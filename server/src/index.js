@@ -5,6 +5,7 @@ import connectDB from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
+console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
 
 connectDB();
 
@@ -15,20 +16,14 @@ app.use(cors());
 // Parse JSON request bodies
 app.use(express.json());
 
-// Debug middleware
-app.use((req, res, next) => {
-    console.log("METHOD:", req.method);
-    console.log("URL:", req.url);
-    console.log("CONTENT-TYPE:", req.headers["content-type"]);
-    console.log("BODY:", req.body);
-    next();
-});
+
 
 app.get("/", (req, res) => {
     res.json({
         message: "Canada RN Mentorship By Tin Zar is Running",
     });
 });
+
 
 app.use("/api/auth", authRoutes);
 
