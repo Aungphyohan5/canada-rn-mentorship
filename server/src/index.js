@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
+import nurseProfileRoutes from "./routes/nurseProfileRoutes.js";
 
 dotenv.config();
 console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/nurse-profile", nurseProfileRoutes);
 
 const PORT = process.env.PORT || 5001;
 
