@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import BookingSuccess from "./pages/BookingSuccess";
+import BookSession from "./pages/BookSession";
 
 function App() {
   return (
@@ -34,6 +36,20 @@ function App() {
             <Profile />
           </ProtectedRoute>
         }
+      />
+
+      <Route
+        path="/book-session"
+        element={
+          <ProtectedRoute>
+            <BookSession />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/booking/success"
+        element={<BookingSuccess />}
       />
 
       <Route
