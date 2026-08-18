@@ -1,7 +1,5 @@
 import nodemailer from "nodemailer";
-import {
-    sendMentorshipConfirmationEmail,
-} from "../services/emailService.js";
+
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
