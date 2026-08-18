@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookSession from "./pages/BookSession";
+import BookingCancelled from "./pages/BookingCancelled.jsx";
 
 function App() {
   return (
@@ -50,6 +51,11 @@ function App() {
       <Route
         path="/booking/success"
         element={<BookingSuccess />}
+      />
+
+      <Route
+        path="/booking/cancelled"
+        element={<BookingCancelled />}
       />
 
       <Route

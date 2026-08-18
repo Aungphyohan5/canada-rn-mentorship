@@ -11,6 +11,33 @@ const BookingSuccess = () => {
     const handleSchedule = () => {
         window.location.href = CALENDLY_URL;
     };
+    const handleCancelBooking = async () => {
+        try {
+            setLoading(true);
+            setError("");
+
+            await api.post(
+                "/payments/cancel-booking",
+                {}
+            );
+
+            // After cancelling, reload the page.
+            window.location.reload();
+
+        } catch (error) {
+            console.error(
+                "CANCEL BOOKING ERROR:",
+                error
+            );
+
+            setError(
+                error.response?.data?.message ||
+                "Unable to cancel the booking."
+            );
+
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="booking-page">

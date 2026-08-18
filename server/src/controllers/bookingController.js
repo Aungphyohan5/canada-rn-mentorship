@@ -1,36 +1,51 @@
 import Booking from "../models/Booking.js";
 
+const SESSION_DURATION_MINUTES = 45;
+const SESSION_AMOUNT = 125;
+
 export const createBooking = async (req, res) => {
     try {
-        const {
-            durationMinutes,
-            amount,
-            sessionType,
-        } = req.body;
+        const userId = req.user._id;
 
-        if (!durationMinutes || !amount) {
+        // Prevent duplicate active paid bookings
+        const existingPaidBooking =
+            await Booking.findOne({
+                user: userId,
+                paymentStatus: "paid",
+                bookingStatus: "pending",
+            }).sort({
+                createdAt: -1,
+            });
+
+        if (existingPaidBooking) {
             return res.status(400).json({
                 success: false,
+                code: "PAID_BOOKING_EXISTS",
                 message:
-                    "Duration and amount are required",
+                    "You already have a paid mentorship session waiting to be scheduled.",
+                data: {
+                    booking: existingPaidBooking,
+                },
             });
         }
 
-        if (![45, 60].includes(Number(durationMinutes))) {
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Duration must be either 45 or 60 minutes",
-            });
-        }
-
+        // Server-controlled session details
         const booking = await Booking.create({
-            user: req.user._id,
+            user: userId,
+
             sessionType:
-                sessionType ||
                 "Canada RN Mentorship Session",
-            durationMinutes: Number(durationMinutes),
-            amount: Number(amount),
+
+            durationMinutes:
+                SESSION_DURATION_MINUTES,
+
+            amount: SESSION_AMOUNT,
+
+            currency: "CAD",
+
+            paymentStatus: "pending",
+
+            bookingStatus: "pending",
         });
 
         return res.status(201).json({
@@ -40,6 +55,7 @@ export const createBooking = async (req, res) => {
                 booking,
             },
         });
+
     } catch (error) {
         console.error(
             "CREATE BOOKING ERROR:",
@@ -52,6 +68,7 @@ export const createBooking = async (req, res) => {
         });
     }
 };
+
 
 export const getMyBookings = async (req, res) => {
     try {
@@ -67,6 +84,7 @@ export const getMyBookings = async (req, res) => {
                 bookings,
             },
         });
+
     } catch (error) {
         console.error(
             "GET BOOKINGS ERROR:",

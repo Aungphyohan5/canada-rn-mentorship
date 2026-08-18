@@ -11,6 +11,7 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import stripeWebhookRoutes from "./routes/stripeWebhookRoutes.js";
 import schedulingRoutes from "./routes/schedulingRoutes.js";
+import calendlyWebhookRoutes from "./routes/calendlyWebhookRoutes.js";
 
 dotenv.config();
 
@@ -22,6 +23,11 @@ console.log(
 console.log(
     "STRIPE_SECRET_KEY exists:",
     !!process.env.STRIPE_SECRET_KEY
+);
+
+console.log(
+    "CALENDLY_ACCESS_TOKEN exists:",
+    !!process.env.CALENDLY_ACCESS_TOKEN
 );
 
 connectDB();
@@ -37,6 +43,12 @@ app.use(cors());
  * Stripe needs the original raw request body
  * to verify the webhook signature.
  */
+
+app.use(
+    "/api/webhooks/calendly",
+    calendlyWebhookRoutes
+);
+
 app.use(
     "/api/stripe/webhook",
     stripeWebhookRoutes
