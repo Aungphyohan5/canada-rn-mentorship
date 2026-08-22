@@ -1,98 +1,352 @@
-#root {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  text-align: left;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* ============================================================
+   GLOBAL RESET
+============================================================ */
+
+:root {
+  --text: #102a4c;
+  --text-h: #102a4c;
+  --bg: #ffffff;
+  --border: #e5eaf0;
+  --code-bg: #f3f6f9;
+  --accent: #d9272e;
+  --accent-bg: rgba(217, 39, 46, 0.08);
+  --accent-border: rgba(217, 39, 46, 0.35);
+
+  --heading: Georgia, "Times New Roman", serif;
+  --mono:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    Menlo,
+    monospace;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: var(--text);
+  background: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ============================================================
+   BOX SIZING
+============================================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* ============================================================
+   HTML / BODY
+============================================================ */
+
+html {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+
+  scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100svh;
+
+  margin: 0;
+  padding: 0;
+
+  background: #ffffff;
+  color: var(--text);
+
+  overflow-x: hidden;
 }
 
 
+/* ============================================================
+   ROOT
+============================================================ */
+
+/*
+   IMPORTANT:
+   Do NOT set a fixed width such as 1126px here.
+   This allows the React application to use the
+   entire browser viewport.
+*/
+
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  width: 100%;
+  max-width: none;
+
+  min-width: 0;
+  min-height: 100vh;
   min-height: 100svh;
+
+  margin: 0;
+  padding: 0;
+
+  text-align: left;
+
   display: flex;
   flex-direction: column;
+
   box-sizing: border-box;
 }
 
+
+/* ============================================================
+   TYPOGRAPHY
+============================================================ */
+
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+
   color: var(--text-h);
+
+  font-family: var(--heading);
+
+  font-weight: 500;
 }
 
 h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
-  margin: 32px 0;
+  line-height: 1.05;
 
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  margin: 32px 0;
 }
 
 h2 {
   font-size: 24px;
-  line-height: 118%;
+  line-height: 1.18;
   letter-spacing: -0.24px;
-  margin: 0 0 8px;
 
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+  margin: 0 0 8px;
+}
+
+h3 {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+h4 {
+  font-size: 17px;
+  line-height: 1.3;
 }
 
 p {
   margin: 0;
 }
 
+a {
+  color: inherit;
+}
+
+
+/* ============================================================
+   CODE
+============================================================ */
+
 code,
 .counter {
   font-family: var(--mono);
+
   display: inline-flex;
+
   border-radius: 4px;
+
   color: var(--text-h);
 }
 
 code {
   font-size: 15px;
-  line-height: 135%;
+  line-height: 1.35;
+
   padding: 4px 8px;
+
   background: var(--code-bg);
+}
+
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
+   IMAGES / MEDIA
+============================================================ */
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+}
+
+
+/* ============================================================
+   LANDING PAGE GLOBAL WIDTH
+============================================================ */
+
+/*
+   Every major landing-page section can now span
+   the complete browser width.
+*/
+
+.landing-page {
+  width: 100%;
+  max-width: none;
+
+  min-height: 100vh;
+  min-height: 100svh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+}
+
+
+/*
+   Content inside sections.
+
+   The section itself remains FULL WIDTH.
+   Only the content receives side spacing.
+*/
+
+.landing-container {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+  padding-left: 40px;
+  padding-right: 40px;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   RESPONSIVE — TABLET
+============================================================ */
+
+@media (max-width: 1024px) {
+
+  h1 {
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin: 20px 0;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .landing-container {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE — MOBILE
+============================================================ */
+
+@media (max-width: 550px) {
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+  }
+
+  h1 {
+    font-size: 36px;
+    letter-spacing: -0.8px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .landing-container {
+    width: 100%;
+
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+
+/* ============================================================
+   DARK MODE
+============================================================ */
+
+/*
+   Disabled intentionally for the landing page.
+
+   The landing page is designed with a white / navy / red
+   visual system, so the browser's dark-mode preference
+   should NOT automatically turn it dark.
+*/
+
+@media (prefers-color-scheme: dark) {
+
+  :root {
+    --text: #102a4c;
+    --text-h: #102a4c;
+    --bg: #ffffff;
+    --border: #e5eaf0;
+    --code-bg: #f3f6f9;
+    --accent: #d9272e;
+    --accent-bg: rgba(217, 39, 46, 0.08);
+    --accent-border: rgba(217, 39, 46, 0.35);
+  }
+
+  body {
+    background: #ffffff;
+    color: #102a4c;
+  }
+
+  #root {
+    background: #ffffff;
+  }
 }

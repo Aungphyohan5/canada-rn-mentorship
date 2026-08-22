@@ -15,8 +15,12 @@
 }
 
 .landing-container {
-    width: min(1180px, calc(100% - 40px));
-    margin: 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding-left: 60px;
+    padding-right: 60px;
+    box-sizing: border-box;
 }
 
 
@@ -1021,7 +1025,7 @@
 ============================================================ */
 
 .final-cta {
-    padding: 45px 0;
+    padding: 35px 0;
 
     background: #d9272e;
 
@@ -1066,6 +1070,7 @@
 .landing-footer {
     background: #061d38;
     color: #ffffff;
+
 }
 
 .footer-grid {
@@ -1104,7 +1109,7 @@
 
     color: #ffffff;
 
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .footer-column a,
@@ -1112,7 +1117,7 @@
 .footer-column button {
     color: #aebed0;
 
-    font-size: 11px;
+    font-size: 13px;
 
     text-decoration: none;
 
@@ -1261,8 +1266,12 @@
 @media (max-width: 550px) {
 
     .landing-container {
-        width: min(100% - 28px,
-                1180px);
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
     }
 
     .nav-actions {

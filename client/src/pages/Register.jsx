@@ -102,9 +102,7 @@ const Register = () => {
                     token
                 );
 
-                navigate(
-                    "/dashboard"
-                );
+                navigate("/onboarding");
 
                 return;
             }

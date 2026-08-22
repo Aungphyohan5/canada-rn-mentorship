@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import {
     useNavigate,
+    useLocation,
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../services/api";
 import DashboardLayout from "../components/layout/DashboardLayout.jsx";
 
+
+// ============================================================
+// CONSTANTS
+// ============================================================
 
 const CALENDLY_URL =
     "https://calendly.com/canadarnmentorshipbytz/canada-rn-mentorship";
@@ -15,37 +20,50 @@ const MENTORSHIP_SESSION_TYPE =
     "Canada RN Mentorship Session";
 
 
+// ============================================================
+// DASHBOARD
+// ============================================================
+
 const Dashboard = () => {
 
     const { user } = useAuth();
 
     const navigate = useNavigate();
 
+    const location = useLocation();
 
 
     // =========================================================
     // STATE
     // =========================================================
 
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] =
+        useState(null);
 
-    const [pathway, setPathway] = useState(null);
+    const [pathway, setPathway] =
+        useState(null);
 
-    const [bookings, setBookings] = useState([]);
+    const [bookings, setBookings] =
+        useState([]);
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] =
+        useState(true);
 
-    const [error, setError] = useState("");
+    const [error, setError] =
+        useState("");
 
     const [paymentError, setPaymentError] =
         useState("");
 
 
     // =========================================================
-    // LOAD DASHBOARD
+    // LOAD DASHBOARD DATA
     // =========================================================
 
     useEffect(() => {
+
+        let cancelled = false;
+
 
         const fetchDashboardData = async () => {
 
@@ -58,9 +76,9 @@ const Dashboard = () => {
                 setPaymentError("");
 
 
-                // -------------------------------------------------
-                // Load dashboard data
-                // -------------------------------------------------
+                // =================================================
+                // LOAD PROFILE / PATHWAY / BOOKINGS
+                // =================================================
 
                 const [
                     profileResponse,
@@ -83,83 +101,125 @@ const Dashboard = () => {
                 ]);
 
 
-                // -------------------------------------------------
-                // Profile
-                // -------------------------------------------------
+                if (cancelled) {
+                    return;
+                }
+
+
+                // =================================================
+                // PROFILE
+                // =================================================
 
                 setProfile(
                     profileResponse
-                        .data
+                        ?.data
                         ?.data
                         ?.profile || null
                 );
 
 
-                // -------------------------------------------------
-                // Pathway
-                // -------------------------------------------------
+                // =================================================
+                // PATHWAY
+                // =================================================
 
                 setPathway(
                     pathwayResponse
-                        .data
+                        ?.data
                         ?.data || null
                 );
 
 
-                // -------------------------------------------------
-                // Bookings
-                // -------------------------------------------------
+                // =================================================
+                // BOOKINGS
+                // =================================================
 
                 let userBookings =
                     bookingsResponse
-                        .data
+                        ?.data
                         ?.data
                         ?.bookings || [];
 
 
-                // -------------------------------------------------
-                // Determine whether Calendly sync is needed
-                // -------------------------------------------------
+                console.log(
+                    "========== DASHBOARD BOOKINGS =========="
+                );
+
+                console.table(
+                    userBookings.map(
+                        (booking) => ({
+                            id: booking._id,
+                            paymentStatus:
+                                booking.paymentStatus,
+                            bookingStatus:
+                                booking.bookingStatus,
+                            scheduledAt:
+                                booking.scheduledAt,
+                            zoomJoinUrl:
+                                booking.zoomJoinUrl,
+                        })
+                    )
+                );
+
+                console.log(
+                    "========================================"
+                );
+
+
+                // =================================================
+                // FIND BOOKING THAT NEEDS CALENDLY SYNC
+                // =================================================
 
                 const bookingToSync =
                     userBookings.find(
-                        (booking) =>
+                        (booking) => {
 
-                            booking.sessionType ===
-                            MENTORSHIP_SESSION_TYPE &&
+                            const isMentorship =
+                                booking.sessionType ===
+                                MENTORSHIP_SESSION_TYPE;
 
-                            booking.paymentStatus ===
-                            "paid" &&
 
-                            (
-                                // Paid but not scheduled
+                            const isPaid =
+                                booking.paymentStatus ===
+                                "paid";
+
+
+                            const isPending =
                                 booking.bookingStatus ===
-                                "pending" ||
+                                "pending";
 
-                                // Scheduled but Zoom URL missing
+
+                            const isScheduledWithoutZoom =
+                                booking.bookingStatus ===
+                                "scheduled" &&
+                                !booking.zoomJoinUrl;
+
+
+                            return (
+                                isMentorship &&
+                                isPaid &&
                                 (
-                                    booking.bookingStatus ===
-                                    "scheduled" &&
-
-                                    !booking.zoomJoinUrl
+                                    isPending ||
+                                    isScheduledWithoutZoom
                                 )
-                            )
+                            );
+
+                        }
                     );
 
 
-                // -------------------------------------------------
-                // Calendly synchronization
-                // -------------------------------------------------
+                // =================================================
+                // CALENDLY SYNC
+                // =================================================
 
                 if (bookingToSync) {
 
+                    console.log(
+                        "CALENDLY SYNC REQUIRED:",
+                        bookingToSync._id
+                    );
+
+
                     try {
-
-                        console.log(
-                            "Checking Calendly for booking:",
-                            bookingToSync._id
-                        );
-
 
                         const syncResponse =
                             await api.get(
@@ -173,9 +233,9 @@ const Dashboard = () => {
                         );
 
 
-                        // ------------------------------------------------
-                        // Reload bookings after synchronization
-                        // ------------------------------------------------
+                        // =================================================
+                        // RELOAD BOOKINGS AFTER SYNC
+                        // =================================================
 
                         const updatedBookingsResponse =
                             await api.get(
@@ -185,9 +245,15 @@ const Dashboard = () => {
 
                         userBookings =
                             updatedBookingsResponse
-                                .data
+                                ?.data
                                 ?.data
                                 ?.bookings || [];
+
+
+                        console.log(
+                            "BOOKINGS AFTER CALENDLY SYNC:",
+                            userBookings
+                        );
 
 
                     } catch (
@@ -195,16 +261,16 @@ const Dashboard = () => {
                     ) {
 
                         /*
-                         * Calendly failure should NOT
-                         * prevent the dashboard from loading.
+                         * Calendly synchronization should
+                         * never prevent the dashboard from loading.
                          */
 
                         console.error(
                             "CALENDLY SYNC ERROR:",
                             calendlyError
-                                .response
+                                ?.response
                                 ?.data ||
-                            calendlyError.message ||
+                            calendlyError?.message ||
                             calendlyError
                         );
 
@@ -213,14 +279,17 @@ const Dashboard = () => {
                 }
 
 
-                // -------------------------------------------------
-                // Save final bookings
-                // -------------------------------------------------
+                // =================================================
+                // SAVE BOOKINGS
+                // =================================================
 
-                setBookings(
-                    userBookings
-                );
+                if (!cancelled) {
 
+                    setBookings(
+                        userBookings
+                    );
+
+                }
 
             } catch (error) {
 
@@ -230,18 +299,25 @@ const Dashboard = () => {
                 );
 
 
-                setError(
-                    error
-                        .response
-                        ?.data
-                        ?.message ||
-                    "Unable to load dashboard data."
-                );
+                if (!cancelled) {
 
+                    setError(
+                        error
+                            ?.response
+                            ?.data
+                            ?.message ||
+                        "Unable to load dashboard data."
+                    );
+
+                }
 
             } finally {
 
-                setLoading(false);
+                if (!cancelled) {
+
+                    setLoading(false);
+
+                }
 
             }
 
@@ -250,11 +326,18 @@ const Dashboard = () => {
 
         fetchDashboardData();
 
+
+        return () => {
+
+            cancelled = true;
+
+        };
+
     }, []);
 
 
     // =========================================================
-    // SCROLL TO DASHBOARD SECTIONS
+    // SCROLL TO SECTION
     // =========================================================
 
     useEffect(() => {
@@ -268,44 +351,38 @@ const Dashboard = () => {
             location.hash.substring(1);
 
 
-        const scrollToSection = () => {
-
-            const element =
-                document.getElementById(
-                    sectionId
-                );
-
-
-            if (!element) {
-                return;
-            }
-
-
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-            });
-
-        };
-
-
-        /*
-         * Small delay allows the dashboard
-         * content to finish rendering.
-         */
-
         const timer =
-            setTimeout(
-                scrollToSection,
-                150
-            );
+            setTimeout(() => {
+
+                const element =
+                    document.getElementById(
+                        sectionId
+                    );
+
+
+                if (!element) {
+                    return;
+                }
+
+
+                element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+
+            }, 150);
 
 
         return () => {
+
             clearTimeout(timer);
+
         };
 
-    }, [location.hash, loading]);
+    }, [
+        location.hash,
+        loading,
+    ]);
 
 
     // =========================================================
@@ -330,6 +407,12 @@ const Dashboard = () => {
             }
 
 
+            console.log(
+                "RESUMING PAYMENT FOR BOOKING:",
+                bookingId
+            );
+
+
             const response =
                 await api.get(
                     "/payments/resume-checkout-session",
@@ -341,12 +424,68 @@ const Dashboard = () => {
                 );
 
 
+            console.log(
+                "RESUME PAYMENT RESPONSE:",
+                response.data
+            );
+
+
+            const responseData =
+                response?.data || {};
+
+
+            const code =
+                responseData.code;
+
+
             const checkoutUrl =
-                response
-                    .data
+                responseData
                     ?.data
                     ?.checkoutUrl;
 
+
+            // =====================================================
+            // PAYMENT RECOVERED
+            // =====================================================
+
+            if (
+                code ===
+                "PAYMENT_RECOVERED" ||
+
+                code ===
+                "PAYMENT_ALREADY_COMPLETED" ||
+
+                code ===
+                "ALREADY_PAID"
+            ) {
+
+                console.log(
+                    "PAYMENT ALREADY COMPLETED."
+                );
+
+
+                /*
+                 * The payment is already complete.
+                 *
+                 * Do NOT send the user back to Stripe.
+                 *
+                 * Reload the dashboard so that:
+                 *
+                 * paymentStatus = paid
+                 *
+                 * then Calendly synchronization can run.
+                 */
+
+                window.location.reload();
+
+                return;
+
+            }
+
+
+            // =====================================================
+            // NORMAL PENDING STRIPE CHECKOUT
+            // =====================================================
 
             if (!checkoutUrl) {
 
@@ -371,10 +510,10 @@ const Dashboard = () => {
 
             setPaymentError(
                 error
-                    .response
+                    ?.response
                     ?.data
                     ?.message ||
-                error.message ||
+                error?.message ||
                 "Unable to resume payment."
             );
 
@@ -404,7 +543,9 @@ const Dashboard = () => {
     ) => {
 
         if (!zoomJoinUrl) {
+
             return;
+
         }
 
 
@@ -461,7 +602,9 @@ const Dashboard = () => {
                     <div className="dashboard-card">
 
                         <p className="booking-error">
+
                             {error}
+
                         </p>
 
                     </div>
@@ -476,14 +619,8 @@ const Dashboard = () => {
 
 
     // =========================================================
-    // MENTORSHIP BOOKINGS
+    // MENTORSHIP BOOKINGS ONLY
     // =========================================================
-
-    /*
-     * Only mentorship bookings are displayed.
-     *
-     * Cancelled bookings are hidden.
-     */
 
     const mentorshipBookings =
         bookings.filter(
@@ -500,14 +637,6 @@ const Dashboard = () => {
     // =========================================================
     // CURRENT PAID BOOKING
     // =========================================================
-
-    /*
-     * Used for the large booking card.
-     *
-     * Paid + pending
-     * OR
-     * Paid + scheduled
-     */
 
     const paidBooking =
         mentorshipBookings.find(
@@ -529,17 +658,6 @@ const Dashboard = () => {
     // =========================================================
     // ACTIVE MENTORSHIP BOOKING
     // =========================================================
-
-    /*
-     * Prevent another mentorship purchase
-     * while an existing session is active.
-     *
-     * Active:
-     *
-     * pending payment
-     * paid + pending
-     * paid + scheduled
-     */
 
     const hasActiveMentorshipBooking =
         mentorshipBookings.some(
@@ -628,7 +746,6 @@ const Dashboard = () => {
                 </div>
 
 
-
                 {/* =================================================
                     JOURNEY
                 ================================================== */}
@@ -646,7 +763,6 @@ const Dashboard = () => {
                                 YOUR JOURNEY
                             </p>
 
-
                             <h2>
                                 Canada RN Pathway
                             </h2>
@@ -663,9 +779,6 @@ const Dashboard = () => {
                     </div>
 
 
-
-                    {/* Progress bar */}
-
                     <div className="progress-bar">
 
                         <div
@@ -677,7 +790,6 @@ const Dashboard = () => {
                         />
 
                     </div>
-
 
 
                     <p className="progress-text">
@@ -694,9 +806,6 @@ const Dashboard = () => {
 
                     </p>
 
-
-
-                    {/* Journey steps */}
 
                     <div className="journey-steps">
 
@@ -758,7 +867,10 @@ const Dashboard = () => {
                         ) : (
 
                             <p className="booking-status-message">
-                                Your pathway steps will appear here.
+
+                                Your pathway steps will
+                                appear here.
+
                             </p>
 
                         )}
@@ -766,7 +878,6 @@ const Dashboard = () => {
                     </div>
 
                 </div>
-
 
 
                 {/* =================================================
@@ -794,17 +905,15 @@ const Dashboard = () => {
 
 
                             <div className="booking-paid-badge">
+
                                 ✓ Paid
+
                             </div>
 
                         </div>
 
 
-
-                        {/* Booking summary */}
-
                         <div className="booking-summary">
-
 
                             <div>
 
@@ -814,14 +923,13 @@ const Dashboard = () => {
 
 
                                 <strong>
-                                    {
-                                        paidBooking.durationMinutes
-                                    }{" "}
-                                    minutes
+
+                                    {paidBooking.durationMinutes}
+                                    {" "}minutes
+
                                 </strong>
 
                             </div>
-
 
 
                             <div>
@@ -835,14 +943,12 @@ const Dashboard = () => {
 
                                     CA$
                                     {paidBooking.amount}
-
                                     {" "}
                                     {paidBooking.currency}
 
                                 </strong>
 
                             </div>
-
 
 
                             <div>
@@ -854,14 +960,12 @@ const Dashboard = () => {
 
                                 <strong>
 
-                                    {
-                                        paidBooking.bookingStatus ===
-                                            "scheduled"
+                                    {paidBooking.bookingStatus ===
+                                        "scheduled"
 
-                                            ? "Scheduled"
+                                        ? "Scheduled"
 
-                                            : "Ready to Schedule"
-                                    }
+                                        : "Ready to Schedule"}
 
                                 </strong>
 
@@ -870,16 +974,14 @@ const Dashboard = () => {
                         </div>
 
 
-
                         {/* =================================================
-                            PAID + SCHEDULED
+                            SCHEDULED
                         ================================================== */}
 
                         {paidBooking.bookingStatus ===
                             "scheduled" && (
 
                                 <div className="booking-next-step">
-
 
                                     {paidBooking.scheduledAt && (
 
@@ -897,7 +999,6 @@ const Dashboard = () => {
                                                     {
                                                         dateStyle:
                                                             "medium",
-
                                                         timeStyle:
                                                             "short",
                                                     }
@@ -912,7 +1013,6 @@ const Dashboard = () => {
                                     )}
 
 
-
                                     {paidBooking.zoomJoinUrl ? (
 
                                         <button
@@ -924,7 +1024,9 @@ const Dashboard = () => {
                                                 )
                                             }
                                         >
+
                                             Join Zoom Meeting →
+
                                         </button>
 
                                     ) : (
@@ -945,9 +1047,8 @@ const Dashboard = () => {
                             )}
 
 
-
                         {/* =================================================
-                            PAID + NOT SCHEDULED
+                            PAID BUT NOT SCHEDULED
                         ================================================== */}
 
                         {paidBooking.bookingStatus ===
@@ -972,7 +1073,9 @@ const Dashboard = () => {
                                             handleScheduleSession
                                         }
                                     >
+
                                         Schedule My Session →
+
                                     </button>
 
                                 </div>
@@ -982,7 +1085,6 @@ const Dashboard = () => {
                     </div>
 
                 )}
-
 
 
                 {/* =================================================
@@ -1020,7 +1122,6 @@ const Dashboard = () => {
                         </p>
 
 
-
                         <div className="profile-summary">
 
                             <span>
@@ -1038,7 +1139,6 @@ const Dashboard = () => {
                         </div>
 
 
-
                         <div className="profile-summary">
 
                             <span>
@@ -1048,16 +1148,12 @@ const Dashboard = () => {
 
                             <strong>
 
-                                {
-                                    profile
-                                        ?.preferredProvince ||
-                                    "Not provided"
-                                }
+                                {profile?.preferredProvince ||
+                                    "Not provided"}
 
                             </strong>
 
                         </div>
-
 
 
                         <button
@@ -1073,7 +1169,6 @@ const Dashboard = () => {
                         </button>
 
                     </div>
-
 
 
                     {/* =================================================
@@ -1102,11 +1197,12 @@ const Dashboard = () => {
 
 
                         <div className="next-step-badge">
+
                             Not Started
+
                         </div>
 
                     </div>
-
 
 
                     {/* =================================================
@@ -1135,7 +1231,6 @@ const Dashboard = () => {
                         </p>
 
 
-
                         <div className="mentorship-details">
 
                             <span>
@@ -1150,7 +1245,6 @@ const Dashboard = () => {
                         </div>
 
 
-
                         {!hasActiveMentorshipBooking && (
 
                             <button
@@ -1162,11 +1256,12 @@ const Dashboard = () => {
                                     )
                                 }
                             >
+
                                 Book a Session
+
                             </button>
 
                         )}
-
 
 
                         {hasActiveMentorshipBooking && (
@@ -1188,9 +1283,8 @@ const Dashboard = () => {
                 </div>
 
 
-
                 {/* =================================================
-                    BOOKINGS
+                    MY SESSIONS
                 ================================================== */}
 
                 <div
@@ -1204,8 +1298,6 @@ const Dashboard = () => {
 
                             <p className="card-eyebrow">
                                 MY SESSIONS
-
-
                             </p>
 
 
@@ -1218,8 +1310,9 @@ const Dashboard = () => {
                     </div>
 
 
-
-                    {/* Payment error */}
+                    {/* =================================================
+                        PAYMENT ERROR
+                    ================================================== */}
 
                     {paymentError && (
 
@@ -1232,9 +1325,8 @@ const Dashboard = () => {
                     )}
 
 
-
                     {/* =================================================
-                        NO BOOKINGS
+                        EMPTY
                     ================================================== */}
 
                     {mentorshipBookings.length ===
@@ -1268,11 +1360,6 @@ const Dashboard = () => {
 
                     ) : (
 
-
-                        /* =================================================
-                            BOOKING LIST
-                        ================================================== */
-
                         <div className="sessions-list">
 
                             {mentorshipBookings.map(
@@ -1283,7 +1370,7 @@ const Dashboard = () => {
                                         "paid";
 
 
-                                    const isPending =
+                                    const isPendingPayment =
                                         booking.paymentStatus ===
                                         "pending";
 
@@ -1307,15 +1394,17 @@ const Dashboard = () => {
 
 
                                             {/* =================================
-                                                SESSION INFORMATION
+                                                INFORMATION
                                             ================================== */}
 
                                             <div className="session-main">
 
                                                 <h3>
+
                                                     {
                                                         booking.sessionType
                                                     }
+
                                                 </h3>
 
 
@@ -1336,10 +1425,7 @@ const Dashboard = () => {
                                                         CA$
                                                         {
                                                             booking.amount
-                                                        }
-
-                                                        {" "}
-
+                                                        }{" "}
                                                         {
                                                             booking.currency
                                                         }
@@ -1374,7 +1460,6 @@ const Dashboard = () => {
                                             </div>
 
 
-
                                             {/* =================================
                                                 STATUS
                                             ================================== */}
@@ -1382,9 +1467,9 @@ const Dashboard = () => {
                                             <div className="session-status">
 
 
-                                                {/* Pending payment */}
+                                                {/* Pending Payment */}
 
-                                                {isPending && (
+                                                {isPendingPayment && (
 
                                                     <span className="status-badge pending">
 
@@ -1395,8 +1480,7 @@ const Dashboard = () => {
                                                 )}
 
 
-
-                                                {/* Paid but not scheduled */}
+                                                {/* Paid / Ready */}
 
                                                 {isPaid &&
                                                     !isScheduled &&
@@ -1409,7 +1493,6 @@ const Dashboard = () => {
                                                         </span>
 
                                                     )}
-
 
 
                                                 {/* Scheduled */}
@@ -1427,7 +1510,6 @@ const Dashboard = () => {
                                                     )}
 
 
-
                                                 {/* Completed */}
 
                                                 {isCompleted && (
@@ -1443,12 +1525,11 @@ const Dashboard = () => {
                                             </div>
 
 
-
                                             {/* =================================
                                                 PENDING PAYMENT
                                             ================================== */}
 
-                                            {isPending && (
+                                            {isPendingPayment && (
 
                                                 <button
                                                     type="button"
@@ -1465,7 +1546,6 @@ const Dashboard = () => {
                                                 </button>
 
                                             )}
-
 
 
                                             {/* =================================
@@ -1489,7 +1569,6 @@ const Dashboard = () => {
                                                     </button>
 
                                                 )}
-
 
 
                                             {/* =================================
@@ -1516,6 +1595,25 @@ const Dashboard = () => {
 
                                                 )}
 
+
+                                            {/* =================================
+                                                SCHEDULED BUT NO ZOOM YET
+                                            ================================== */}
+
+                                            {isPaid &&
+                                                isScheduled &&
+                                                !booking.zoomJoinUrl && (
+
+                                                    <span className="booking-status-message">
+
+                                                        Zoom link will
+                                                        appear here when
+                                                        available.
+
+                                                    </span>
+
+                                                )}
+
                                         </div>
 
                                     );
@@ -1528,7 +1626,6 @@ const Dashboard = () => {
                     )}
 
                 </div>
-
 
             </div>
 

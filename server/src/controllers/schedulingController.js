@@ -439,9 +439,7 @@ export const syncMyCalendlyBooking = async (
          * ====================================================
          */
 
-        const location =
-            fullEvent?.location;
-
+        const location = fullEvent?.location;
 
         console.log(
             "CALENDLY LOCATION:",
@@ -453,30 +451,64 @@ export const syncMyCalendlyBooking = async (
         );
 
 
-        /*
-         * ====================================================
-         * SAVE ZOOM INFORMATION
-         * ====================================================
-         */
+        // ============================================================
+        // EXTRACT ZOOM INFORMATION
+        // ============================================================
 
-        if (
-            location?.join_url
-        ) {
+        let zoomJoinUrl = null;
+        let zoomMeetingId = null;
+
+
+        // Direct Calendly location
+        if (location?.join_url) {
+            zoomJoinUrl = location.join_url;
+        }
+
+
+        // Some Calendly responses may expose Zoom
+        // information inside data
+        if (!zoomJoinUrl && location?.data?.join_url) {
+            zoomJoinUrl = location.data.join_url;
+        }
+
+
+        // Zoom meeting ID
+        if (location?.data?.id) {
+            zoomMeetingId =
+                String(location.data.id);
+        }
+
+
+        // Save Zoom URL
+        if (zoomJoinUrl) {
 
             booking.zoomJoinUrl =
-                location.join_url;
+                zoomJoinUrl;
+
+            console.log(
+                "ZOOM JOIN URL SAVED:",
+                zoomJoinUrl
+            );
+
+        } else {
+
+            console.log(
+                "NO ZOOM JOIN URL FOUND IN CALENDLY LOCATION"
+            );
 
         }
 
 
-        if (
-            location?.data?.id
-        ) {
+        // Save Zoom meeting ID
+        if (zoomMeetingId) {
 
             booking.zoomMeetingId =
-                String(
-                    location.data.id
-                );
+                zoomMeetingId;
+
+            console.log(
+                "ZOOM MEETING ID SAVED:",
+                zoomMeetingId
+            );
 
         }
 

@@ -1,0 +1,640 @@
+/* =========================================================
+   ONBOARDING PAGE
+========================================================= */
+
+.onboarding-page {
+    min-height: 100vh;
+    background: #f6f8fb;
+    color: #172b4d;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.onboarding-header {
+    height: 76px;
+    background: #ffffff;
+    border-bottom: 1px solid #e6eaf0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 6%;
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.onboarding-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.onboarding-logo {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.onboarding-brand strong {
+    display: block;
+
+    font-family: Georgia, serif;
+    font-size: 20px;
+
+    color: #17365d;
+}
+
+.onboarding-brand span {
+    display: block;
+
+    font-size: 12px;
+    color: #6d7a8d;
+
+    margin-top: 2px;
+}
+
+.onboarding-user {
+    font-size: 14px;
+    color: #68778d;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.onboarding-container {
+    width: 100%;
+    max-width: 820px;
+
+    margin: 0 auto;
+
+    padding: 55px 20px 80px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.onboarding-card {
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 42px;
+
+    box-shadow:
+        0 12px 40px rgba(22, 43, 77, 0.08);
+
+    border: 1px solid #e9edf3;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.onboarding-intro {
+    text-align: center;
+
+    max-width: 650px;
+
+    margin: 0 auto 38px;
+}
+
+.onboarding-eyebrow {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #d9272e;
+
+    margin-bottom: 12px;
+}
+
+.onboarding-intro h1 {
+    font-family: Georgia, serif;
+
+    font-size: 38px;
+
+    line-height: 1.2;
+
+    color: #17365d;
+
+    margin: 0 0 16px;
+}
+
+.onboarding-intro>p {
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    color: #65748a;
+}
+
+.intro-note {
+    background: #f7f9fc;
+
+    border-radius: 10px;
+
+    padding: 14px 18px;
+
+    font-size: 14px !important;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.onboarding-progress {
+    margin-bottom: 38px;
+}
+
+.progress-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #6b788c;
+
+    margin-bottom: 9px;
+}
+
+.onboarding-progress-bar {
+    height: 7px;
+
+    background: #e9edf3;
+
+    border-radius: 99px;
+
+    overflow: hidden;
+}
+
+.onboarding-progress-fill {
+    height: 100%;
+
+    background: #d9272e;
+
+    border-radius: 99px;
+
+    transition: width 0.3s ease;
+}
+
+
+/* =========================================================
+   STEP HEADING
+========================================================= */
+
+.step-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 32px;
+}
+
+.step-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f7f9fc;
+
+    border-radius: 14px;
+
+    font-size: 25px;
+}
+
+.step-heading p {
+    margin: 0 0 4px;
+
+    color: #d9272e;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+.step-heading h2 {
+    margin: 0;
+
+    font-family: Georgia, serif;
+
+    color: #17365d;
+
+    font-size: 28px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-step {
+    min-height: 350px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #293b54;
+}
+
+.form-group label>span {
+    color: #d9272e;
+
+    margin-left: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d8dee8;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    padding: 13px 14px;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    color: #26384f;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group textarea {
+    resize: vertical;
+
+    min-height: 110px;
+
+    line-height: 1.5;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #8da6c4;
+
+    box-shadow:
+        0 0 0 3px rgba(45, 91, 137, 0.08);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a1aab7;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   RADIO
+========================================================= */
+
+.radio-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.radio-option {
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 13px 15px;
+
+    border: 1px solid #e0e5ec;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 500 !important;
+
+    transition: background 0.2s ease;
+}
+
+.radio-option:hover {
+    background: #f8fafc;
+}
+
+.radio-option input {
+    width: 17px;
+
+    height: 17px;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-list {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+}
+
+.checkbox-option {
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px;
+
+    border: 1px solid #e0e5ec;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 500 !important;
+}
+
+.checkbox-option input {
+    width: 17px;
+
+    height: 17px;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   COMPLETION NOTE
+========================================================= */
+
+.completion-note {
+    display: flex;
+
+    gap: 14px;
+
+    background: #f5f9f6;
+
+    border: 1px solid #dcecdf;
+
+    border-radius: 12px;
+
+    padding: 18px;
+
+    margin-top: 30px;
+}
+
+.completion-note>span {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    background: #4c9b67;
+
+    color: white;
+
+    border-radius: 50%;
+
+    font-size: 14px;
+}
+
+.completion-note strong {
+    display: block;
+
+    color: #285c3a;
+
+    margin-bottom: 5px;
+}
+
+.completion-note p {
+    margin: 0;
+
+    color: #627466;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.onboarding-error {
+    background: #fff3f3;
+
+    border: 1px solid #f2c8ca;
+
+    color: #b4232b;
+
+    padding: 13px 15px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.onboarding-actions {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 38px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #edf0f4;
+}
+
+.continue-button {
+    min-width: 170px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    padding: 14px 22px;
+
+    background: #d9272e;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.continue-button:hover {
+    background: #bd2027;
+
+    transform: translateY(-1px);
+}
+
+.continue-button:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.back-button,
+.skip-button {
+    background: transparent;
+
+    border: none;
+
+    color: #66758a;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.back-button:hover,
+.skip-button:hover {
+    color: #17365d;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .onboarding-header {
+        padding: 0 20px;
+    }
+
+    .onboarding-user {
+        display: none;
+    }
+
+    .onboarding-container {
+        padding: 25px 14px 50px;
+    }
+
+    .onboarding-card {
+        padding: 28px 20px;
+
+        border-radius: 14px;
+    }
+
+    .onboarding-intro h1 {
+        font-size: 30px;
+    }
+
+    .step-heading h2 {
+        font-size: 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .checkbox-list {
+        grid-template-columns: 1fr;
+    }
+
+    .onboarding-actions {
+        gap: 15px;
+    }
+
+    .continue-button {
+        min-width: 145px;
+    }
+
+}

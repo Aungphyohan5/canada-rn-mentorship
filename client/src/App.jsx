@@ -15,6 +15,7 @@ import BookingCancelled from "./pages/BookingCancelled.jsx";
 import Resources from "./pages/Resources.jsx";
 import Bookings from "./pages/Bookings.jsx";
 import Register from "./pages/Register";
+import Onboarding from "./pages/Onboarding";
 
 
 function App() {
@@ -43,6 +44,17 @@ function App() {
         path="/login"
         element={
           <Login />
+        }
+      />
+      {/* ==========================================
+               Onboarding
+            ========================================== */}
+      <Route
+        path="/onboarding"
+        element={
+          <ProtectedRoute>
+            <Onboarding />
+          </ProtectedRoute>
         }
       />
 
