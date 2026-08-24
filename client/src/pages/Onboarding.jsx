@@ -16,35 +16,87 @@ const Onboarding = () => {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
-    const [formData, setFormData] = useState({
-        countryOfResidence: "",
+    // =========================================================
+    // FORM DATA
+    // Matches NurseProfile schema
+    // =========================================================
 
-        nursingEducation: "",
+    const [formData, setFormData] = useState({
+        // Personal
+        countryOfResidence: "",
+        immigrationStatus: "",
+
+        // Education
+        countryOfEducation: "",
+        nursingDegree: "",
         educationInstitution: "",
 
+        // Registration
         licenseStatus: "",
         registrationCountry: "",
         registrationProvince: "",
         regulatoryBody: "",
 
+        // Experience
+        yearsOfExperience: "",
+        specialty: "",
+        currentlyWorking: "",
+        currentWorkCountry: "",
+
+        // English
+        englishTest: "None",
+        englishScore: "",
+
+        // NCLEX
         nclexStatus: "",
         nclexJurisdiction: "",
 
-        currentlyWorking: "",
-        currentWorkCountry: "",
-        yearsOfExperience: "",
-        specialty: "",
+        // NNAS
+        nnasStatus: "Not Started",
 
+        // Canada RN journey
         preferredProvince: "",
         registrationStarted: "",
         registrationProgress: [],
 
+        // Goals
         mainGoal: "",
         biggestConcern: "",
     });
 
     // =========================================================
-    // UPDATE FORM
+    // OPTIONS
+    // =========================================================
+
+    const provinces = [
+        "Alberta",
+        "British Columbia",
+        "Ontario",
+        "New Brunswick",
+        "Saskatchewan",
+        "Nova Scotia",
+        "Prince Edward Island",
+        "Newfoundland and Labrador",
+        "Manitoba",
+        "Quebec",
+        "Not sure yet",
+        "Other",
+    ];
+
+    const countries = [
+        "Canada",
+        "Myanmar",
+        "Singapore",
+        "United States",
+        "Philippines",
+        "India",
+        "United Kingdom",
+        "Australia",
+        "Other",
+    ];
+
+    // =========================================================
+    // UPDATE FIELD
     // =========================================================
 
     const updateField = (field, value) => {
@@ -52,10 +104,15 @@ const Onboarding = () => {
             ...previous,
             [field]: value,
         }));
+
+        // Clear error when user changes something
+        if (error) {
+            setError("");
+        }
     };
 
     // =========================================================
-    // CHECKBOXES
+    // TOGGLE REGISTRATION PROGRESS
     // =========================================================
 
     const toggleProgress = (value) => {
@@ -65,6 +122,7 @@ const Onboarding = () => {
 
             return {
                 ...previous,
+
                 registrationProgress: exists
                     ? previous.registrationProgress.filter(
                         (item) => item !== value
@@ -75,6 +133,10 @@ const Onboarding = () => {
                     ],
             };
         });
+
+        if (error) {
+            setError("");
+        }
     };
 
     // =========================================================
@@ -83,6 +145,10 @@ const Onboarding = () => {
 
     const validateStep = () => {
         setError("");
+
+        // -----------------------------------------------------
+        // STEP 1
+        // -----------------------------------------------------
 
         if (step === 1) {
             if (!formData.countryOfResidence) {
@@ -94,10 +160,22 @@ const Onboarding = () => {
             }
         }
 
+        // -----------------------------------------------------
+        // STEP 2
+        // -----------------------------------------------------
+
         if (step === 2) {
-            if (!formData.nursingEducation.trim()) {
+            if (!formData.countryOfEducation) {
                 setError(
-                    "Please enter your nursing education."
+                    "Please select the country where you completed your nursing education."
+                );
+
+                return false;
+            }
+
+            if (!formData.nursingDegree.trim()) {
+                setError(
+                    "Please enter your nursing degree or qualification."
                 );
 
                 return false;
@@ -105,17 +183,21 @@ const Onboarding = () => {
 
             if (!formData.educationInstitution.trim()) {
                 setError(
-                    "Please enter where you completed your nursing education."
+                    "Please enter the institution where you completed your nursing education."
                 );
 
                 return false;
             }
         }
 
+        // -----------------------------------------------------
+        // STEP 3
+        // -----------------------------------------------------
+
         if (step === 3) {
             if (!formData.licenseStatus) {
                 setError(
-                    "Please select your current nursing registration status."
+                    "Please select your current nursing registration or license status."
                 );
 
                 return false;
@@ -129,6 +211,10 @@ const Onboarding = () => {
                 return false;
             }
         }
+
+        // -----------------------------------------------------
+        // STEP 4
+        // -----------------------------------------------------
 
         if (step === 4) {
             if (!formData.currentlyWorking) {
@@ -147,6 +233,10 @@ const Onboarding = () => {
                 return false;
             }
         }
+
+        // -----------------------------------------------------
+        // STEP 5
+        // -----------------------------------------------------
 
         if (step === 5) {
             if (!formData.mainGoal.trim()) {
@@ -206,6 +296,174 @@ const Onboarding = () => {
     };
 
     // =========================================================
+    // BUILD PROFILE PAYLOAD
+    // =========================================================
+
+    const buildProfilePayload = () => {
+        /*
+         * Frontend uses simple answers.
+         *
+         * Backend uses:
+         *
+         * Not Started
+         * Planning
+         * Registered
+         * Scheduled
+         * Passed
+         * Failed
+         */
+
+        // -----------------------------------------------------
+        // NCLEX
+        // -----------------------------------------------------
+
+        let nclexStatus = "Not Started";
+
+        if (formData.nclexStatus === "Yes") {
+            nclexStatus = "Passed";
+        }
+
+        if (formData.nclexStatus === "No") {
+            nclexStatus = "Not Started";
+        }
+
+        if (formData.nclexStatus === "Not sure") {
+            nclexStatus = "Planning";
+        }
+
+        // -----------------------------------------------------
+        // YEARS OF EXPERIENCE
+        // -----------------------------------------------------
+
+        let yearsOfExperience = 0;
+
+        switch (formData.yearsOfExperience) {
+            case "Less than 1 year":
+                yearsOfExperience = 0;
+                break;
+
+            case "1–2 years":
+                yearsOfExperience = 2;
+                break;
+
+            case "3–5 years":
+                yearsOfExperience = 5;
+                break;
+
+            case "6–10 years":
+                yearsOfExperience = 10;
+                break;
+
+            case "More than 10 years":
+                yearsOfExperience = 11;
+                break;
+
+            default:
+                yearsOfExperience = 0;
+        }
+
+        // -----------------------------------------------------
+        // NNAS
+        // -----------------------------------------------------
+
+        let nnasStatus = "Not Started";
+
+        if (
+            formData.registrationProgress.includes(
+                "NNAS"
+            )
+        ) {
+            nnasStatus = "Completed";
+        }
+
+        // -----------------------------------------------------
+        // PAYLOAD
+        //
+        // IMPORTANT:
+        // Every field here matches NurseProfile schema.
+        // -----------------------------------------------------
+
+        return {
+            // Personal
+            countryOfResidence:
+                formData.countryOfResidence,
+
+            immigrationStatus:
+                formData.immigrationStatus || "",
+
+            // Education
+            countryOfEducation:
+                formData.countryOfEducation,
+
+            nursingDegree:
+                formData.nursingDegree,
+
+            educationInstitution:
+                formData.educationInstitution,
+
+            // Registration
+            licenseStatus:
+                formData.licenseStatus,
+
+            registrationCountry:
+                formData.registrationCountry,
+
+            registrationProvince:
+                formData.registrationProvince,
+
+            regulatoryBody:
+                formData.regulatoryBody,
+
+            // Experience
+            yearsOfExperience,
+
+            specialty:
+                formData.specialty,
+
+            currentlyWorking:
+                formData.currentlyWorking,
+
+            currentWorkCountry:
+                formData.currentWorkCountry,
+
+            // English
+            englishTest:
+                formData.englishTest || "None",
+
+            englishScore:
+                formData.englishScore
+                    ? Number(formData.englishScore)
+                    : null,
+
+            // NCLEX
+            nclexStatus,
+
+            nclexJurisdiction:
+                formData.nclexJurisdiction,
+
+            // NNAS
+            nnasStatus,
+
+            // Canadian RN journey
+            preferredProvince:
+                formData.preferredProvince,
+
+            registrationStarted:
+                formData.registrationStarted,
+
+            registrationProgress:
+                formData.registrationProgress,
+
+            // Goals
+            mainGoal:
+                formData.mainGoal,
+
+            biggestConcern:
+                formData.biggestConcern,
+        };
+    };
+
+    // =========================================================
     // SUBMIT
     // =========================================================
 
@@ -220,9 +478,17 @@ const Onboarding = () => {
             setSaving(true);
             setError("");
 
+            const profilePayload =
+                buildProfilePayload();
+
+            console.log(
+                "ONBOARDING PROFILE PAYLOAD:",
+                profilePayload
+            );
+
             await api.put(
                 "/nurse-profile/me",
-                formData
+                profilePayload
             );
 
             navigate("/dashboard", {
@@ -242,25 +508,6 @@ const Onboarding = () => {
             setSaving(false);
         }
     };
-
-    // =========================================================
-    // PROVINCES
-    // =========================================================
-
-    const provinces = [
-        "Alberta",
-        "British Columbia",
-        "Ontario",
-        "New Brunswick",
-        "Saskatchewan",
-        "Nova Scotia",
-        "Prince Edward Island",
-        "Newfoundland and Labrador",
-        "Manitoba",
-        "Quebec",
-        "Not sure yet",
-        "Other",
-    ];
 
     // =========================================================
     // RENDER
@@ -310,7 +557,7 @@ const Onboarding = () => {
 
 
             {/* =================================================
-                CONTENT
+                MAIN
             ================================================= */}
 
             <main className="onboarding-container">
@@ -363,8 +610,7 @@ const Onboarding = () => {
 
                             <span>
                                 {Math.round(
-                                    (step / TOTAL_STEPS) *
-                                    100
+                                    (step / TOTAL_STEPS) * 100
                                 )}
                                 %
                             </span>
@@ -399,7 +645,6 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {step === 1 && (
-
                             <section className="form-step">
 
                                 <div className="step-heading">
@@ -409,15 +654,11 @@ const Onboarding = () => {
                                     </span>
 
                                     <div>
-
-                                        <p>
-                                            STEP 1
-                                        </p>
+                                        <p>STEP 1</p>
 
                                         <h2>
                                             About You
                                         </h2>
-
                                     </div>
 
                                 </div>
@@ -446,43 +687,41 @@ const Onboarding = () => {
                                             Select your country
                                         </option>
 
-                                        <option>
-                                            Canada
-                                        </option>
-
-                                        <option>
-                                            Myanmar
-                                        </option>
-
-                                        <option>
-                                            Singapore
-                                        </option>
-
-                                        <option>
-                                            United States
-                                        </option>
-
-                                        <option>
-                                            Philippines
-                                        </option>
-
-                                        <option>
-                                            India
-                                        </option>
-
-                                        <option>
-                                            United Kingdom
-                                        </option>
-
-                                        <option>
-                                            Australia
-                                        </option>
-
-                                        <option>
-                                            Other
-                                        </option>
+                                        {countries.map(
+                                            (country) => (
+                                                <option
+                                                    key={country}
+                                                    value={country}
+                                                >
+                                                    {country}
+                                                </option>
+                                            )
+                                        )}
 
                                     </select>
+
+                                </div>
+
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Current Immigration Status
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={
+                                            formData.immigrationStatus
+                                        }
+                                        onChange={(event) =>
+                                            updateField(
+                                                "immigrationStatus",
+                                                event.target.value
+                                            )
+                                        }
+                                        placeholder="Example: Citizen, PR, Work Permit, Student..."
+                                    />
 
                                 </div>
 
@@ -495,7 +734,6 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {step === 2 && (
-
                             <section className="form-step">
 
                                 <div className="step-heading">
@@ -505,15 +743,11 @@ const Onboarding = () => {
                                     </span>
 
                                     <div>
-
-                                        <p>
-                                            STEP 2
-                                        </p>
+                                        <p>STEP 2</p>
 
                                         <h2>
                                             Nursing Education
                                         </h2>
-
                                     </div>
 
                                 </div>
@@ -522,23 +756,63 @@ const Onboarding = () => {
                                 <div className="form-group">
 
                                     <label>
-                                        What nursing education
-                                        have you completed?
+                                        Country where you completed
+                                        your nursing education
+                                        <span>*</span>
+                                    </label>
+
+                                    <select
+                                        value={
+                                            formData.countryOfEducation
+                                        }
+                                        onChange={(event) =>
+                                            updateField(
+                                                "countryOfEducation",
+                                                event.target.value
+                                            )
+                                        }
+                                    >
+
+                                        <option value="">
+                                            Select country
+                                        </option>
+
+                                        {countries.map(
+                                            (country) => (
+                                                <option
+                                                    key={country}
+                                                    value={country}
+                                                >
+                                                    {country}
+                                                </option>
+                                            )
+                                        )}
+
+                                    </select>
+
+                                </div>
+
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Nursing education /
+                                        qualification
                                         <span>*</span>
                                     </label>
 
                                     <textarea
                                         value={
-                                            formData.nursingEducation
+                                            formData.nursingDegree
                                         }
                                         onChange={(event) =>
                                             updateField(
-                                                "nursingEducation",
+                                                "nursingDegree",
                                                 event.target.value
                                             )
                                         }
                                         placeholder="Example: Diploma in Nursing, BSN, BScN..."
-                                        rows="4"
+                                        rows="3"
                                     />
 
                                 </div>
@@ -547,8 +821,9 @@ const Onboarding = () => {
                                 <div className="form-group">
 
                                     <label>
-                                        Where did you complete
-                                        your nursing education?
+                                        Institution where you
+                                        completed your nursing
+                                        education
                                         <span>*</span>
                                     </label>
 
@@ -562,8 +837,8 @@ const Onboarding = () => {
                                                 event.target.value
                                             )
                                         }
-                                        placeholder="Institution name and country"
-                                        rows="4"
+                                        placeholder="Example: University / Nursing School name"
+                                        rows="3"
                                     />
 
                                 </div>
@@ -577,7 +852,6 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {step === 3 && (
-
                             <section className="form-step">
 
                                 <div className="step-heading">
@@ -587,19 +861,17 @@ const Onboarding = () => {
                                     </span>
 
                                     <div>
-
-                                        <p>
-                                            STEP 3
-                                        </p>
+                                        <p>STEP 3</p>
 
                                         <h2>
-                                            Registration & Experience
+                                            Registration & NCLEX
                                         </h2>
-
                                     </div>
 
                                 </div>
 
+
+                                {/* LICENSE */}
 
                                 <div className="form-group">
 
@@ -616,41 +888,47 @@ const Onboarding = () => {
                                             "License expired",
                                             "Not currently registered / licensed",
                                             "Other",
-                                        ].map((option) => (
+                                        ].map(
+                                            (option) => (
+                                                <label
+                                                    className="radio-option"
+                                                    key={option}
+                                                >
 
-                                            <label
-                                                className="radio-option"
-                                                key={option}
-                                            >
+                                                    <input
+                                                        type="radio"
+                                                        name="licenseStatus"
+                                                        value={option}
+                                                        checked={
+                                                            formData.licenseStatus ===
+                                                            option
+                                                        }
+                                                        onChange={(
+                                                            event
+                                                        ) =>
+                                                            updateField(
+                                                                "licenseStatus",
+                                                                event
+                                                                    .target
+                                                                    .value
+                                                            )
+                                                        }
+                                                    />
 
-                                                <input
-                                                    type="radio"
-                                                    name="licenseStatus"
-                                                    value={option}
-                                                    checked={
-                                                        formData.licenseStatus ===
-                                                        option
-                                                    }
-                                                    onChange={(event) =>
-                                                        updateField(
-                                                            "licenseStatus",
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                />
+                                                    <span>
+                                                        {option}
+                                                    </span>
 
-                                                <span>
-                                                    {option}
-                                                </span>
-
-                                            </label>
-
-                                        ))}
+                                                </label>
+                                            )
+                                        )}
 
                                     </div>
 
                                 </div>
 
+
+                                {/* REGISTRATION */}
 
                                 <div className="form-grid">
 
@@ -671,7 +949,7 @@ const Onboarding = () => {
                                                     event.target.value
                                                 )
                                             }
-                                            placeholder="Example: Singapore"
+                                            placeholder="Example: Myanmar"
                                         />
 
                                     </div>
@@ -694,7 +972,7 @@ const Onboarding = () => {
                                                     event.target.value
                                                 )
                                             }
-                                            placeholder="Example: New York"
+                                            placeholder="Example: New Brunswick"
                                         />
 
                                     </div>
@@ -725,6 +1003,8 @@ const Onboarding = () => {
                                 </div>
 
 
+                                {/* NCLEX */}
+
                                 <div className="form-group">
 
                                     <label>
@@ -739,36 +1019,40 @@ const Onboarding = () => {
                                             "Yes",
                                             "No",
                                             "Not sure",
-                                        ].map((option) => (
+                                        ].map(
+                                            (option) => (
+                                                <label
+                                                    className="radio-option"
+                                                    key={option}
+                                                >
 
-                                            <label
-                                                className="radio-option"
-                                                key={option}
-                                            >
+                                                    <input
+                                                        type="radio"
+                                                        name="nclexStatus"
+                                                        value={option}
+                                                        checked={
+                                                            formData.nclexStatus ===
+                                                            option
+                                                        }
+                                                        onChange={(
+                                                            event
+                                                        ) =>
+                                                            updateField(
+                                                                "nclexStatus",
+                                                                event
+                                                                    .target
+                                                                    .value
+                                                            )
+                                                        }
+                                                    />
 
-                                                <input
-                                                    type="radio"
-                                                    name="nclexStatus"
-                                                    value={option}
-                                                    checked={
-                                                        formData.nclexStatus ===
-                                                        option
-                                                    }
-                                                    onChange={(event) =>
-                                                        updateField(
-                                                            "nclexStatus",
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                />
+                                                    <span>
+                                                        {option}
+                                                    </span>
 
-                                                <span>
-                                                    {option}
-                                                </span>
-
-                                            </label>
-
-                                        ))}
+                                                </label>
+                                            )
+                                        )}
 
                                     </div>
 
@@ -777,7 +1061,6 @@ const Onboarding = () => {
 
                                 {formData.nclexStatus ===
                                     "Yes" && (
-
                                         <div className="form-group">
 
                                             <label>
@@ -800,7 +1083,6 @@ const Onboarding = () => {
                                             />
 
                                         </div>
-
                                     )}
 
                             </section>
@@ -812,7 +1094,6 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {step === 4 && (
-
                             <section className="form-step">
 
                                 <div className="step-heading">
@@ -822,19 +1103,17 @@ const Onboarding = () => {
                                     </span>
 
                                     <div>
-
-                                        <p>
-                                            STEP 4
-                                        </p>
+                                        <p>STEP 4</p>
 
                                         <h2>
                                             Your Canadian RN Journey
                                         </h2>
-
                                     </div>
 
                                 </div>
 
+
+                                {/* CURRENT WORK */}
 
                                 <div className="form-group">
 
@@ -849,65 +1128,74 @@ const Onboarding = () => {
                                         {[
                                             "Yes",
                                             "No",
-                                        ].map((option) => (
+                                        ].map(
+                                            (option) => (
+                                                <label
+                                                    className="radio-option"
+                                                    key={option}
+                                                >
 
-                                            <label
-                                                className="radio-option"
-                                                key={option}
-                                            >
+                                                    <input
+                                                        type="radio"
+                                                        name="currentlyWorking"
+                                                        value={option}
+                                                        checked={
+                                                            formData.currentlyWorking ===
+                                                            option
+                                                        }
+                                                        onChange={(
+                                                            event
+                                                        ) =>
+                                                            updateField(
+                                                                "currentlyWorking",
+                                                                event
+                                                                    .target
+                                                                    .value
+                                                            )
+                                                        }
+                                                    />
 
-                                                <input
-                                                    type="radio"
-                                                    name="currentlyWorking"
-                                                    value={option}
-                                                    checked={
-                                                        formData.currentlyWorking ===
-                                                        option
-                                                    }
-                                                    onChange={(event) =>
-                                                        updateField(
-                                                            "currentlyWorking",
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                />
+                                                    <span>
+                                                        {option}
+                                                    </span>
 
-                                                <span>
-                                                    {option}
-                                                </span>
-
-                                            </label>
-
-                                        ))}
+                                                </label>
+                                            )
+                                        )}
 
                                     </div>
 
                                 </div>
 
 
-                                <div className="form-group">
+                                {formData.currentlyWorking ===
+                                    "Yes" && (
+                                        <div className="form-group">
 
-                                    <label>
-                                        Where are you currently
-                                        working as a nurse?
-                                    </label>
+                                            <label>
+                                                Where are you currently
+                                                working as a nurse?
+                                            </label>
 
-                                    <input
-                                        type="text"
-                                        value={
-                                            formData.currentWorkCountry
-                                        }
-                                        onChange={(event) =>
-                                            updateField(
-                                                "currentWorkCountry",
-                                                event.target.value
-                                            )
-                                        }
-                                        placeholder="Country"
-                                    />
+                                            <input
+                                                type="text"
+                                                value={
+                                                    formData.currentWorkCountry
+                                                }
+                                                onChange={(event) =>
+                                                    updateField(
+                                                        "currentWorkCountry",
+                                                        event.target.value
+                                                    )
+                                                }
+                                                placeholder="Country"
+                                            />
 
-                                </div>
+                                        </div>
+                                    )}
 
+
+                                {/* EXPERIENCE */}
 
                                 <div className="form-group">
 
@@ -931,23 +1219,23 @@ const Onboarding = () => {
                                             Select
                                         </option>
 
-                                        <option>
+                                        <option value="Less than 1 year">
                                             Less than 1 year
                                         </option>
 
-                                        <option>
+                                        <option value="1–2 years">
                                             1–2 years
                                         </option>
 
-                                        <option>
+                                        <option value="3–5 years">
                                             3–5 years
                                         </option>
 
-                                        <option>
+                                        <option value="6–10 years">
                                             6–10 years
                                         </option>
 
-                                        <option>
+                                        <option value="More than 10 years">
                                             More than 10 years
                                         </option>
 
@@ -955,6 +1243,8 @@ const Onboarding = () => {
 
                                 </div>
 
+
+                                {/* SPECIALTY */}
 
                                 <div className="form-group">
 
@@ -973,11 +1263,13 @@ const Onboarding = () => {
                                                 event.target.value
                                             )
                                         }
-                                        placeholder="Example: Medical-Surgical"
+                                        placeholder="Example: Medical-Surgical, ICU, Pediatrics..."
                                     />
 
                                 </div>
 
+
+                                {/* PROVINCE */}
 
                                 <div className="form-group">
 
@@ -1007,6 +1299,7 @@ const Onboarding = () => {
                                             (province) => (
                                                 <option
                                                     key={province}
+                                                    value={province}
                                                 >
                                                     {province}
                                                 </option>
@@ -1017,6 +1310,8 @@ const Onboarding = () => {
 
                                 </div>
 
+
+                                {/* REGISTRATION STARTED */}
 
                                 <div className="form-group">
 
@@ -1032,45 +1327,50 @@ const Onboarding = () => {
                                             "Yes",
                                             "No",
                                             "Not sure",
-                                        ].map((option) => (
+                                        ].map(
+                                            (option) => (
+                                                <label
+                                                    className="radio-option"
+                                                    key={option}
+                                                >
 
-                                            <label
-                                                className="radio-option"
-                                                key={option}
-                                            >
+                                                    <input
+                                                        type="radio"
+                                                        name="registrationStarted"
+                                                        value={option}
+                                                        checked={
+                                                            formData.registrationStarted ===
+                                                            option
+                                                        }
+                                                        onChange={(
+                                                            event
+                                                        ) =>
+                                                            updateField(
+                                                                "registrationStarted",
+                                                                event
+                                                                    .target
+                                                                    .value
+                                                            )
+                                                        }
+                                                    />
 
-                                                <input
-                                                    type="radio"
-                                                    name="registrationStarted"
-                                                    value={option}
-                                                    checked={
-                                                        formData.registrationStarted ===
-                                                        option
-                                                    }
-                                                    onChange={(event) =>
-                                                        updateField(
-                                                            "registrationStarted",
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                />
+                                                    <span>
+                                                        {option}
+                                                    </span>
 
-                                                <span>
-                                                    {option}
-                                                </span>
-
-                                            </label>
-
-                                        ))}
+                                                </label>
+                                            )
+                                        )}
 
                                     </div>
 
                                 </div>
 
 
+                                {/* REGISTRATION PROGRESS */}
+
                                 {formData.registrationStarted ===
                                     "Yes" && (
-
                                         <div className="form-group">
 
                                             <label>
@@ -1085,37 +1385,36 @@ const Onboarding = () => {
                                                     "NCLEX-RN",
                                                     "Credential assessment",
                                                     "English language test",
-                                                ].map((item) => (
+                                                ].map(
+                                                    (item) => (
+                                                        <label
+                                                            className="checkbox-option"
+                                                            key={item}
+                                                        >
 
-                                                    <label
-                                                        className="checkbox-option"
-                                                        key={item}
-                                                    >
-
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={formData.registrationProgress.includes(
-                                                                item
-                                                            )}
-                                                            onChange={() =>
-                                                                toggleProgress(
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={formData.registrationProgress.includes(
                                                                     item
-                                                                )
-                                                            }
-                                                        />
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleProgress(
+                                                                        item
+                                                                    )
+                                                                }
+                                                            />
 
-                                                        <span>
-                                                            {item}
-                                                        </span>
+                                                            <span>
+                                                                {item}
+                                                            </span>
 
-                                                    </label>
-
-                                                ))}
+                                                        </label>
+                                                    )
+                                                )}
 
                                             </div>
 
                                         </div>
-
                                     )}
 
                             </section>
@@ -1127,7 +1426,6 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {step === 5 && (
-
                             <section className="form-step">
 
                                 <div className="step-heading">
@@ -1137,19 +1435,17 @@ const Onboarding = () => {
                                     </span>
 
                                     <div>
-
-                                        <p>
-                                            STEP 5
-                                        </p>
+                                        <p>STEP 5</p>
 
                                         <h2>
                                             Your Goals
                                         </h2>
-
                                     </div>
 
                                 </div>
 
+
+                                {/* MAIN GOAL */}
 
                                 <div className="form-group">
 
@@ -1168,12 +1464,14 @@ const Onboarding = () => {
                                                 event.target.value
                                             )
                                         }
-                                        placeholder="Tell us what you hope to accomplish..."
+                                        placeholder="Example: I want to become an RN in Canada and understand which province and pathway is best for me."
                                         rows="5"
                                     />
 
                                 </div>
 
+
+                                {/* CONCERN */}
 
                                 <div className="form-group">
 
@@ -1199,6 +1497,8 @@ const Onboarding = () => {
 
                                 </div>
 
+
+                                {/* COMPLETION */}
 
                                 <div className="completion-note">
 
@@ -1233,11 +1533,9 @@ const Onboarding = () => {
                         ================================================= */}
 
                         {error && (
-
                             <div className="onboarding-error">
                                 {error}
                             </div>
-
                         )}
 
 
@@ -1248,7 +1546,6 @@ const Onboarding = () => {
                         <div className="onboarding-actions">
 
                             {step > 1 ? (
-
                                 <button
                                     type="button"
                                     className="back-button"
@@ -1257,9 +1554,7 @@ const Onboarding = () => {
                                 >
                                     ← Back
                                 </button>
-
                             ) : (
-
                                 <button
                                     type="button"
                                     className="skip-button"
@@ -1269,12 +1564,10 @@ const Onboarding = () => {
                                 >
                                     Complete Later
                                 </button>
-
                             )}
 
 
                             {step < TOTAL_STEPS ? (
-
                                 <button
                                     type="button"
                                     className="continue-button"
@@ -1283,9 +1576,7 @@ const Onboarding = () => {
                                     Continue
                                     <span>→</span>
                                 </button>
-
                             ) : (
-
                                 <button
                                     type="submit"
                                     className="continue-button"
@@ -1295,7 +1586,6 @@ const Onboarding = () => {
                                         ? "Saving..."
                                         : "Complete My Profile →"}
                                 </button>
-
                             )}
 
                         </div>

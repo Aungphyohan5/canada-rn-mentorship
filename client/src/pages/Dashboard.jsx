@@ -61,281 +61,155 @@ const Dashboard = () => {
     // =========================================================
 
     useEffect(() => {
-
-        let cancelled = false;
-
-
         const fetchDashboardData = async () => {
-
             try {
-
                 setLoading(true);
-
                 setError("");
-
                 setPaymentError("");
 
+                // =====================================================
+                // PROFILE
+                // =====================================================
 
-                // =================================================
-                // LOAD PROFILE / PATHWAY / BOOKINGS
-                // =================================================
+                let profileResponse;
 
-                const [
-                    profileResponse,
-                    pathwayResponse,
-                    bookingsResponse,
-                ] = await Promise.all([
-
-                    api.get(
+                try {
+                    profileResponse = await api.get(
                         "/nurse-profile/me"
-                    ),
+                    );
 
-                    api.get(
-                        "/pathway/me"
-                    ),
+                    setProfile(
+                        profileResponse.data?.data?.profile || null
+                    );
 
-                    api.get(
-                        "/bookings/me"
-                    ),
+                } catch (profileError) {
+                    /*
+                     * A new user may not have a NurseProfile yet.
+                     *
+                     * In that case, send them to onboarding.
+                     */
 
-                ]);
+                    if (
+                        profileError.response?.status === 404
+                    ) {
+                        navigate("/onboarding", {
+                            replace: true,
+                        });
 
+                        return;
+                    }
 
-                if (cancelled) {
-                    return;
+                    throw profileError;
                 }
 
-
-                // =================================================
-                // PROFILE
-                // =================================================
-
-                setProfile(
-                    profileResponse
-                        ?.data
-                        ?.data
-                        ?.profile || null
-                );
-
-
-                // =================================================
+                // =====================================================
                 // PATHWAY
-                // =================================================
+                // =====================================================
+
+                const pathwayResponse = await api.get(
+                    "/pathway/me"
+                );
 
                 setPathway(
-                    pathwayResponse
-                        ?.data
-                        ?.data || null
+                    pathwayResponse.data?.data || null
                 );
 
-
-                // =================================================
+                // =====================================================
                 // BOOKINGS
-                // =================================================
+                // =====================================================
+
+                let bookingsResponse = await api.get(
+                    "/bookings/me"
+                );
 
                 let userBookings =
-                    bookingsResponse
-                        ?.data
+                    bookingsResponse.data
                         ?.data
                         ?.bookings || [];
 
-
-                console.log(
-                    "========== DASHBOARD BOOKINGS =========="
-                );
-
-                console.table(
-                    userBookings.map(
-                        (booking) => ({
-                            id: booking._id,
-                            paymentStatus:
-                                booking.paymentStatus,
-                            bookingStatus:
-                                booking.bookingStatus,
-                            scheduledAt:
-                                booking.scheduledAt,
-                            zoomJoinUrl:
-                                booking.zoomJoinUrl,
-                        })
-                    )
-                );
-
-                console.log(
-                    "========================================"
-                );
-
-
-                // =================================================
-                // FIND BOOKING THAT NEEDS CALENDLY SYNC
-                // =================================================
+                // =====================================================
+                // CALENDLY SYNC
+                // =====================================================
 
                 const bookingToSync =
                     userBookings.find(
-                        (booking) => {
+                        (booking) =>
+                            booking.sessionType ===
+                            "Canada RN Mentorship Session" &&
 
-                            const isMentorship =
-                                booking.sessionType ===
-                                MENTORSHIP_SESSION_TYPE;
+                            booking.paymentStatus ===
+                            "paid" &&
 
-
-                            const isPaid =
-                                booking.paymentStatus ===
-                                "paid";
-
-
-                            const isPending =
+                            (
                                 booking.bookingStatus ===
-                                "pending";
+                                "pending" ||
 
-
-                            const isScheduledWithoutZoom =
-                                booking.bookingStatus ===
-                                "scheduled" &&
-                                !booking.zoomJoinUrl;
-
-
-                            return (
-                                isMentorship &&
-                                isPaid &&
                                 (
-                                    isPending ||
-                                    isScheduledWithoutZoom
+                                    booking.bookingStatus ===
+                                    "scheduled" &&
+
+                                    !booking.zoomJoinUrl
                                 )
-                            );
-
-                        }
+                            )
                     );
-
-
-                // =================================================
-                // CALENDLY SYNC
-                // =================================================
 
                 if (bookingToSync) {
-
-                    console.log(
-                        "CALENDLY SYNC REQUIRED:",
-                        bookingToSync._id
-                    );
-
-
                     try {
-
-                        const syncResponse =
-                            await api.get(
-                                "/scheduling/sync-calendly"
-                            );
-
-
                         console.log(
-                            "CALENDLY SYNC RESPONSE:",
-                            syncResponse.data
+                            "Checking Calendly for booking:",
+                            bookingToSync._id
                         );
 
-
-                        // =================================================
-                        // RELOAD BOOKINGS AFTER SYNC
-                        // =================================================
+                        await api.get(
+                            "/scheduling/sync-calendly"
+                        );
 
                         const updatedBookingsResponse =
                             await api.get(
                                 "/bookings/me"
                             );
 
-
                         userBookings =
                             updatedBookingsResponse
-                                ?.data
+                                .data
                                 ?.data
                                 ?.bookings || [];
 
-
-                        console.log(
-                            "BOOKINGS AFTER CALENDLY SYNC:",
-                            userBookings
-                        );
-
-
-                    } catch (
-                    calendlyError
-                    ) {
-
-                        /*
-                         * Calendly synchronization should
-                         * never prevent the dashboard from loading.
-                         */
-
+                    } catch (calendlyError) {
                         console.error(
                             "CALENDLY SYNC ERROR:",
-                            calendlyError
-                                ?.response
-                                ?.data ||
-                            calendlyError?.message ||
+                            calendlyError.response?.data ||
+                            calendlyError.message ||
                             calendlyError
                         );
-
                     }
-
                 }
 
-
-                // =================================================
+                // =====================================================
                 // SAVE BOOKINGS
-                // =================================================
+                // =====================================================
 
-                if (!cancelled) {
-
-                    setBookings(
-                        userBookings
-                    );
-
-                }
+                setBookings(userBookings);
 
             } catch (error) {
-
                 console.error(
                     "DASHBOARD DATA ERROR:",
                     error
                 );
 
-
-                if (!cancelled) {
-
-                    setError(
-                        error
-                            ?.response
-                            ?.data
-                            ?.message ||
-                        "Unable to load dashboard data."
-                    );
-
-                }
+                setError(
+                    error.response?.data?.message ||
+                    "Unable to load dashboard data."
+                );
 
             } finally {
-
-                if (!cancelled) {
-
-                    setLoading(false);
-
-                }
-
+                setLoading(false);
             }
-
         };
-
 
         fetchDashboardData();
 
-
-        return () => {
-
-            cancelled = true;
-
-        };
-
-    }, []);
-
-
+    }, [navigate]);
     // =========================================================
     // SCROLL TO SECTION
     // =========================================================

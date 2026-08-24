@@ -1,516 +1,621 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext.jsx";
+
+import "./Profile.css";
 
 const Profile = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [editing, setEditing] = useState(false);
-
-    const fetchProfile = async () => {
-        try {
-            setLoading(true);
-            setError("");
-
-            const response = await api.get("/nurse-profile/me");
-
-            setProfile(response.data.data.profile);
-        } catch (error) {
-            console.error("PROFILE FETCH ERROR:", error);
-
-            setError(
-                error.response?.data?.message ||
-                "Unable to load nurse profile"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setLoading(true);
+
+                const response = await api.get(
+                    "/nurse-profile/me"
+                );
+
+                setProfile(
+                    response.data?.data?.profile
+                );
+
+            } catch (error) {
+                console.error(
+                    "GET PROFILE ERROR:",
+                    error
+                );
+
+                setError(
+                    error.response?.data?.message ||
+                    "Unable to load your profile."
+                );
+
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchProfile();
     }, []);
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
+    const formatValue = (value) => {
+        if (
+            value === undefined ||
+            value === null ||
+            value === ""
+        ) {
+            return "Not provided";
+        }
 
-        setProfile((currentProfile) => ({
-            ...currentProfile,
-            [name]:
-                name === "yearsOfExperience"
-                    ? Number(value)
-                    : name === "englishScore"
-                        ? value === ""
-                            ? null
-                            : Number(value)
-                        : value,
-        }));
+        return value;
     };
 
-    const handleSave = async (event) => {
-        event.preventDefault();
-
-        try {
-            setSaving(true);
-            setError("");
-            setSuccess("");
-
-            const response = await api.put(
-                "/nurse-profile/me",
-                {
-                    phone: profile.phone,
-                    countryOfEducation:
-                        profile.countryOfEducation,
-                    nursingDegree: profile.nursingDegree,
-                    yearsOfExperience:
-                        profile.yearsOfExperience,
-                    specialty: profile.specialty,
-                    englishTest: profile.englishTest,
-                    englishScore: profile.englishScore,
-                    nclexStatus: profile.nclexStatus,
-                    nnasStatus: profile.nnasStatus,
-                    preferredProvince:
-                        profile.preferredProvince,
-                    immigrationStatus:
-                        profile.immigrationStatus,
-                }
-            );
-
-            setProfile(response.data.data.profile);
-
-            setEditing(false);
-            setSuccess("Profile updated successfully.");
-        } catch (error) {
-            console.error("PROFILE SAVE ERROR:", error);
-
-            setError(
-                error.response?.data?.message ||
-                "Unable to save profile"
-            );
-        } finally {
-            setSaving(false);
+    const getStatusClass = (status) => {
+        if (
+            status === "Passed" ||
+            status === "Completed" ||
+            status ===
+            "Currently licensed / registered"
+        ) {
+            return "status-success";
         }
+
+        if (
+            status === "In Progress" ||
+            status === "Planning" ||
+            status === "Scheduled"
+        ) {
+            return "status-warning";
+        }
+
+        return "status-neutral";
     };
 
     if (loading) {
-        return <p>Loading profile...</p>;
+        return (
+            <div className="profile-page">
+                <div className="profile-loading">
+                    Loading your profile...
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="profile-page">
+                <div className="profile-error">
+                    {error}
+                </div>
+            </div>
+        );
     }
 
     if (!profile) {
-        return <p>No profile found.</p>;
+        return (
+            <div className="profile-page">
+                <div className="profile-empty">
+                    <h2>
+                        Your profile isn't ready yet
+                    </h2>
+
+                    <p>
+                        Complete your nurse profile
+                        to continue.
+                    </p>
+
+                    <button
+                        onClick={() =>
+                            navigate("/onboarding")
+                        }
+                    >
+                        Complete Profile
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <div>
-                <h1>My Nurse Profile</h1>
+        <div className="profile-page">
 
-                {!editing && (
+            {/* HEADER */}
+
+            <header className="profile-header">
+
+                <div className="profile-brand">
+
+                    <div className="profile-logo">
+                        🍁
+                    </div>
+
+                    <div>
+                        <strong>
+                            Canada RN
+                        </strong>
+
+                        <span>
+                            Mentorship
+                        </span>
+                    </div>
+
+                </div>
+
+                <button
+                    className="profile-dashboard-button"
+                    onClick={() =>
+                        navigate("/dashboard")
+                    }
+                >
+                    Dashboard
+                </button>
+
+            </header>
+
+
+            <main className="profile-container">
+
+                {/* PROFILE HERO */}
+
+                <section className="profile-hero">
+
+                    <div className="profile-avatar">
+                        {user?.firstName
+                            ?.charAt(0)
+                            ?.toUpperCase() || "N"}
+                    </div>
+
+                    <div className="profile-identity">
+
+                        <p className="profile-eyebrow">
+                            NURSE PROFILE
+                        </p>
+
+                        <h1>
+                            {user?.firstName || ""}
+                            {" "}
+                            {user?.lastName || ""}
+                        </h1>
+
+                        <p>
+                            {user?.email ||
+                                "Email not available"}
+                        </p>
+
+                    </div>
+
                     <button
-                        type="button"
-                        onClick={() => {
-                            setEditing(true);
-                            setSuccess("");
-                            setError("");
-                        }}
+                        className="profile-edit-button"
+                        onClick={() =>
+                            navigate("/onboarding")
+                        }
                     >
                         Edit Profile
                     </button>
-                )}
-            </div>
 
-            {success && <p>{success}</p>}
-            {error && <p>{error}</p>}
+                </section>
 
-            {editing ? (
-                <form onSubmit={handleSave}>
 
-                    <section>
-                        <h2>Personal Information</h2>
+                {/* COMPLETION */}
 
-                        <p>
-                            <strong>Name:</strong>{" "}
-                            {user?.firstName}{" "}
-                            {user?.lastName}
-                        </p>
+                <section className="profile-completion">
+
+                    <div>
+
+                        <strong>
+                            Profile Completion
+                        </strong>
 
                         <p>
-                            <strong>Email:</strong>{" "}
-                            {user?.email}
+                            Keep your information
+                            up to date.
                         </p>
 
-                        <label>
-                            Phone
-                            <input
-                                type="text"
-                                name="phone"
-                                value={profile.phone || ""}
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </section>
+                    </div>
 
-                    <hr />
+                    <strong>
+                        {profile.profileCompleted
+                            ? "100%"
+                            : "Incomplete"}
+                    </strong>
 
-                    <section>
-                        <h2>Nursing Background</h2>
+                </section>
 
-                        <label>
-                            Country of Education
-                            <input
-                                type="text"
-                                name="countryOfEducation"
-                                value={
-                                    profile.countryOfEducation ||
-                                    ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
 
-                        <label>
-                            Nursing Degree
-                            <input
-                                type="text"
-                                name="nursingDegree"
-                                value={
-                                    profile.nursingDegree || ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
+                {/* PERSONAL */}
 
-                        <label>
-                            Years of Experience
-                            <input
-                                type="number"
-                                min="0"
-                                name="yearsOfExperience"
-                                value={
-                                    profile.yearsOfExperience ?? 0
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
+                <section className="profile-section">
 
-                        <label>
-                            Specialty
-                            <input
-                                type="text"
-                                name="specialty"
-                                value={
-                                    profile.specialty || ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </section>
+                    <div className="section-heading">
+                        <span>🌎</span>
 
-                    <hr />
+                        <div>
+                            <p>ABOUT YOU</p>
+                            <h2>
+                                Personal Information
+                            </h2>
+                        </div>
+                    </div>
 
-                    <section>
-                        <h2>English Proficiency</h2>
+                    <div className="profile-grid">
 
-                        <label>
-                            English Test
-                            <select
-                                name="englishTest"
-                                value={
-                                    profile.englishTest || "None"
-                                }
-                                onChange={handleChange}
-                            >
-                                <option value="None">
-                                    None
-                                </option>
+                        <ProfileItem
+                            label="Country of Residence"
+                            value={
+                                profile.countryOfResidence
+                            }
+                        />
 
-                                <option value="IELTS">
-                                    IELTS
-                                </option>
+                        <ProfileItem
+                            label="Immigration Status"
+                            value={
+                                profile.immigrationStatus
+                            }
+                        />
 
-                                <option value="CELBAN">
-                                    CELBAN
-                                </option>
+                    </div>
 
-                                <option value="PTE">
-                                    PTE
-                                </option>
+                </section>
 
-                                <option value="OET">
-                                    OET
-                                </option>
-                            </select>
-                        </label>
 
-                        <label>
-                            English Score
-                            <input
-                                type="number"
-                                step="0.5"
-                                min="0"
-                                name="englishScore"
-                                value={
-                                    profile.englishScore ?? ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </section>
+                {/* EDUCATION */}
 
-                    <hr />
+                <section className="profile-section">
 
-                    <section>
-                        <h2>Canadian RN Journey</h2>
+                    <div className="section-heading">
+                        <span>🎓</span>
 
-                        <label>
-                            NNAS Status
-                            <select
-                                name="nnasStatus"
-                                value={
-                                    profile.nnasStatus ||
-                                    "Not Started"
-                                }
-                                onChange={handleChange}
-                            >
-                                <option value="Not Started">
-                                    Not Started
-                                </option>
+                        <div>
+                            <p>EDUCATION</p>
+                            <h2>
+                                Nursing Education
+                            </h2>
+                        </div>
+                    </div>
 
-                                <option value="In Progress">
-                                    In Progress
-                                </option>
+                    <div className="profile-grid">
 
-                                <option value="Submitted">
-                                    Submitted
-                                </option>
+                        <ProfileItem
+                            label="Nursing Degree"
+                            value={
+                                profile.nursingDegree
+                            }
+                        />
 
-                                <option value="Completed">
-                                    Completed
-                                </option>
-                            </select>
-                        </label>
+                        <ProfileItem
+                            label="Institution"
+                            value={
+                                profile.educationInstitution
+                            }
+                        />
 
-                        <label>
-                            NCLEX Status
-                            <select
-                                name="nclexStatus"
-                                value={
-                                    profile.nclexStatus ||
-                                    "Not Started"
-                                }
-                                onChange={handleChange}
-                            >
-                                <option value="Not Started">
-                                    Not Started
-                                </option>
+                        <ProfileItem
+                            label="Country of Education"
+                            value={
+                                profile.countryOfEducation
+                            }
+                        />
 
-                                <option value="Planning">
-                                    Planning
-                                </option>
+                    </div>
 
-                                <option value="Registered">
-                                    Registered
-                                </option>
+                </section>
 
-                                <option value="Scheduled">
-                                    Scheduled
-                                </option>
 
-                                <option value="Passed">
-                                    Passed
-                                </option>
+                {/* LICENSING */}
 
-                                <option value="Failed">
-                                    Failed
-                                </option>
-                            </select>
-                        </label>
+                <section className="profile-section">
 
-                        <label>
-                            Preferred Province
-                            <input
-                                type="text"
-                                name="preferredProvince"
-                                value={
-                                    profile.preferredProvince ||
-                                    ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </section>
+                    <div className="section-heading">
+                        <span>🩺</span>
 
-                    <hr />
+                        <div>
+                            <p>REGISTRATION</p>
+                            <h2>
+                                Nursing License
+                            </h2>
+                        </div>
+                    </div>
 
-                    <section>
-                        <h2>Immigration</h2>
+                    <div className="profile-grid">
 
-                        <label>
-                            Immigration Status
-                            <input
-                                type="text"
-                                name="immigrationStatus"
-                                value={
-                                    profile.immigrationStatus ||
-                                    ""
-                                }
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </section>
+                        <ProfileItem
+                            label="License Status"
+                            value={
+                                <span
+                                    className={`status-badge ${getStatusClass(
+                                        profile.licenseStatus
+                                    )}`}
+                                >
+                                    {formatValue(
+                                        profile.licenseStatus
+                                    )}
+                                </span>
+                            }
+                        />
 
-                    <hr />
+                        <ProfileItem
+                            label="Registration Country"
+                            value={
+                                profile.registrationCountry
+                            }
+                        />
 
-                    <button
-                        type="submit"
-                        disabled={saving}
-                    >
-                        {saving
-                            ? "Saving..."
-                            : "Save Changes"}
-                    </button>
+                        <ProfileItem
+                            label="Province / State"
+                            value={
+                                profile.registrationProvince
+                            }
+                        />
 
-                    <button
-                        type="button"
-                        disabled={saving}
-                        onClick={() => {
-                            setEditing(false);
-                            setError("");
-                            setSuccess("");
-                            fetchProfile();
-                        }}
-                    >
-                        Cancel
-                    </button>
-                </form>
-            ) : (
-                <>
-                    <section>
-                        <h2>Personal Information</h2>
+                        <ProfileItem
+                            label="Regulatory Body"
+                            value={
+                                profile.regulatoryBody
+                            }
+                        />
+
+                    </div>
+
+                </section>
+
+
+                {/* EXPERIENCE */}
+
+                <section className="profile-section">
+
+                    <div className="section-heading">
+                        <span>💼</span>
+
+                        <div>
+                            <p>EXPERIENCE</p>
+                            <h2>
+                                Nursing Experience
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="profile-grid">
+
+                        <ProfileItem
+                            label="Years of Experience"
+                            value={
+                                profile.yearsOfExperience
+                                    ? `${profile.yearsOfExperience} years`
+                                    : "Not provided"
+                            }
+                        />
+
+                        <ProfileItem
+                            label="Specialty"
+                            value={
+                                profile.specialty
+                            }
+                        />
+
+                        <ProfileItem
+                            label="Currently Working"
+                            value={
+                                profile.currentlyWorking
+                            }
+                        />
+
+                        <ProfileItem
+                            label="Current Work Country"
+                            value={
+                                profile.currentWorkCountry
+                            }
+                        />
+
+                    </div>
+
+                </section>
+
+
+                {/* NCLEX / NNAS */}
+
+                <section className="profile-section">
+
+                    <div className="section-heading">
+                        <span>📋</span>
+
+                        <div>
+                            <p>LICENSING JOURNEY</p>
+                            <h2>
+                                NCLEX & NNAS
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="profile-grid">
+
+                        <ProfileItem
+                            label="NCLEX-RN"
+                            value={
+                                <span
+                                    className={`status-badge ${getStatusClass(
+                                        profile.nclexStatus
+                                    )}`}
+                                >
+                                    {formatValue(
+                                        profile.nclexStatus
+                                    )}
+                                </span>
+                            }
+                        />
+
+                        <ProfileItem
+                            label="NCLEX Jurisdiction"
+                            value={
+                                profile.nclexJurisdiction
+                            }
+                        />
+
+                        <ProfileItem
+                            label="NNAS"
+                            value={
+                                <span
+                                    className={`status-badge ${getStatusClass(
+                                        profile.nnasStatus
+                                    )}`}
+                                >
+                                    {formatValue(
+                                        profile.nnasStatus
+                                    )}
+                                </span>
+                            }
+                        />
+
+                    </div>
+
+                </section>
+
+
+                {/* CANADIAN JOURNEY */}
+
+                <section className="profile-section">
+
+                    <div className="section-heading">
+                        <span>🇨🇦</span>
+
+                        <div>
+                            <p>CANADA</p>
+                            <h2>
+                                Canadian RN Journey
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="profile-grid">
+
+                        <ProfileItem
+                            label="Preferred Province"
+                            value={
+                                profile.preferredProvince
+                            }
+                        />
+
+                        <ProfileItem
+                            label="Registration Started"
+                            value={
+                                profile.registrationStarted
+                            }
+                        />
+
+                    </div>
+
+                    {profile.registrationProgress
+                        ?.length > 0 && (
+
+                            <div className="progress-items">
+
+                                <h3>
+                                    Completed Steps
+                                </h3>
+
+                                <div className="tag-list">
+
+                                    {profile.registrationProgress.map(
+                                        (item) => (
+                                            <span
+                                                key={item}
+                                            >
+                                                ✓ {item}
+                                            </span>
+                                        )
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+                </section>
+
+
+                {/* GOALS */}
+
+                <section className="profile-section">
+
+                    <div className="section-heading">
+                        <span>🎯</span>
+
+                        <div>
+                            <p>YOUR DIRECTION</p>
+                            <h2>
+                                Goals & Concerns
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="goal-card">
+
+                        <h3>
+                            My Main Goal
+                        </h3>
 
                         <p>
-                            <strong>Name:</strong>{" "}
-                            {user?.firstName}{" "}
-                            {user?.lastName}
+                            {formatValue(
+                                profile.mainGoal
+                            )}
                         </p>
+
+                    </div>
+
+                    <div className="goal-card">
+
+                        <h3>
+                            My Biggest Concern
+                        </h3>
 
                         <p>
-                            <strong>Email:</strong>{" "}
-                            {user?.email}
+                            {formatValue(
+                                profile.biggestConcern
+                            )}
                         </p>
 
-                        <p>
-                            <strong>Phone:</strong>{" "}
-                            {profile.phone || "Not provided"}
-                        </p>
-                    </section>
+                    </div>
 
-                    <hr />
+                </section>
 
-                    <section>
-                        <h2>Nursing Background</h2>
+            </main>
 
-                        <p>
-                            <strong>
-                                Country of Education:
-                            </strong>{" "}
-                            {profile.countryOfEducation ||
-                                "Not provided"}
-                        </p>
-
-                        <p>
-                            <strong>
-                                Nursing Degree:
-                            </strong>{" "}
-                            {profile.nursingDegree ||
-                                "Not provided"}
-                        </p>
-
-                        <p>
-                            <strong>
-                                Years of Experience:
-                            </strong>{" "}
-                            {profile.yearsOfExperience}
-                        </p>
-
-                        <p>
-                            <strong>Specialty:</strong>{" "}
-                            {profile.specialty ||
-                                "Not provided"}
-                        </p>
-                    </section>
-
-                    <hr />
-
-                    <section>
-                        <h2>English Proficiency</h2>
-
-                        <p>
-                            <strong>
-                                English Test:
-                            </strong>{" "}
-                            {profile.englishTest}
-                        </p>
-
-                        <p>
-                            <strong>
-                                English Score:
-                            </strong>{" "}
-                            {profile.englishScore ??
-                                "Not provided"}
-                        </p>
-                    </section>
-
-                    <hr />
-
-                    <section>
-                        <h2>Canadian RN Journey</h2>
-
-                        <p>
-                            <strong>
-                                NNAS Status:
-                            </strong>{" "}
-                            {profile.nnasStatus}
-                        </p>
-
-                        <p>
-                            <strong>
-                                NCLEX Status:
-                            </strong>{" "}
-                            {profile.nclexStatus}
-                        </p>
-
-                        <p>
-                            <strong>
-                                Preferred Province:
-                            </strong>{" "}
-                            {profile.preferredProvince ||
-                                "Not provided"}
-                        </p>
-                    </section>
-
-                    <hr />
-
-                    <section>
-                        <h2>Immigration</h2>
-
-                        <p>
-                            <strong>
-                                Immigration Status:
-                            </strong>{" "}
-                            {profile.immigrationStatus ||
-                                "Not provided"}
-                        </p>
-                    </section>
-                </>
-            )}
         </div>
     );
 };
+
+
+// =============================================================
+// PROFILE ITEM
+// =============================================================
+
+const ProfileItem = ({
+    label,
+    value,
+}) => {
+
+    return (
+        <div className="profile-item">
+
+            <span>
+                {label}
+            </span>
+
+            <strong>
+                {value || "Not provided"}
+            </strong>
+
+        </div>
+    );
+};
+
 
 export default Profile;

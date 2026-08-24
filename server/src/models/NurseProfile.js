@@ -9,11 +9,31 @@ const nurseProfileSchema = new mongoose.Schema(
             unique: true,
         },
 
+        // =====================================================
+        // PERSONAL INFORMATION
+        // =====================================================
+
         phone: {
             type: String,
             trim: true,
             default: "",
         },
+
+        countryOfResidence: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        immigrationStatus: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // NURSING EDUCATION
+        // =====================================================
 
         countryOfEducation: {
             type: String,
@@ -27,6 +47,50 @@ const nurseProfileSchema = new mongoose.Schema(
             default: "",
         },
 
+        educationInstitution: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // REGISTRATION / LICENSING
+        // =====================================================
+
+        licenseStatus: {
+            type: String,
+            enum: [
+                "Currently licensed / registered",
+                "License expired",
+                "Not currently registered / licensed",
+                "Other",
+                "",
+            ],
+            default: "",
+        },
+
+        registrationCountry: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        registrationProvince: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        regulatoryBody: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // EXPERIENCE
+        // =====================================================
+
         yearsOfExperience: {
             type: Number,
             min: 0,
@@ -39,9 +103,31 @@ const nurseProfileSchema = new mongoose.Schema(
             default: "",
         },
 
+        currentlyWorking: {
+            type: String,
+            enum: ["Yes", "No", ""],
+            default: "",
+        },
+
+        currentWorkCountry: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // ENGLISH
+        // =====================================================
+
         englishTest: {
             type: String,
-            enum: ["IELTS", "CELBAN", "PTE", "OET", "None"],
+            enum: [
+                "IELTS",
+                "CELBAN",
+                "PTE",
+                "OET",
+                "None",
+            ],
             default: "None",
         },
 
@@ -49,6 +135,10 @@ const nurseProfileSchema = new mongoose.Schema(
             type: Number,
             default: null,
         },
+
+        // =====================================================
+        // NCLEX
+        // =====================================================
 
         nclexStatus: {
             type: String,
@@ -63,6 +153,16 @@ const nurseProfileSchema = new mongoose.Schema(
             default: "Not Started",
         },
 
+        nclexJurisdiction: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // NNAS
+        // =====================================================
+
         nnasStatus: {
             type: String,
             enum: [
@@ -74,17 +174,51 @@ const nurseProfileSchema = new mongoose.Schema(
             default: "Not Started",
         },
 
+        // =====================================================
+        // CANADIAN RN JOURNEY
+        // =====================================================
+
         preferredProvince: {
             type: String,
             trim: true,
             default: "",
         },
 
-        immigrationStatus: {
+        registrationStarted: {
+            type: String,
+            enum: [
+                "Yes",
+                "No",
+                "Not sure",
+                "",
+            ],
+            default: "",
+        },
+
+        registrationProgress: {
+            type: [String],
+            default: [],
+        },
+
+        // =====================================================
+        // GOALS
+        // =====================================================
+
+        mainGoal: {
             type: String,
             trim: true,
             default: "",
         },
+
+        biggestConcern: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
+        // =====================================================
+        // PROFILE STATUS
+        // =====================================================
 
         profileCompleted: {
             type: Boolean,
@@ -96,4 +230,7 @@ const nurseProfileSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("NurseProfile", nurseProfileSchema);
+export default mongoose.model(
+    "NurseProfile",
+    nurseProfileSchema
+);
