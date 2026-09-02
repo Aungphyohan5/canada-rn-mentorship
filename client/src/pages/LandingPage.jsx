@@ -415,7 +415,10 @@ const LandingPage = () => {
                                 <div className="nurse-placeholder">
 
                                     <div className="nurse-avatar">
-                                        👩🏻‍⚕️
+                                        <img
+                                            src="/images/tin zar-profile.png"
+                                            alt="Canada RN Mentorship"
+                                        />
                                     </div>
 
                                     <div className="nurse-stethoscope">
@@ -795,13 +798,16 @@ const LandingPage = () => {
 
                             <div className="mentorship-photo-placeholder">
 
-                                👩🏻‍⚕️
+                                <img
+                                    src="/images/tinzar.png"
+                                    alt="1-on-1 Mentorship"
+                                />
 
-                                <span>
+                                <div className="mentorship-photo-caption">
                                     1-on-1
                                     <br />
                                     Mentorship
-                                </span>
+                                </div>
 
                             </div>
 
@@ -816,12 +822,12 @@ const LandingPage = () => {
                             </p>
 
 
-                            <h2>
-                                Clarity.
+                            <h2 className="white">
+                                Clarity
                                 <br />
-                                Direction.
+                                Direction
                                 <br />
-                                Confidence.
+                                Confidence
                             </h2>
 
 

@@ -16,39 +16,38 @@ import Resources from "./pages/Resources.jsx";
 import Bookings from "./pages/Bookings.jsx";
 import Register from "./pages/Register";
 import Onboarding from "./pages/Onboarding";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminNurseProfile from "./pages/AdminNurseProfile";
 
 
 function App() {
-
   return (
-
     <Routes>
 
       {/* ==========================================
-                PUBLIC LANDING PAGE
+                PUBLIC
             ========================================== */}
 
       <Route
         path="/"
-        element={
-          <LandingPage />
-        }
+        element={<LandingPage />}
       />
-
-
-      {/* ==========================================
-                LOGIN
-            ========================================== */}
 
       <Route
         path="/login"
-        element={
-          <Login />
-        }
+        element={<Login />}
       />
+
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+
+
       {/* ==========================================
-               Onboarding
+                NURSE ONBOARDING
             ========================================== */}
+
       <Route
         path="/onboarding"
         element={
@@ -58,18 +57,9 @@ function App() {
         }
       />
 
-      {/* ==========================================
-    REGISTER
-========================================== */}
-
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
 
       {/* ==========================================
-                PROTECTED DASHBOARD
+                NURSE DASHBOARD
             ========================================== */}
 
       <Route
@@ -81,11 +71,6 @@ function App() {
         }
       />
 
-
-      {/* ==========================================
-                PROFILE
-            ========================================== */}
-
       <Route
         path="/profile"
         element={
@@ -94,11 +79,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-
-      {/* ==========================================
-                RESOURCES
-            ========================================== */}
 
       <Route
         path="/resources"
@@ -109,11 +89,6 @@ function App() {
         }
       />
 
-
-      {/* ==========================================
-                BOOKINGS
-            ========================================== */}
-
       <Route
         path="/bookings"
         element={
@@ -122,11 +97,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-
-      {/* ==========================================
-                BOOK MENTORSHIP SESSION
-            ========================================== */}
 
       <Route
         path="/book-session"
@@ -139,25 +109,39 @@ function App() {
 
 
       {/* ==========================================
-                STRIPE SUCCESS
+                STRIPE
             ========================================== */}
 
       <Route
         path="/booking/success"
-        element={
-          <BookingSuccess />
-        }
+        element={<BookingSuccess />}
+      />
+
+      <Route
+        path="/booking/cancelled"
+        element={<BookingCancelled />}
       />
 
 
       {/* ==========================================
-                STRIPE CANCELLED
+                ADMIN
             ========================================== */}
 
       <Route
-        path="/booking/cancelled"
+        path="/admin"
         element={
-          <BookingCancelled />
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/nurses/:id"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminNurseProfile />
+          </ProtectedRoute>
         }
       />
 
@@ -177,9 +161,7 @@ function App() {
       />
 
     </Routes>
-
   );
 }
-
 
 export default App;

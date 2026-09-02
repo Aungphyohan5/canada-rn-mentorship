@@ -1,16 +1,65 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const ProtectedRoute = ({ children }) => {
-  const { token, loading } = useAuth();
+const ProtectedRoute = ({
+  children,
+  allowedRoles,
+}) => {
+  const {
+    user,
+    token,
+    loading,
+  } = useAuth();
+
+  const location = useLocation();
+
+
+  // =========================================================
+  // AUTHENTICATION LOADING
+  // =========================================================
 
   if (loading) {
     return <p>Loading...</p>;
   }
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
+
+  // =========================================================
+  // NOT LOGGED IN
+  // =========================================================
+
+  if (!token || !user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          from: location,
+        }}
+      />
+    );
   }
+
+
+  // =========================================================
+  // ROLE CHECK
+  // =========================================================
+
+  if (
+    allowedRoles &&
+    !allowedRoles.includes(user.role)
+  ) {
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
+  }
+
+
+  // =========================================================
+  // AUTHORIZED
+  // =========================================================
 
   return children;
 };

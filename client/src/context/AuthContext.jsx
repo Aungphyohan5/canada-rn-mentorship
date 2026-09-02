@@ -10,246 +10,164 @@ import api from "../services/api";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-
     const [user, setUser] = useState(null);
 
-    const [token, setToken] = useState(
-        () => localStorage.getItem("token")
-    );
+    const [token, setToken] = useState(() => {
+        return localStorage.getItem("token");
+    });
 
     const [loading, setLoading] = useState(true);
 
-
     // =========================================================
-    // RESTORE AUTHENTICATED USER
+    // RESTORE USER SESSION
     // =========================================================
 
     useEffect(() => {
-
-        const loadUser = async () => {
-
-            const storedToken =
-                localStorage.getItem("token");
-
+        const restoreUser = async () => {
+            const storedToken = localStorage.getItem("token");
 
             // -------------------------------------------------
             // No token
             // -------------------------------------------------
 
             if (!storedToken) {
-
                 setUser(null);
-
                 setToken(null);
-
                 setLoading(false);
-
                 return;
             }
-
 
             // -------------------------------------------------
             // Token exists
             // -------------------------------------------------
 
             try {
+                console.log("AUTH: Restoring user...");
 
-                console.log(
-                    "AUTH: Restoring user..."
-                );
-
-
-                const response =
-                    await api.get(
-                        "/auth/me"
-                    );
-
+                const response = await api.get("/auth/me");
 
                 const authenticatedUser =
-                    response.data
-                        ?.data
-                        ?.user;
-
+                    response.data?.data?.user;
 
                 if (!authenticatedUser) {
-
                     throw new Error(
                         "Authenticated user was not returned."
                     );
-
                 }
-
 
                 console.log(
                     "AUTH: User restored:",
                     authenticatedUser
                 );
 
-
-                setUser(
-                    authenticatedUser
-                );
-
-                setToken(
-                    storedToken
-                );
-
+                setUser(authenticatedUser);
+                setToken(storedToken);
 
             } catch (error) {
-
                 console.error(
-                    "AUTH USER LOAD ERROR:",
+                    "AUTH: Failed to restore user:",
                     error.response?.data ||
                     error.message ||
                     error
                 );
 
+                const status = error.response?.status;
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * Do not immediately delete the token
-                 * for every possible error.
-                 *
-                 * Only clear authentication when the
-                 * backend explicitly says the token is
-                 * unauthorized.
-                 */
+                // -------------------------------------------------
+                // Invalid / expired token
+                // -------------------------------------------------
 
-                const status =
-                    error.response?.status;
-
-
-                if (
-                    status === 401 ||
-                    status === 403
-                ) {
-
+                if (status === 401 || status === 403) {
                     console.warn(
-                        "AUTH: Token is no longer valid."
+                        "AUTH: Token is invalid or expired."
                     );
 
-
-                    localStorage.removeItem(
-                        "token"
-                    );
+                    localStorage.removeItem("token");
 
                     setToken(null);
-
                     setUser(null);
-
                 } else {
-
-                    /*
-                     * Temporary network/server error.
-                     *
-                     * Keep the token so the user is not
-                     * unexpectedly logged out.
-                     */
+                    // -------------------------------------------------
+                    // Temporary backend/network problem
+                    // Keep token
+                    // -------------------------------------------------
 
                     console.warn(
-                        "AUTH: Could not verify token, keeping existing token."
+                        "AUTH: Temporary verification error. Keeping token."
                     );
 
-                    setToken(
-                        storedToken
-                    );
-
+                    setToken(storedToken);
                 }
 
             } finally {
-
                 setLoading(false);
-
             }
-
         };
 
-
-        loadUser();
-
+        restoreUser();
     }, []);
-
 
     // =========================================================
     // LOGIN
     // =========================================================
 
-    const login = (
-        userData,
-        userToken
-    ) => {
+    const login = (userData, userToken) => {
+        console.log("AUTH: Login successful.");
 
-        console.log(
-            "AUTH: Logging in user."
-        );
+        localStorage.setItem("token", userToken);
 
-
-        localStorage.setItem(
-            "token",
-            userToken
-        );
-
-
-        setToken(
-            userToken
-        );
-
-
-        setUser(
-            userData
-        );
-
+        setToken(userToken);
+        setUser(userData);
     };
-
 
     // =========================================================
     // LOGOUT
     // =========================================================
 
     const logout = () => {
+        console.log("AUTH: Logging out.");
 
-        console.log(
-            "AUTH: Logging out."
-        );
-
-
-        localStorage.removeItem(
-            "token"
-        );
-
+        localStorage.removeItem("token");
 
         setToken(null);
-
         setUser(null);
-
     };
 
+    // =========================================================
+    // AUTH CONTEXT
+    // =========================================================
+
+    const value = {
+        user,
+        token,
+        loading,
+        login,
+        logout,
+        isAuthenticated: Boolean(user && token),
+        isAdmin: user?.role === "admin",
+    };
 
     return (
-
-        <AuthContext.Provider
-            value={{
-                user,
-                token,
-                loading,
-                login,
-                logout,
-            }}
-        >
-
+        <AuthContext.Provider value={value}>
             {children}
-
         </AuthContext.Provider>
-
     );
-
 };
-
 
 // =============================================================
 // USE AUTH
 // =============================================================
 
-export const useAuth = () =>
-    useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error(
+            "useAuth must be used inside an AuthProvider"
+        );
+    }
+
+    return context;
+};
+
+export default AuthContext;

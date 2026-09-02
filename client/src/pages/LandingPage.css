@@ -4,8 +4,10 @@
 
 .landing-page {
     min-height: 100vh;
+    width: 100%;
     background: #ffffff;
     color: #102a4c;
+
     font-family:
         Inter,
         -apple-system,
@@ -17,7 +19,7 @@
 .landing-container {
     width: 100%;
     max-width: none;
-    margin: 0;
+    margin: 0 auto;
     padding-left: 60px;
     padding-right: 60px;
     box-sizing: border-box;
@@ -35,6 +37,8 @@
 
     background: rgba(255, 255, 255, 0.97);
     border-bottom: 1px solid #edf0f4;
+
+    backdrop-filter: blur(10px);
 }
 
 .nav-container {
@@ -46,6 +50,9 @@
 
     gap: 30px;
 }
+
+
+/* LOGO */
 
 .landing-logo {
     border: 0;
@@ -70,6 +77,7 @@
     justify-content: center;
 
     font-size: 27px;
+    line-height: 1;
 }
 
 .logo-text {
@@ -81,14 +89,19 @@
 }
 
 .logo-text strong {
-    font-family: Georgia, serif;
-    font-size: 17px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .logo-text span {
-    font-family: Georgia, serif;
+    font-family: Georgia, "Times New Roman", serif;
     font-size: 15px;
+    font-weight: 400;
 }
+
+
+/* NAVIGATION */
 
 .landing-nav {
     display: flex;
@@ -100,7 +113,7 @@
     color: #102a4c;
     text-decoration: none;
 
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
 
     transition: color 0.2s ease;
@@ -109,6 +122,9 @@
 .landing-nav a:hover {
     color: #d9272e;
 }
+
+
+/* NAV BUTTONS */
 
 .nav-actions {
     display: flex;
@@ -119,12 +135,18 @@
 .nav-login-button,
 .nav-primary-button {
     border-radius: 6px;
+
     padding: 11px 19px;
 
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .nav-login-button {
@@ -139,12 +161,19 @@
     color: #ffffff;
 }
 
+.nav-login-button:hover,
+.nav-primary-button:hover {
+    transform: translateY(-1px);
+}
+
 
 /* ============================================================
    HERO
 ============================================================ */
 
 .hero-section {
+    width: 100%;
+
     background:
         linear-gradient(110deg,
             #ffffff 0%,
@@ -174,7 +203,7 @@
 
     color: #d9272e;
 
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 800;
 
     letter-spacing: 1.4px;
@@ -208,6 +237,9 @@
     line-height: 1.7;
 }
 
+
+/* HERO BUTTONS */
+
 .hero-buttons {
     display: flex;
     align-items: center;
@@ -224,7 +256,7 @@
     padding: 13px 21px;
 
     font-weight: 700;
-    font-size: 14px;
+    font-size: 16px;
 
     cursor: pointer;
 
@@ -240,19 +272,13 @@
         0 8px 20px rgba(217, 39, 46, 0.2);
 }
 
-.landing-primary {
-    display: flex;
-    gap: 18px;
-    align-items: center;
-}
-
 .secondary-button {
     border-radius: 6px;
 
     padding: 12px 20px;
 
     font-weight: 700;
-    font-size: 14px;
+    font-size: 16px;
 
     text-decoration: none;
 }
@@ -262,6 +288,15 @@
     color: #102a4c;
     background: #ffffff;
 }
+
+.landing-primary {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+
+/* HERO FEATURES */
 
 .hero-features {
     display: flex;
@@ -279,7 +314,7 @@
 
     color: #253d59;
 
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 600;
 }
 
@@ -295,11 +330,14 @@
     border-radius: 50%;
 
     color: #d9272e;
-    font-size: 13px;
+
+    font-size: 15px;
 }
 
 
-/* HERO VISUAL */
+/* ============================================================
+   HERO VISUAL
+============================================================ */
 
 .hero-visual {
     position: relative;
@@ -433,7 +471,7 @@
 
 .hero-floating-card strong {
     color: #102a4c;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .hero-floating-card span {
@@ -486,6 +524,9 @@
     margin-right: auto;
 }
 
+
+/* CHECK LIST */
+
 .check-list {
     list-style: none;
 
@@ -520,9 +561,12 @@
     background: #d9272e;
     color: #ffffff;
 
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 800;
 }
+
+
+/* HELP CARDS */
 
 .help-grid {
     display: grid;
@@ -554,20 +598,19 @@
 
 .help-card>span {
     margin-bottom: 8px;
-
     font-size: 25px;
 }
 
 .help-card strong {
     color: #102a4c;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .help-card small {
     margin-top: 5px;
 
     color: #7a8898;
-    font-size: 10px;
+    font-size: 15px;
 }
 
 
@@ -636,7 +679,7 @@
     background: #d9272e;
     color: #ffffff;
 
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 800;
 }
 
@@ -659,92 +702,212 @@
 
     color: #718094;
 
-    font-size: 12px;
+    font-size: 15px;
     line-height: 1.6;
 }
 
 
 /* ============================================================
-   MENTORSHIP
+   MENTORSHIP SECTION
 ============================================================ */
 
 .mentorship-section {
-    padding: 75px 0;
+    width: 100%;
 
-    background: #09274b;
+    padding: 64px 0 66px;
+
+    background: #092b52;
+
+    overflow: hidden;
 }
 
 .mentorship-inner {
     display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
 
-    gap: 55px;
+    grid-template-columns: minmax(480px, 0.9fr) minmax(500px, 1.1fr);
+
+    gap: 45px;
 
     align-items: center;
 }
 
+
+/* ============================================================
+   MENTORSHIP PHOTO
+============================================================ */
+
 .mentorship-visual {
-    min-height: 340px;
-
-    border-radius: 12px;
-
-    overflow: hidden;
-
-    background:
-        linear-gradient(145deg,
-            #e7f2f8,
-            #bdd8e8);
-}
-
-.mentorship-photo-placeholder {
-    height: 100%;
-
-    min-height: 340px;
+    width: 100%;
 
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    color: #102a4c;
+    overflow: hidden;
 
-    font-size: 100px;
+    background: transparent;
+
+    border-radius: 14px;
 }
 
-.mentorship-photo-placeholder span {
-    margin-top: -15px;
+
+/*
+   The image itself already contains the complete photo
+   composition. We therefore do NOT crop it with object-fit: cover.
+*/
+
+.mentorship-photo-placeholder {
+    width: 100%;
+    max-width: 640px;
+
+    display: block;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    border-radius: 13px;
+
+    background: #dcecf7;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.18);
+}
+
+.mentorship-photo-placeholder img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    margin: 0;
+    padding: 0;
+
+    object-fit: contain;
+    object-position: center;
+
+    border: 0;
+}
+
+
+/*
+   Your JSX currently has:
+
+   <span>
+       1-on-1
+       <br />
+       Mentorship
+   </span>
+
+   This makes the caption sit underneath the photo.
+*/
+
+.mentorship-photo-placeholder>span {
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 7px 15px 9px;
+
+    box-sizing: border-box;
+
+    background: #dcecf7;
 
     color: #102a4c;
-
-    font-family: Georgia, serif;
-
-    font-size: 24px;
-    font-weight: 700;
 
     text-align: center;
-}
 
-.mentorship-content {
-    color: #ffffff;
-}
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
 
-.section-eyebrow.light {
-    color: #ff6469;
-}
+    font-size: 22px;
+    font-weight: 700;
 
-.mentorship-content h2 {
-    margin: 0;
-
-    font-family: Georgia, serif;
-
-    font-size: 44px;
     line-height: 1.05;
 }
 
-.mentorship-content>p {
-    max-width: 570px;
 
-    margin: 23px 0;
+/* If this class is used instead of the span */
+
+.mentorship-photo-caption {
+    width: 100%;
+
+    padding: 7px 15px 9px;
+
+    box-sizing: border-box;
+
+    background: #dcecf7;
+
+    color: #102a4c;
+
+    text-align: center;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    line-height: 1.05;
+}
+
+
+/* ============================================================
+   MENTORSHIP CONTENT
+============================================================ */
+
+.mentorship-content {
+    color: #ffffff;
+
+    padding: 10px 0;
+}
+
+.mentorship-content .section-eyebrow {
+    margin-bottom: 25px;
+}
+
+.section-eyebrow.light {
+    color: #ff6268;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+.white {
+    color: #ffffff;
+
+    line-height: 1.05;
+}
+
+.mentorship-content h2 {
+    max-width: 420px;
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 44px;
+    font-weight: 400;
+
+    line-height: 1.03;
+}
+
+.mentorship-content>p {
+    max-width: 590px;
+
+    margin: 24px 0;
 
     color: #c5d4e4;
 
@@ -752,21 +915,39 @@
     line-height: 1.7;
 }
 
+
+/* MENTORSHIP META */
+
 .mentorship-meta {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
 
     gap: 20px;
 
-    margin-bottom: 25px;
+    margin-bottom: 26px;
 
     color: #ffffff;
 
-    font-size: 13px;
+    font-size: 15px;
 }
+
+.mentorship-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+
+/* MENTORSHIP BUTTON */
 
 .light-button {
     background: #d9272e;
+    color: #ffffff;
+}
+
+.light-button:hover {
+    background: #c92128;
 }
 
 
@@ -780,6 +961,7 @@
 
 .resources-grid {
     display: grid;
+
     grid-template-columns: repeat(5, 1fr);
 
     gap: 15px;
@@ -819,7 +1001,7 @@
 
     color: #102a4c;
 
-    font-size: 14px;
+    font-size: 21px;
 }
 
 .resource-card p {
@@ -829,14 +1011,14 @@
 
     color: #77879a;
 
-    font-size: 11px;
+    font-size: 16px;
     line-height: 1.6;
 }
 
 .resource-card span {
     color: #d9272e;
 
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
 }
 
@@ -875,6 +1057,7 @@
 
 .about-grid {
     display: grid;
+
     grid-template-columns: 0.9fr 1.1fr;
 
     align-items: center;
@@ -897,7 +1080,6 @@
 
 .canada-placeholder {
     height: 100%;
-
     min-height: 330px;
 
     display: flex;
@@ -935,6 +1117,7 @@
     padding: 0;
 
     display: grid;
+
     grid-template-columns: 1fr 1fr;
 
     gap: 14px;
@@ -947,7 +1130,7 @@
 
     color: #344b65;
 
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
 }
 
@@ -971,6 +1154,7 @@
 
     display: flex;
     flex-direction: column;
+
     gap: 10px;
 }
 
@@ -992,7 +1176,7 @@
 
     color: #102a4c;
 
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
 
     cursor: pointer;
@@ -1015,7 +1199,7 @@
 
     color: #6d7d90;
 
-    font-size: 13px;
+    font-size: 15px;
     line-height: 1.7;
 }
 
@@ -1025,7 +1209,7 @@
 ============================================================ */
 
 .final-cta {
-    padding: 35px 0;
+    padding: 30px 0;
 
     background: #d9272e;
 
@@ -1055,6 +1239,7 @@
     border-radius: 6px;
 
     background: transparent;
+
     color: #ffffff;
 
     font-weight: 700;
@@ -1070,13 +1255,13 @@
 .landing-footer {
     background: #061d38;
     color: #ffffff;
-
 }
 
 .footer-grid {
     padding: 60px 0;
 
     display: grid;
+
     grid-template-columns: 1.5fr repeat(4, 1fr);
 
     gap: 35px;
@@ -1093,7 +1278,7 @@
 
     color: #aebed0;
 
-    font-size: 12px;
+    font-size: 15px;
     line-height: 1.7;
 }
 
@@ -1117,11 +1302,12 @@
 .footer-column button {
     color: #aebed0;
 
-    font-size: 13px;
+    font-size: 15px;
 
     text-decoration: none;
 
     background: transparent;
+
     border: 0;
 
     text-align: left;
@@ -1143,14 +1329,31 @@
 
     color: #8396ac;
 
-    font-size: 11px;
+    font-size: 14px;
 
     text-align: center;
 }
 
 
 /* ============================================================
-   RESPONSIVE
+   LANDING PROFILE PHOTO
+============================================================ */
+
+.landing-profile-photo {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center top;
+
+    border-radius: 50%;
+}
+
+
+/* ============================================================
+   RESPONSIVE — 1050px
 ============================================================ */
 
 @media (max-width: 1050px) {
@@ -1160,7 +1363,7 @@
     }
 
     .landing-nav a {
-        font-size: 12px;
+        font-size: 15px;
     }
 
     .hero-grid {
@@ -1184,10 +1387,37 @@
     .footer-grid {
         grid-template-columns: 1.5fr repeat(2, 1fr);
     }
+
+
+    /* Mentorship */
+
+    .mentorship-inner {
+        grid-template-columns:
+            minmax(400px, 0.9fr) minmax(400px, 1.1fr);
+
+        gap: 35px;
+    }
+
+    .mentorship-photo-placeholder {
+        max-width: 590px;
+    }
+
+    .mentorship-content h2 {
+        font-size: 40px;
+    }
 }
 
 
+/* ============================================================
+   RESPONSIVE — 800px
+============================================================ */
+
 @media (max-width: 800px) {
+
+    .landing-container {
+        padding-left: 35px;
+        padding-right: 35px;
+    }
 
     .nav-container {
         min-height: 68px;
@@ -1196,6 +1426,9 @@
     .landing-nav {
         display: none;
     }
+
+
+    /* HERO */
 
     .hero-grid,
     .audience-grid,
@@ -1214,6 +1447,7 @@
 
     .hero-circle {
         right: 50%;
+
         transform: translateX(50%);
 
         width: 450px;
@@ -1227,26 +1461,77 @@
 
     .hero-floating-card {
         left: 50%;
+
         transform: translateX(-50%);
 
         bottom: 35px;
     }
 
+
+    /* AUDIENCE */
+
     .help-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+
+    /* HOW IT WORKS */
 
     .steps-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
+
+    /* MENTORSHIP */
+
+    .mentorship-section {
+        padding: 65px 0;
+    }
+
+    .mentorship-inner {
+        gap: 45px;
+    }
+
+    .mentorship-visual {
+        order: 1;
+    }
+
+    .mentorship-content {
+        order: 2;
+
+        text-align: center;
+    }
+
+    .mentorship-content h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .mentorship-content>p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .mentorship-meta {
+        justify-content: center;
+    }
+
+
+    /* RESOURCES */
+
     .resources-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
+
+    /* ABOUT */
+
     .about-list {
         grid-template-columns: 1fr;
     }
+
+
+    /* FOOTER */
 
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1256,23 +1541,38 @@
         grid-column: 1 / -1;
     }
 
+
+    /* CTA */
+
     .final-cta-inner {
         flex-direction: column;
+
         text-align: center;
     }
 }
 
 
+/* ============================================================
+   RESPONSIVE — 550px
+============================================================ */
+
 @media (max-width: 550px) {
 
     .landing-container {
         width: 100%;
+
         max-width: none;
+
         margin: 0;
+
         padding-left: 20px;
         padding-right: 20px;
+
         box-sizing: border-box;
     }
+
+
+    /* HEADER */
 
     .nav-actions {
         gap: 6px;
@@ -1282,13 +1582,16 @@
     .nav-primary-button {
         padding: 9px 12px;
 
-        font-size: 11px;
+        font-size: 14px;
     }
 
     .logo-text strong,
     .logo-text span {
-        font-size: 13px;
+        font-size: 15px;
     }
+
+
+    /* HERO */
 
     .hero-content h1 {
         font-size: 42px;
@@ -1310,8 +1613,14 @@
 
     .hero-features {
         display: grid;
+
         grid-template-columns: 1fr 1fr;
+
+        gap: 15px;
     }
+
+
+    /* SECTIONS */
 
     .audience-section,
     .how-section,
@@ -1327,20 +1636,58 @@
         font-size: 30px;
     }
 
+
+    /* HELP / STEPS / RESOURCES */
+
     .help-grid,
     .steps-grid,
     .resources-grid {
         grid-template-columns: 1fr;
     }
 
+
+    /* MENTORSHIP */
+
+    .mentorship-section {
+        padding: 50px 0 55px;
+    }
+
+    .mentorship-photo-placeholder {
+        width: 100%;
+        max-width: 100%;
+
+        border-radius: 10px;
+    }
+
+    .mentorship-photo-placeholder>span,
+    .mentorship-photo-caption {
+        font-size: 20px;
+
+        padding: 7px 12px 9px;
+    }
+
+    .mentorship-content {
+        text-align: left;
+    }
+
     .mentorship-content h2 {
         font-size: 38px;
     }
 
+    .section-eyebrow.light {
+        font-size: 22px;
+    }
+
     .mentorship-meta {
         flex-direction: column;
+
+        align-items: flex-start;
+
         gap: 10px;
     }
+
+
+    /* FOOTER */
 
     .footer-grid {
         grid-template-columns: 1fr;
@@ -1350,7 +1697,35 @@
         grid-column: auto;
     }
 
+
+    /* CTA */
+
     .final-cta h2 {
         font-size: 26px;
+    }
+}
+
+
+/* ============================================================
+   RESPONSIVE — 400px
+============================================================ */
+
+@media (max-width: 400px) {
+
+    .landing-container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .hero-features {
+        grid-template-columns: 1fr;
+    }
+
+    .mentorship-content h2 {
+        font-size: 34px;
     }
 }

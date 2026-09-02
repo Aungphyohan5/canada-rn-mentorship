@@ -12,6 +12,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import stripeWebhookRoutes from "./routes/stripeWebhookRoutes.js";
 import schedulingRoutes from "./routes/schedulingRoutes.js";
 import calendlyWebhookRoutes from "./routes/calendlyWebhookRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
 
@@ -99,6 +100,8 @@ app.use(
     "/api/scheduling",
     schedulingRoutes
 );
+
+app.use("/api/admin", adminRoutes);
 
 /*
  * Start Server

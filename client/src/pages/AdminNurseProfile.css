@@ -1,0 +1,368 @@
+/* =========================================================
+   ADMIN NURSE PROFILE
+========================================================= */
+
+.admin-profile-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+
+    padding: 32px 32px 60px;
+
+    color: #172b4d;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   PAGE WIDTH
+========================================================= */
+
+.admin-profile-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.admin-back-button {
+    display: inline-flex;
+    align-items: center;
+
+    margin-bottom: 22px;
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: #2563eb;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: color 0.15s ease;
+}
+
+.admin-back-button:hover {
+    color: #1d4ed8;
+}
+
+/* =========================================================
+   PROFILE HEADER
+========================================================= */
+
+.admin-profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 22px;
+    padding: 30px 32px;
+
+    background: #ffffff;
+
+    border: 1px solid #e3e8f0;
+    border-radius: 20px;
+
+    box-shadow: 0 10px 35px rgba(15, 35, 65, 0.06);
+}
+
+.admin-profile-header h1 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 38px;
+    line-height: 1.1;
+    font-weight: 500;
+
+    letter-spacing: -0.025em;
+
+    color: #17345f;
+}
+
+.admin-profile-header p {
+    margin: 8px 0 0;
+
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-complete,
+.status-incomplete {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 8px 13px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.status-complete {
+    background: #ecfdf3;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.status-incomplete {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+/* =========================================================
+   PROFILE CARDS
+========================================================= */
+
+.admin-profile-card {
+    margin-bottom: 20px;
+    padding: 26px 28px;
+
+    background: #ffffff;
+
+    border: 1px solid #e3e8f0;
+    border-radius: 18px;
+
+    box-shadow: 0 8px 28px rgba(15, 35, 65, 0.045);
+}
+
+.admin-profile-card h2 {
+    margin: 0 0 22px;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 23px;
+    line-height: 1.2;
+    font-weight: 500;
+
+    color: #17345f;
+}
+
+/* =========================================================
+   INFORMATION GRID
+========================================================= */
+
+.admin-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+/* =========================================================
+   INFORMATION ITEM
+========================================================= */
+
+.admin-info-item {
+    min-height: 72px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 14px 16px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf1f5;
+    border-radius: 11px;
+}
+
+.admin-info-item span {
+    margin-bottom: 6px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+
+    color: #94a3b8;
+}
+
+.admin-info-item strong {
+    font-size: 14px;
+    line-height: 1.45;
+
+    font-weight: 600;
+
+    color: #243b5a;
+
+    word-break: break-word;
+}
+
+/* =========================================================
+   REGISTRATION PROGRESS
+========================================================= */
+
+.progress-section {
+    margin-top: 26px;
+    padding-top: 22px;
+
+    border-top: 1px solid #edf0f4;
+}
+
+.progress-section h3 {
+    margin: 0 0 14px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #334155;
+}
+
+.progress-section ul {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    list-style: none;
+
+    padding: 0;
+    margin: 0;
+}
+
+.progress-section li {
+    padding: 8px 12px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+    border-radius: 999px;
+
+    color: #1d4ed8;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.progress-section>p {
+    margin: 0;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border-radius: 10px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   GOALS / CONCERNS
+========================================================= */
+
+.admin-long-text {
+    margin-top: 18px;
+}
+
+.admin-long-text:first-of-type {
+    margin-top: 0;
+}
+
+.admin-long-text h3 {
+    margin: 0 0 8px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #475569;
+}
+
+.admin-long-text p {
+    margin: 0;
+
+    padding: 16px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf1f5;
+    border-radius: 11px;
+
+    color: #334155;
+
+    font-size: 14px;
+    line-height: 1.65;
+
+    white-space: pre-wrap;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.admin-profile-page>p {
+    color: #64748b;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.admin-profile-page .admin-error {
+    max-width: 700px;
+
+    margin: 50px auto;
+
+    padding: 18px;
+
+    background: #fff5f5;
+
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+
+    color: #b91c1c;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .admin-profile-page {
+        padding: 24px 14px 40px;
+    }
+
+    .admin-profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        padding: 24px 20px;
+    }
+
+    .admin-profile-header h1 {
+        font-size: 31px;
+    }
+
+    .admin-profile-card {
+        padding: 22px 18px;
+    }
+
+    .admin-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-complete,
+    .status-incomplete {
+        align-self: flex-start;
+    }
+}

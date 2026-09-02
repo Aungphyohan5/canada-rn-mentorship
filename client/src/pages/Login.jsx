@@ -18,32 +18,110 @@ const Login = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    // =========================================================
+    // REDIRECT USER BASED ON ROLE
+    // =========================================================
+
+    const redirectByRole = (user) => {
+        if (!user?.role) {
+            navigate("/dashboard", {
+                replace: true,
+            });
+
+            return;
+        }
+
+        switch (user.role) {
+            case "admin":
+                navigate("/admin", {
+                    replace: true,
+                });
+                break;
+
+            case "employer":
+                navigate("/dashboard", {
+                    replace: true,
+                });
+                break;
+
+            case "nurse":
+            default:
+                navigate("/dashboard", {
+                    replace: true,
+                });
+                break;
+        }
+    };
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError("");
-        setLoading(true);
+
+        if (!email.trim() || !password) {
+            setError(
+                "Please enter your email and password."
+            );
+
+            return;
+        }
 
         try {
-            const response = await api.post("/auth/login", {
-                email,
-                password,
-            });
+            setLoading(true);
 
-            const { user, token } = response.data.data;
+            const response = await api.post(
+                "/auth/login",
+                {
+                    email: email.trim(),
+                    password,
+                }
+            );
 
+            /*
+             * Your backend currently returns:
+             *
+             * response.data.data.user
+             * response.data.data.token
+             */
+
+            const { user, token } =
+                response.data.data;
+
+            if (!user || !token) {
+                throw new Error(
+                    "Invalid login response from server."
+                );
+            }
+
+            // Save authentication state
             login(user, token);
 
-            navigate("/dashboard");
+            // Redirect according to account role
+            redirectByRole(user);
+
         } catch (error) {
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
+
             setError(
                 error.response?.data?.message ||
+                error.message ||
                 "Login failed. Please check your email and password."
             );
         } finally {
             setLoading(false);
         }
     };
+
+    // =========================================================
+    // RENDER
+    // =========================================================
 
     return (
         <div className="login-page">
@@ -85,7 +163,9 @@ const Login = () => {
 
                 <div className="login-card">
 
-                    {/* HEADER */}
+                    {/* =================================================
+                        HEADER
+                    ================================================= */}
 
                     <div className="login-header">
 
@@ -105,14 +185,18 @@ const Login = () => {
                     </div>
 
 
-                    {/* FORM */}
+                    {/* =================================================
+                        FORM
+                    ================================================= */}
 
                     <form
                         className="login-form"
                         onSubmit={handleSubmit}
                     >
 
-                        {/* EMAIL */}
+                        {/* =================================================
+                            EMAIL
+                        ================================================= */}
 
                         <div className="login-form-group">
 
@@ -134,6 +218,7 @@ const Login = () => {
                                     }
                                     placeholder="Enter your email"
                                     autoComplete="email"
+                                    disabled={loading}
                                     required
                                 />
 
@@ -142,7 +227,9 @@ const Login = () => {
                         </div>
 
 
-                        {/* PASSWORD */}
+                        {/* =================================================
+                            PASSWORD
+                        ================================================= */}
 
                         <div className="login-form-group">
 
@@ -168,6 +255,7 @@ const Login = () => {
                                     }
                                     placeholder="Enter your password"
                                     autoComplete="current-password"
+                                    disabled={loading}
                                     required
                                 />
 
@@ -176,9 +264,11 @@ const Login = () => {
                                     className="login-password-toggle"
                                     onClick={() =>
                                         setShowPassword(
-                                            !showPassword
+                                            (previous) =>
+                                                !previous
                                         )
                                     }
+                                    disabled={loading}
                                 >
                                     {showPassword
                                         ? "Hide"
@@ -190,18 +280,25 @@ const Login = () => {
                         </div>
 
 
-                        {/* ERROR */}
+                        {/* =================================================
+                            ERROR
+                        ================================================= */}
 
                         {error && (
 
-                            <div className="login-error">
+                            <div
+                                className="login-error"
+                                role="alert"
+                            >
                                 {error}
                             </div>
 
                         )}
 
 
-                        {/* OPTIONS */}
+                        {/* =================================================
+                            OPTIONS
+                        ================================================= */}
 
                         <div className="login-form-options">
 
@@ -209,6 +306,7 @@ const Login = () => {
 
                                 <input
                                     type="checkbox"
+                                    disabled={loading}
                                 />
 
                                 <span>
@@ -221,6 +319,7 @@ const Login = () => {
                             <button
                                 type="button"
                                 className="login-forgot"
+                                disabled={loading}
                                 onClick={() =>
                                     alert(
                                         "Password reset will be available soon."
@@ -233,31 +332,35 @@ const Login = () => {
                         </div>
 
 
-                        {/* LOGIN BUTTON */}
+                        {/* =================================================
+                            LOGIN BUTTON
+                        ================================================= */}
 
                         <button
                             type="submit"
                             className="login-submit"
                             disabled={loading}
                         >
-
                             {loading
                                 ? "Logging in..."
                                 : "Log In"}
-
                         </button>
 
                     </form>
 
 
-                    {/* DIVIDER */}
+                    {/* =================================================
+                        DIVIDER
+                    ================================================= */}
 
                     <div className="login-divider">
                         <span>OR</span>
                     </div>
 
 
-                    {/* REGISTER */}
+                    {/* =================================================
+                        REGISTER
+                    ================================================= */}
 
                     <p className="login-register">
 
@@ -265,6 +368,7 @@ const Login = () => {
 
                         <button
                             type="button"
+                            disabled={loading}
                             onClick={() =>
                                 navigate("/register")
                             }
@@ -277,11 +381,14 @@ const Login = () => {
                 </div>
 
 
-                {/* BACK HOME */}
+                {/* =================================================
+                    BACK HOME
+                ================================================= */}
 
                 <button
                     type="button"
                     className="login-back-home"
+                    disabled={loading}
                     onClick={() =>
                         navigate("/")
                     }
@@ -290,7 +397,9 @@ const Login = () => {
                 </button>
 
 
-                {/* FOOTER */}
+                {/* =================================================
+                    FOOTER
+                ================================================= */}
 
                 <div className="login-footer">
 

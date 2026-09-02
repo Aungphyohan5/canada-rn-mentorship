@@ -127,26 +127,27 @@ const DashboardLayout = ({ children }) => {
                     BRAND
                 ================================================== */}
 
-                <div className="sidebar-brand">
-
-                    <div className="brand-mark">
+                <div
+                    className="dashboard-logo"
+                    onClick={() => navigate("/")}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                            navigate("/");
+                        }
+                    }}
+                >
+                    <div className="dashboard-logo-mark">
                         🍁
                     </div>
 
-
-                    <div>
-
-                        <h2>
-                            Canada RN
-                        </h2>
-
-                        <span>
-                            Mentorship
-                        </span>
-
+                    <div className="dashboard-logo-text">
+                        <strong>Canada RN</strong>
+                        <span>Mentorship</span>
                     </div>
-
                 </div>
+
 
 
 
@@ -248,7 +249,7 @@ const DashboardLayout = ({ children }) => {
                         DOCUMENTS
                     ================================================= */}
 
-                    <button
+                    {/* <button
                         type="button"
                         className="nav-link nav-button"
                         onClick={() =>
@@ -258,7 +259,7 @@ const DashboardLayout = ({ children }) => {
                         }
                     >
                         Documents
-                    </button>
+                    </button> */}
 
                 </nav>
 
