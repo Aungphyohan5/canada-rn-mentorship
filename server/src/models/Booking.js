@@ -34,7 +34,11 @@ const bookingSchema = new mongoose.Schema(
 
         paymentStatus: {
             type: String,
-            enum: ["pending", "paid", "cancelled"],
+            enum: [
+                "pending",
+                "paid",
+                "cancelled",
+            ],
             default: "pending",
         },
 
@@ -79,7 +83,20 @@ const bookingSchema = new mongoose.Schema(
             default: "",
         },
 
+        // --------------------------------------------------
+        // Session confirmation email
+        // --------------------------------------------------
+
         confirmationSent: {
+            type: Boolean,
+            default: false,
+        },
+
+        // --------------------------------------------------
+        // Payment confirmation email
+        // --------------------------------------------------
+
+        paymentConfirmationSent: {
             type: Boolean,
             default: false,
         },
@@ -89,4 +106,7 @@ const bookingSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("Booking", bookingSchema);
+export default mongoose.model(
+    "Booking",
+    bookingSchema
+);

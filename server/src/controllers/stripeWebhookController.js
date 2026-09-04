@@ -1,5 +1,8 @@
 import stripe from "../config/stripe.js";
 import Booking from "../models/Booking.js";
+import {
+    sendPaymentReceivedEmail,
+} from "../services/emailService.js";
 
 
 // ============================================================
@@ -13,7 +16,7 @@ export const handleStripeWebhook = async (req, res) => {
 
 
     // ============================================================
-    // VERIFY STRIPE WEBHOOK
+    // VERIFY STRIPE WEBHOOK SIGNATURE
     // ============================================================
 
     let event;
@@ -77,7 +80,7 @@ export const handleStripeWebhook = async (req, res) => {
 
 
             // ======================================================
-            // CHECKOUT COMPLETED
+            // CHECKOUT SESSION COMPLETED
             // ======================================================
 
             case "checkout.session.completed": {
@@ -85,16 +88,11 @@ export const handleStripeWebhook = async (req, res) => {
                 const session =
                     event.data.object;
 
-
                 console.log(
                     "STRIPE CHECKOUT SESSION:",
                     session.id
                 );
 
-
-                // --------------------------------------------------
-                // Get booking ID
-                // --------------------------------------------------
 
                 const bookingId =
                     session.metadata?.bookingId;
@@ -124,7 +122,7 @@ export const handleStripeWebhook = async (req, res) => {
                 const booking =
                     await Booking.findById(
                         bookingId
-                    );
+                    ).populate("user");
 
 
                 if (!booking) {
@@ -143,7 +141,6 @@ export const handleStripeWebhook = async (req, res) => {
                     booking.paymentStatus
                 );
 
-
                 console.log(
                     "Current booking status:",
                     booking.bookingStatus
@@ -151,67 +148,149 @@ export const handleStripeWebhook = async (req, res) => {
 
 
                 // --------------------------------------------------
-                // Check payment
+                // Only process successful payment
                 // --------------------------------------------------
 
                 if (
-                    session.payment_status ===
+                    session.payment_status !==
                     "paid"
                 ) {
-
-                    /*
-                     * IMPORTANT:
-                     *
-                     * We only update paymentStatus.
-                     *
-                     * We DO NOT change bookingStatus here.
-                     *
-                     * Calendly synchronization is responsible
-                     * for changing bookingStatus from:
-                     *
-                     * pending → scheduled
-                     *
-                     * after the client books a time.
-                     */
-
-
-                    if (
-                        booking.paymentStatus !==
-                        "paid"
-                    ) {
-
-                        booking.paymentStatus =
-                            "paid";
-
-                        await booking.save();
-
-
-                        console.log(
-                            "✅ BOOKING MARKED AS PAID"
-                        );
-
-                        console.log(
-                            "Booking:",
-                            booking._id.toString()
-                        );
-
-                    } else {
-
-                        console.log(
-                            "ℹ️ Booking was already marked as paid."
-                        );
-
-                    }
-
-                } else {
 
                     console.log(
                         "⚠️ Checkout completed but payment status is:",
                         session.payment_status
                     );
 
+                    break;
                 }
 
+
+                // ==================================================
+                // MARK BOOKING AS PAID
+                // ==================================================
+
+                const wasAlreadyPaid =
+                    booking.paymentStatus === "paid";
+
+
+                if (!wasAlreadyPaid) {
+
+                    booking.paymentStatus =
+                        "paid";
+
+
+                    if (session.payment_intent) {
+
+                        booking.stripePaymentId =
+                            session.payment_intent;
+
+                    }
+
+
+                    await booking.save();
+
+
+                    console.log(
+                        "✅ BOOKING MARKED AS PAID"
+                    );
+
+                } else {
+
+                    console.log(
+                        "ℹ️ Booking was already marked as paid."
+                    );
+
+                }
+
+
+                // ==================================================
+                // PAYMENT CONFIRMATION EMAIL
+                // ==================================================
+
+                if (
+                    booking.user?.email &&
+                    !booking.paymentConfirmationSent
+                ) {
+
+                    try {
+
+                        await sendPaymentReceivedEmail({
+
+                            to:
+                                booking.user.email,
+
+                            firstName:
+                                booking.user.firstName,
+
+                            amount:
+                                booking.amount,
+
+                            currency:
+                                booking.currency,
+
+                            sessionType:
+                                booking.sessionType,
+
+                        });
+
+
+                        booking.paymentConfirmationSent =
+                            true;
+
+
+                        await booking.save();
+
+
+                        console.log(
+                            "📧 PAYMENT CONFIRMATION EMAIL SENT"
+                        );
+
+
+                    } catch (emailError) {
+
+                        /*
+                         * Email failure must NOT
+                         * make the payment fail.
+                         */
+
+                        console.error(
+                            "❌ PAYMENT CONFIRMATION EMAIL FAILED:",
+                            emailError.message
+                        );
+
+                    }
+
+                } else if (
+                    booking.paymentConfirmationSent
+                ) {
+
+                    console.log(
+                        "ℹ️ Payment confirmation email already sent."
+                    );
+
+                } else {
+
+                    console.warn(
+                        "⚠️ No customer email found. Payment email not sent."
+                    );
+
+                }
+
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * We do NOT change bookingStatus here.
+                 *
+                 * Payment:
+                 * pending → paid
+                 *
+                 * Booking:
+                 * pending → scheduled
+                 *
+                 * Calendly synchronization handles
+                 * the scheduling status.
+                 */
 
                 break;
             }
@@ -225,6 +304,12 @@ export const handleStripeWebhook = async (req, res) => {
 
                 const session =
                     event.data.object;
+
+
+                console.log(
+                    "ASYNC PAYMENT SESSION:",
+                    session.id
+                );
 
 
                 const bookingId =
@@ -245,7 +330,7 @@ export const handleStripeWebhook = async (req, res) => {
                 const booking =
                     await Booking.findById(
                         bookingId
-                    );
+                    ).populate("user");
 
 
                 if (!booking) {
@@ -259,21 +344,104 @@ export const handleStripeWebhook = async (req, res) => {
                 }
 
 
-                booking.paymentStatus =
-                    "paid";
+                // --------------------------------------------------
+                // Mark paid
+                // --------------------------------------------------
+
+                if (
+                    booking.paymentStatus !==
+                    "paid"
+                ) {
+
+                    booking.paymentStatus =
+                        "paid";
 
 
-                await booking.save();
+                    if (session.payment_intent) {
+
+                        booking.stripePaymentId =
+                            session.payment_intent;
+
+                    }
 
 
-                console.log(
-                    "✅ ASYNC PAYMENT SUCCEEDED"
-                );
+                    await booking.save();
 
-                console.log(
-                    "Booking:",
-                    booking._id.toString()
-                );
+
+                    console.log(
+                        "✅ ASYNC PAYMENT SUCCEEDED"
+                    );
+
+                } else {
+
+                    console.log(
+                        "ℹ️ Booking was already paid."
+                    );
+
+                }
+
+
+                // ==================================================
+                // PAYMENT CONFIRMATION EMAIL
+                // ==================================================
+
+                if (
+                    booking.user?.email &&
+                    !booking.paymentConfirmationSent
+                ) {
+
+                    try {
+
+                        await sendPaymentReceivedEmail({
+
+                            to:
+                                booking.user.email,
+
+                            firstName:
+                                booking.user.firstName,
+
+                            amount:
+                                booking.amount,
+
+                            currency:
+                                booking.currency,
+
+                            sessionType:
+                                booking.sessionType,
+
+                        });
+
+
+                        booking.paymentConfirmationSent =
+                            true;
+
+
+                        await booking.save();
+
+
+                        console.log(
+                            "📧 PAYMENT CONFIRMATION EMAIL SENT"
+                        );
+
+
+                    } catch (emailError) {
+
+                        console.error(
+                            "❌ PAYMENT CONFIRMATION EMAIL FAILED:",
+                            emailError.message
+                        );
+
+                    }
+
+                } else if (
+                    booking.paymentConfirmationSent
+                ) {
+
+                    console.log(
+                        "ℹ️ Payment confirmation email already sent."
+                    );
+
+                }
 
 
                 break;
@@ -288,6 +456,12 @@ export const handleStripeWebhook = async (req, res) => {
 
                 const session =
                     event.data.object;
+
+
+                console.log(
+                    "ASYNC PAYMENT FAILED SESSION:",
+                    session.id
+                );
 
 
                 const bookingId =
@@ -323,28 +497,28 @@ export const handleStripeWebhook = async (req, res) => {
 
 
                 /*
-                 * Do not mark an already-paid booking
-                 * as failed.
+                 * IMPORTANT:
+                 *
+                 * Do not set paymentStatus to "failed"
+                 * because "failed" is not part of the
+                 * Booking schema enum.
+                 *
+                 * We simply log the failure.
                  */
 
                 if (
-                    booking.paymentStatus !==
+                    booking.paymentStatus ===
                     "paid"
                 ) {
 
-                    booking.paymentStatus =
-                        "failed";
-
-
-                    await booking.save();
-
                     console.log(
-                        "❌ ASYNC PAYMENT FAILED"
+                        "ℹ️ Booking is already paid. Ignoring async payment failure."
                     );
 
+                } else {
+
                     console.log(
-                        "Booking:",
-                        booking._id.toString()
+                        "⚠️ Async payment failed. Booking remains pending."
                     );
 
                 }
@@ -362,6 +536,12 @@ export const handleStripeWebhook = async (req, res) => {
 
                 const session =
                     event.data.object;
+
+
+                console.log(
+                    "EXPIRED CHECKOUT SESSION:",
+                    session.id
+                );
 
 
                 const bookingId =
@@ -397,29 +577,31 @@ export const handleStripeWebhook = async (req, res) => {
 
 
                 /*
-                 * Only mark expired if payment
-                 * has NOT already completed.
+                 * IMPORTANT:
+                 *
+                 * Do not set paymentStatus to "expired"
+                 * because "expired" is not part of the
+                 * Booking schema enum.
+                 *
+                 * Keep the booking pending.
+                 *
+                 * Your application can later reuse or
+                 * cancel stale pending bookings.
                  */
 
                 if (
-                    booking.paymentStatus !==
+                    booking.paymentStatus ===
                     "paid"
                 ) {
 
-                    booking.paymentStatus =
-                        "expired";
-
-
-                    await booking.save();
-
-
                     console.log(
-                        "⌛ CHECKOUT SESSION EXPIRED"
+                        "ℹ️ Checkout expired event received, but booking is already paid."
                     );
 
+                } else {
+
                     console.log(
-                        "Booking:",
-                        booking._id.toString()
+                        "⌛ Checkout session expired. Booking remains pending."
                     );
 
                 }
@@ -430,7 +612,7 @@ export const handleStripeWebhook = async (req, res) => {
 
 
             // ======================================================
-            // OTHER EVENTS
+            // OTHER STRIPE EVENTS
             // ======================================================
 
             default: {
@@ -451,7 +633,9 @@ export const handleStripeWebhook = async (req, res) => {
         // ============================================================
 
         return res.status(200).json({
+
             received: true,
+
         });
 
 
