@@ -92,7 +92,12 @@ const BookSession = () => {
                 "pending"
             ) {
                 const response = await api.get(
-                    "/payments/resume-checkout-session"
+                    "/payments/resume-checkout-session",
+                    {
+                        params: {
+                            bookingId: activeBooking._id,
+                        },
+                    }
                 );
 
                 const checkoutUrl =
@@ -109,7 +114,6 @@ const BookSession = () => {
 
                 return;
             }
-
             /*
              * No active booking.
              *
