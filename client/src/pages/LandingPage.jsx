@@ -1342,25 +1342,182 @@ const LandingPage = () => {
                 FOOTER
             ================================================== */}
 
+            {/* ==================================================
+    FOOTER
+================================================== */}
+
             <footer className="landing-footer">
 
-                <div className="landing-container footer-grid">
+                {/* ==================================================
+        DESKTOP FOOTER
+    ================================================== */}
+
+                <div className="landing-desktop-footer">
+
+                    <div className="landing-container footer-grid">
 
 
-                    {/* ===============================
-                        FOOTER BRAND
-                    =============================== */}
+                        {/* FOOTER BRAND */}
 
-                    <div className="footer-brand">
+                        <div className="footer-brand">
 
-                        <div className="footer-logo">
+                            <div className="footer-logo">
 
-                            <div className="logo-mark">
-                                🍁
+                                <div className="logo-mark">
+                                    🍁
+                                </div>
+
+                                <div className="logo-text">
+
+                                    <strong>
+                                        Canada RN
+                                    </strong>
+
+                                    <span>
+                                        Mentorship
+                                    </span>
+
+                                </div>
+
                             </div>
 
-                            <div className="logo-text">
 
+                            <p>
+                                Guidance. Support. Success.
+                                <br />
+                                Every step of the way.
+                            </p>
+
+                        </div>
+
+
+
+                        {/* QUICK LINKS */}
+
+                        <div className="footer-column">
+
+                            <h4>
+                                Quick Links
+                            </h4>
+
+                            <a href="#home">
+                                Home
+                            </a>
+
+                            <a href="#about">
+                                About
+                            </a>
+
+                            <a href="#how-it-works">
+                                How It Works
+                            </a>
+
+                            <a href="#resources">
+                                Resources
+                            </a>
+
+                        </div>
+
+
+
+                        {/* MORE */}
+
+                        <div className="footer-column">
+
+                            <h4>
+                                More
+                            </h4>
+
+                            <a href="#mentorship">
+                                Mentorship
+                            </a>
+
+                            <a href="#faq">
+                                FAQ
+                            </a>
+
+                            <button
+                                type="button"
+                                onClick={
+                                    user
+                                        ? () => navigate("/dashboard")
+                                        : () => navigate("/login")
+                                }
+                            >
+                                {user ? "Dashboard" : "Log In"}
+                            </button>
+
+                        </div>
+
+
+
+                        {/* LEGAL */}
+
+                        <div className="footer-column">
+
+                            <h4>
+                                Legal
+                            </h4>
+
+                            <span>
+                                Terms of Service
+                            </span>
+
+                            <span>
+                                Privacy Policy
+                            </span>
+
+                            <span>
+                                Disclaimer
+                            </span>
+
+                        </div>
+
+
+
+                        {/* CONNECT */}
+
+                        <div className="footer-column">
+
+                            <h4>
+                                Connect With Me
+                            </h4>
+
+                            <span>
+                                ✉ info@canadarnmentorship.com
+                            </span>
+
+                            <span>
+                                📍 Canada
+                            </span>
+
+                            <span>
+                                Future RNs in Canada
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                {/* ==================================================
+        MOBILE FOOTER
+    ================================================== */}
+
+                <div className="landing-mobile-footer">
+
+                    <div className="mobile-footer-brand">
+
+                        <div className="mobile-footer-logo">
+
+                            <span className="mobile-footer-logo-mark">
+                                🍁
+                            </span>
+
+                            <div>
                                 <strong>
                                     Canada RN
                                 </strong>
@@ -1368,172 +1525,150 @@ const LandingPage = () => {
                                 <span>
                                     Mentorship
                                 </span>
-
                             </div>
 
                         </div>
 
-
                         <p>
-
                             Guidance. Support. Success.
                             <br />
                             Every step of the way.
-
                         </p>
 
                     </div>
 
 
 
-                    {/* ===============================
-                        QUICK LINKS
-                    =============================== */}
+                    {/* QUICK LINKS */}
 
-                    <div className="footer-column">
+                    <details className="mobile-footer-accordion">
 
-                        <h4>
+                        <summary>
                             Quick Links
-                        </h4>
+                            <span>+</span>
+                        </summary>
+
+                        <div className="mobile-footer-links">
+
+                            <a href="#home">
+                                Home
+                            </a>
+
+                            <a href="#about">
+                                About
+                            </a>
+
+                            <a href="#how-it-works">
+                                How It Works
+                            </a>
+
+                            <a href="#resources">
+                                Resources
+                            </a>
+
+                        </div>
+
+                    </details>
 
 
-                        <a href="#home">
-                            Home
-                        </a>
 
+                    {/* MORE */}
 
-                        <a href="#about">
-                            About
-                        </a>
+                    <details className="mobile-footer-accordion">
 
-
-                        <a href="#how-it-works">
-                            How It Works
-                        </a>
-
-
-                        <a href="#resources">
-                            Resources
-                        </a>
-
-                    </div>
-
-
-
-                    {/* ===============================
-                        MORE
-                    =============================== */}
-
-                    <div className="footer-column">
-
-                        <h4>
+                        <summary>
                             More
-                        </h4>
+                            <span>+</span>
+                        </summary>
 
+                        <div className="mobile-footer-links">
 
-                        <a href="#mentorship">
-                            Mentorship
-                        </a>
+                            <a href="#mentorship">
+                                Mentorship
+                            </a>
 
+                            <a href="#faq">
+                                FAQ
+                            </a>
 
-                        <a href="#faq">
-                            FAQ
-                        </a>
+                            <button
+                                type="button"
+                                onClick={
+                                    user
+                                        ? () => navigate("/dashboard")
+                                        : () => navigate("/login")
+                                }
+                            >
+                                {user ? "Dashboard" : "Log In"}
+                            </button>
 
+                        </div>
 
-                        <button
-                            type="button"
-                            onClick={
-                                user
-                                    ? () =>
-                                        navigate(
-                                            "/dashboard"
-                                        )
-                                    : () =>
-                                        navigate(
-                                            "/login"
-                                        )
-                            }
-                        >
-
-                            {user
-                                ? "Dashboard"
-                                : "Log In"}
-
-                        </button>
-
-                    </div>
+                    </details>
 
 
 
-                    {/* ===============================
-                        LEGAL
-                    =============================== */}
+                    {/* LEGAL */}
 
-                    <div className="footer-column">
+                    <details className="mobile-footer-accordion">
 
-                        <h4>
+                        <summary>
                             Legal
-                        </h4>
+                            <span>+</span>
+                        </summary>
+
+                        <div className="mobile-footer-links">
+
+                            <button type="button">
+                                Terms of Service
+                            </button>
+
+                            <button type="button">
+                                Privacy Policy
+                            </button>
+
+                            <button type="button">
+                                Disclaimer
+                            </button>
+
+                        </div>
+
+                    </details>
 
 
-                        <span>
-                            Terms of Service
-                        </span>
 
+                    {/* CONNECT */}
 
-                        <span>
-                            Privacy Policy
-                        </span>
+                    <details className="mobile-footer-accordion">
 
-
-                        <span>
-                            Disclaimer
-                        </span>
-
-                    </div>
-
-
-
-                    {/* ===============================
-                        CONNECT
-                    =============================== */}
-
-                    <div className="footer-column">
-
-                        <h4>
+                        <summary>
                             Connect With Me
-                        </h4>
+                            <span>+</span>
+                        </summary>
+
+                        <div className="mobile-footer-links">
+
+                            <span>
+                                ✉ info@canadarnmentorship.com
+                            </span>
+
+                            <span>
+                                📍 Canada
+                            </span>
+
+                            <span>
+                                Future RNs in Canada
+                            </span>
+
+                        </div>
+
+                    </details>
 
 
-                        <span>
-                            ✉ info@canadarnmentorship.com
-                        </span>
 
+                    {/* COPYRIGHT */}
 
-                        <span>
-                            📍 Canada
-                        </span>
-
-
-                        <span>
-                            Future RNs in Canada
-                        </span>
-
-                    </div>
-
-
-                </div>
-
-
-
-                {/* ===============================
-                    FOOTER BOTTOM
-                =============================== */}
-
-                <div className="footer-bottom">
-
-                    <div className="landing-container">
+                    <div className="mobile-footer-bottom">
 
                         © 2026 Canada RN Mentorship.
                         All rights reserved.
