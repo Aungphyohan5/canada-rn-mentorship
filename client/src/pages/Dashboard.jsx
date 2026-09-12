@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-    useNavigate,
-    useLocation,
-} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../services/api";
@@ -37,23 +34,17 @@ const Dashboard = () => {
     // STATE
     // =========================================================
 
-    const [profile, setProfile] =
-        useState(null);
+    const [profile, setProfile] = useState(null);
 
-    const [pathway, setPathway] =
-        useState(null);
+    const [pathway, setPathway] = useState(null);
 
-    const [bookings, setBookings] =
-        useState([]);
+    const [bookings, setBookings] = useState([]);
 
-    const [loading, setLoading] =
-        useState(true);
+    const [loading, setLoading] = useState(true);
 
-    const [error, setError] =
-        useState("");
+    const [error, setError] = useState("");
 
-    const [paymentError, setPaymentError] =
-        useState("");
+    const [paymentError, setPaymentError] = useState("");
 
 
     // =========================================================
@@ -61,11 +52,15 @@ const Dashboard = () => {
     // =========================================================
 
     useEffect(() => {
+
         const fetchDashboardData = async () => {
+
             try {
+
                 setLoading(true);
                 setError("");
                 setPaymentError("");
+
 
                 // =====================================================
                 // PROFILE
@@ -74,6 +69,7 @@ const Dashboard = () => {
                 let profileResponse;
 
                 try {
+
                     profileResponse = await api.get(
                         "/nurse-profile/me"
                     );
@@ -83,24 +79,23 @@ const Dashboard = () => {
                     );
 
                 } catch (profileError) {
-                    /*
-                     * A new user may not have a NurseProfile yet.
-                     *
-                     * In that case, send them to onboarding.
-                     */
 
                     if (
                         profileError.response?.status === 404
                     ) {
+
                         navigate("/onboarding", {
                             replace: true,
                         });
 
                         return;
+
                     }
 
                     throw profileError;
+
                 }
+
 
                 // =====================================================
                 // PATHWAY
@@ -114,47 +109,54 @@ const Dashboard = () => {
                     pathwayResponse.data?.data || null
                 );
 
+
                 // =====================================================
                 // BOOKINGS
                 // =====================================================
 
-                let bookingsResponse = await api.get(
+                const bookingsResponse = await api.get(
                     "/bookings/me"
                 );
 
                 let userBookings =
-                    bookingsResponse.data
-                        ?.data
-                        ?.bookings || [];
+                    bookingsResponse.data?.data?.bookings || [];
+
 
                 // =====================================================
-                // CALENDLY SYNC
+                // CALENDLY SYNCHRONIZATION
                 // =====================================================
 
-                const bookingToSync =
-                    userBookings.find(
-                        (booking) =>
+                const bookingToSync = userBookings.find(
+                    (booking) => {
+
+                        const isMentorship =
                             booking.sessionType ===
-                            "Canada RN Mentorship Session" &&
+                            MENTORSHIP_SESSION_TYPE;
 
-                            booking.paymentStatus ===
-                            "paid" &&
+                        const isPaid =
+                            booking.paymentStatus === "paid";
 
+                        const needsSync =
+                            booking.bookingStatus === "pending" ||
                             (
-                                booking.bookingStatus ===
-                                "pending" ||
+                                booking.bookingStatus === "scheduled" &&
+                                !booking.zoomJoinUrl
+                            );
 
-                                (
-                                    booking.bookingStatus ===
-                                    "scheduled" &&
+                        return (
+                            isMentorship &&
+                            isPaid &&
+                            needsSync
+                        );
 
-                                    !booking.zoomJoinUrl
-                                )
-                            )
-                    );
+                    }
+                );
+
 
                 if (bookingToSync) {
+
                     try {
+
                         console.log(
                             "Checking Calendly for booking:",
                             bookingToSync._id
@@ -165,25 +167,26 @@ const Dashboard = () => {
                         );
 
                         const updatedBookingsResponse =
-                            await api.get(
-                                "/bookings/me"
-                            );
+                            await api.get("/bookings/me");
 
                         userBookings =
-                            updatedBookingsResponse
-                                .data
+                            updatedBookingsResponse.data
                                 ?.data
                                 ?.bookings || [];
 
                     } catch (calendlyError) {
+
                         console.error(
                             "CALENDLY SYNC ERROR:",
                             calendlyError.response?.data ||
                             calendlyError.message ||
                             calendlyError
                         );
+
                     }
+
                 }
+
 
                 // =====================================================
                 // SAVE BOOKINGS
@@ -191,25 +194,32 @@ const Dashboard = () => {
 
                 setBookings(userBookings);
 
-            } catch (error) {
+            } catch (dashboardError) {
+
                 console.error(
                     "DASHBOARD DATA ERROR:",
-                    error
+                    dashboardError
                 );
 
                 setError(
-                    error.response?.data?.message ||
+                    dashboardError.response?.data?.message ||
                     "Unable to load dashboard data."
                 );
 
             } finally {
+
                 setLoading(false);
+
             }
+
         };
+
 
         fetchDashboardData();
 
     }, [navigate]);
+
+
     // =========================================================
     // SCROLL TO SECTION
     // =========================================================
@@ -220,37 +230,27 @@ const Dashboard = () => {
             return;
         }
 
-
         const sectionId =
             location.hash.substring(1);
 
+        const timer = setTimeout(() => {
 
-        const timer =
-            setTimeout(() => {
+            const element =
+                document.getElementById(sectionId);
 
-                const element =
-                    document.getElementById(
-                        sectionId
-                    );
+            if (!element) {
+                return;
+            }
 
+            element.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
 
-                if (!element) {
-                    return;
-                }
-
-
-                element.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                });
-
-            }, 150);
-
+        }, 150);
 
         return () => {
-
             clearTimeout(timer);
-
         };
 
     }, [
@@ -263,14 +263,11 @@ const Dashboard = () => {
     // CONTINUE STRIPE PAYMENT
     // =========================================================
 
-    const handleContinuePayment = async (
-        bookingId
-    ) => {
+    const handleContinuePayment = async (bookingId) => {
 
         try {
 
             setPaymentError("");
-
 
             if (!bookingId) {
 
@@ -280,75 +277,48 @@ const Dashboard = () => {
 
             }
 
-
             console.log(
                 "RESUMING PAYMENT FOR BOOKING:",
                 bookingId
             );
 
-
-            const response =
-                await api.get(
-                    "/payments/resume-checkout-session",
-                    {
-                        params: {
-                            bookingId,
-                        },
-                    }
-                );
-
+            const response = await api.get(
+                "/payments/resume-checkout-session",
+                {
+                    params: {
+                        bookingId,
+                    },
+                }
+            );
 
             console.log(
                 "RESUME PAYMENT RESPONSE:",
                 response.data
             );
 
-
             const responseData =
                 response?.data || {};
-
 
             const code =
                 responseData.code;
 
-
             const checkoutUrl =
-                responseData
-                    ?.data
-                    ?.checkoutUrl;
+                responseData?.data?.checkoutUrl;
 
 
             // =====================================================
-            // PAYMENT RECOVERED
+            // PAYMENT ALREADY COMPLETED
             // =====================================================
 
             if (
-                code ===
-                "PAYMENT_RECOVERED" ||
-
-                code ===
-                "PAYMENT_ALREADY_COMPLETED" ||
-
-                code ===
-                "ALREADY_PAID"
+                code === "PAYMENT_RECOVERED" ||
+                code === "PAYMENT_ALREADY_COMPLETED" ||
+                code === "ALREADY_PAID"
             ) {
 
                 console.log(
                     "PAYMENT ALREADY COMPLETED."
                 );
-
-
-                /*
-                 * The payment is already complete.
-                 *
-                 * Do NOT send the user back to Stripe.
-                 *
-                 * Reload the dashboard so that:
-                 *
-                 * paymentStatus = paid
-                 *
-                 * then Calendly synchronization can run.
-                 */
 
                 window.location.reload();
 
@@ -358,7 +328,7 @@ const Dashboard = () => {
 
 
             // =====================================================
-            // NORMAL PENDING STRIPE CHECKOUT
+            // CONTINUE NORMAL CHECKOUT
             // =====================================================
 
             if (!checkoutUrl) {
@@ -369,25 +339,18 @@ const Dashboard = () => {
 
             }
 
+            window.location.href = checkoutUrl;
 
-            window.location.href =
-                checkoutUrl;
-
-
-        } catch (error) {
+        } catch (paymentRequestError) {
 
             console.error(
                 "CONTINUE PAYMENT ERROR:",
-                error
+                paymentRequestError
             );
 
-
             setPaymentError(
-                error
-                    ?.response
-                    ?.data
-                    ?.message ||
-                error?.message ||
+                paymentRequestError?.response?.data?.message ||
+                paymentRequestError?.message ||
                 "Unable to resume payment."
             );
 
@@ -402,8 +365,7 @@ const Dashboard = () => {
 
     const handleScheduleSession = () => {
 
-        window.location.href =
-            CALENDLY_URL;
+        window.location.href = CALENDLY_URL;
 
     };
 
@@ -412,16 +374,11 @@ const Dashboard = () => {
     // OPEN ZOOM
     // =========================================================
 
-    const handleJoinZoom = (
-        zoomJoinUrl
-    ) => {
+    const handleJoinZoom = (zoomJoinUrl) => {
 
         if (!zoomJoinUrl) {
-
             return;
-
         }
-
 
         window.open(
             zoomJoinUrl,
@@ -433,7 +390,7 @@ const Dashboard = () => {
 
 
     // =========================================================
-    // LOADING
+    // LOADING STATE
     // =========================================================
 
     if (loading) {
@@ -462,7 +419,7 @@ const Dashboard = () => {
 
 
     // =========================================================
-    // ERROR
+    // ERROR STATE
     // =========================================================
 
     if (error) {
@@ -476,9 +433,7 @@ const Dashboard = () => {
                     <div className="dashboard-card">
 
                         <p className="booking-error">
-
                             {error}
-
                         </p>
 
                     </div>
@@ -496,81 +451,55 @@ const Dashboard = () => {
     // MENTORSHIP BOOKINGS ONLY
     // =========================================================
 
-    const mentorshipBookings =
-        bookings.filter(
-            (booking) =>
-
-                booking.sessionType ===
-                MENTORSHIP_SESSION_TYPE &&
-
-                booking.paymentStatus !==
-                "cancelled"
-        );
+    const mentorshipBookings = bookings.filter(
+        (booking) =>
+            booking.sessionType === MENTORSHIP_SESSION_TYPE &&
+            booking.paymentStatus !== "cancelled"
+    );
 
 
     // =========================================================
     // CURRENT PAID BOOKING
     // =========================================================
 
-    const paidBooking =
-        mentorshipBookings.find(
-            (booking) =>
-
-                booking.paymentStatus ===
-                "paid" &&
-
-                (
-                    booking.bookingStatus ===
-                    "pending" ||
-
-                    booking.bookingStatus ===
-                    "scheduled"
-                )
-        );
+    const paidBooking = mentorshipBookings.find(
+        (booking) =>
+            booking.paymentStatus === "paid" &&
+            (
+                booking.bookingStatus === "pending" ||
+                booking.bookingStatus === "scheduled"
+            )
+    );
 
 
     // =========================================================
     // ACTIVE MENTORSHIP BOOKING
     // =========================================================
 
-    const hasActiveMentorshipBooking =
-        mentorshipBookings.some(
-            (booking) =>
-
-                booking.paymentStatus ===
-                "pending" ||
-
+    const hasActiveMentorshipBooking = mentorshipBookings.some(
+        (booking) =>
+            booking.paymentStatus === "pending" ||
+            (
+                booking.paymentStatus === "paid" &&
                 (
-                    booking.paymentStatus ===
-                    "paid" &&
-
-                    (
-                        booking.bookingStatus ===
-                        "pending" ||
-
-                        booking.bookingStatus ===
-                        "scheduled"
-                    )
+                    booking.bookingStatus === "pending" ||
+                    booking.bookingStatus === "scheduled"
                 )
-        );
+            )
+    );
 
 
     // =========================================================
     // PATHWAY PROGRESS
     // =========================================================
 
-    const completionPercentage =
-        Math.min(
-            100,
-            Math.max(
-                0,
-                Number(
-                    pathway
-                        ?.completionPercentage ||
-                    0
-                )
-            )
-        );
+    const completionPercentage = Math.min(
+        100,
+        Math.max(
+            0,
+            Number(pathway?.completionPercentage || 0)
+        )
+    );
 
 
     // =========================================================
@@ -597,24 +526,14 @@ const Dashboard = () => {
                         CANADA RN MENTORSHIP
                     </p>
 
-
                     <h1>
-
                         Welcome back,{" "}
-
-                        {user?.firstName ||
-                            "there"}
-
-                        {" "}👋
-
+                        {user?.firstName || "there"} 👋
                     </h1>
 
-
                     <p>
-
                         Continue your journey toward
                         becoming an RN in Canada.
-
                     </p>
 
                 </div>
@@ -643,11 +562,8 @@ const Dashboard = () => {
 
                         </div>
 
-
                         <div className="progress-number">
-
                             {completionPercentage}%
-
                         </div>
 
                     </div>
@@ -658,8 +574,7 @@ const Dashboard = () => {
                         <div
                             className="progress-bar-fill"
                             style={{
-                                width:
-                                    `${completionPercentage}%`,
+                                width: `${completionPercentage}%`,
                             }}
                         />
 
@@ -668,14 +583,9 @@ const Dashboard = () => {
 
                     <p className="progress-text">
 
-                        {pathway?.completedSteps ||
-                            0}
-
+                        {pathway?.completedSteps || 0}
                         {" "}of{" "}
-
-                        {pathway?.totalSteps ||
-                            0}
-
+                        {pathway?.totalSteps || 0}
                         {" "}steps completed
 
                     </p>
@@ -685,66 +595,53 @@ const Dashboard = () => {
 
                         {pathway?.steps?.length ? (
 
-                            pathway.steps.map(
-                                (step) => {
+                            pathway.steps.map((step) => {
 
-                                    const completed =
-                                        step.status ===
-                                        "Completed" ||
+                                const completed =
+                                    step.status === "Completed" ||
+                                    step.status === "Passed";
 
-                                        step.status ===
-                                        "Passed";
+                                return (
 
-
-                                    return (
+                                    <div
+                                        className="journey-step"
+                                        key={step.key}
+                                    >
 
                                         <div
-                                            className="journey-step"
-                                            key={step.key}
+                                            className={
+                                                completed
+                                                    ? "step-icon completed"
+                                                    : "step-icon"
+                                            }
                                         >
 
-                                            <div
-                                                className={
-                                                    completed
-                                                        ? "step-icon completed"
-                                                        : "step-icon"
-                                                }
-                                            >
-
-                                                {completed
-                                                    ? "✓"
-                                                    : "○"}
-
-                                            </div>
-
-
-                                            <div>
-
-                                                <strong>
-                                                    {step.name}
-                                                </strong>
-
-
-                                                <span>
-                                                    {step.status}
-                                                </span>
-
-                                            </div>
+                                            {completed ? "✓" : "○"}
 
                                         </div>
 
-                                    );
+                                        <div>
 
-                                }
-                            )
+                                            <strong>
+                                                {step.name}
+                                            </strong>
+
+                                            <span>
+                                                {step.status}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                );
+
+                            })
 
                         ) : (
 
                             <p className="booking-status-message">
-
-                                Your pathway steps will
-                                appear here.
-
+                                Your pathway steps will appear here.
                             </p>
 
                         )}
@@ -755,7 +652,7 @@ const Dashboard = () => {
 
 
                 {/* =================================================
-                    CURRENT MENTORSHIP BOOKING
+                    CURRENT PAID MENTORSHIP BOOKING
                 ================================================== */}
 
                 {paidBooking && (
@@ -770,18 +667,14 @@ const Dashboard = () => {
                                     MENTORSHIP BOOKING
                                 </p>
 
-
                                 <h2>
                                     Canada RN Mentorship Session
                                 </h2>
 
                             </div>
 
-
                             <div className="booking-paid-badge">
-
                                 ✓ Paid
-
                             </div>
 
                         </div>
@@ -795,12 +688,8 @@ const Dashboard = () => {
                                     Duration
                                 </span>
 
-
                                 <strong>
-
-                                    {paidBooking.durationMinutes}
-                                    {" "}minutes
-
+                                    {paidBooking.durationMinutes} minutes
                                 </strong>
 
                             </div>
@@ -812,14 +701,9 @@ const Dashboard = () => {
                                     Amount
                                 </span>
 
-
                                 <strong>
-
-                                    CA$
-                                    {paidBooking.amount}
-                                    {" "}
+                                    CA${paidBooking.amount}{" "}
                                     {paidBooking.currency}
-
                                 </strong>
 
                             </div>
@@ -831,14 +715,11 @@ const Dashboard = () => {
                                     Status
                                 </span>
 
-
                                 <strong>
 
                                     {paidBooking.bookingStatus ===
                                         "scheduled"
-
                                         ? "Scheduled"
-
                                         : "Ready to Schedule"}
 
                                 </strong>
@@ -847,10 +728,6 @@ const Dashboard = () => {
 
                         </div>
 
-
-                        {/* =================================================
-                            SCHEDULED
-                        ================================================== */}
 
                         {paidBooking.bookingStatus ===
                             "scheduled" && (
@@ -871,16 +748,12 @@ const Dashboard = () => {
                                                 ).toLocaleString(
                                                     undefined,
                                                     {
-                                                        dateStyle:
-                                                            "medium",
-                                                        timeStyle:
-                                                            "short",
+                                                        dateStyle: "medium",
+                                                        timeStyle: "short",
                                                     }
                                                 )}
 
-                                            </strong>
-
-                                            .
+                                            </strong>.
 
                                         </p>
 
@@ -907,9 +780,8 @@ const Dashboard = () => {
 
                                         <p className="booking-status-message">
 
-                                            Your appointment is
-                                            confirmed. The Zoom
-                                            meeting link will appear
+                                            Your appointment is confirmed.
+                                            The Zoom meeting link will appear
                                             here once it is available.
 
                                         </p>
@@ -921,10 +793,6 @@ const Dashboard = () => {
                             )}
 
 
-                        {/* =================================================
-                            PAID BUT NOT SCHEDULED
-                        ================================================== */}
-
                         {paidBooking.bookingStatus ===
                             "pending" && (
 
@@ -934,18 +802,14 @@ const Dashboard = () => {
 
                                         Your payment is confirmed.
                                         Choose a date and time for
-                                        your 45-minute mentorship
-                                        session.
+                                        your mentorship session.
 
                                     </p>
-
 
                                     <button
                                         type="button"
                                         className="primary-button"
-                                        onClick={
-                                            handleScheduleSession
-                                        }
+                                        onClick={handleScheduleSession}
                                     >
 
                                         Schedule My Session →
@@ -981,11 +845,9 @@ const Dashboard = () => {
                             PROFILE
                         </p>
 
-
                         <h2>
                             Your Nurse Profile
                         </h2>
-
 
                         <p className="card-description">
 
@@ -995,23 +857,17 @@ const Dashboard = () => {
 
                         </p>
 
-
                         <div className="profile-summary">
 
                             <span>
                                 Specialty
                             </span>
 
-
                             <strong>
-
-                                {profile?.specialty ||
-                                    "Not provided"}
-
+                                {profile?.specialty || "Not provided"}
                             </strong>
 
                         </div>
-
 
                         <div className="profile-summary">
 
@@ -1019,23 +875,17 @@ const Dashboard = () => {
                                 Preferred Province
                             </span>
 
-
                             <strong>
-
                                 {profile?.preferredProvince ||
                                     "Not provided"}
-
                             </strong>
 
                         </div>
 
-
                         <button
                             type="button"
                             className="card-link"
-                            onClick={() =>
-                                navigate("/profile")
-                            }
+                            onClick={() => navigate("/profile")}
                         >
 
                             View Profile →
@@ -1055,11 +905,9 @@ const Dashboard = () => {
                             NEXT STEP
                         </p>
 
-
                         <h2>
                             Provincial Registration
                         </h2>
-
 
                         <p className="card-description">
 
@@ -1069,11 +917,8 @@ const Dashboard = () => {
 
                         </p>
 
-
                         <div className="next-step-badge">
-
                             Not Started
-
                         </div>
 
                     </div>
@@ -1089,11 +934,9 @@ const Dashboard = () => {
                             ONE-ON-ONE MENTORSHIP
                         </p>
 
-
                         <h2>
                             Need personalized guidance?
                         </h2>
-
 
                         <p className="card-description">
 
@@ -1104,13 +947,11 @@ const Dashboard = () => {
 
                         </p>
 
-
                         <div className="mentorship-details">
 
                             <span>
                                 45 minutes
                             </span>
-
 
                             <span>
                                 CA$125 CAD
@@ -1125,9 +966,7 @@ const Dashboard = () => {
                                 type="button"
                                 className="primary-button"
                                 onClick={() =>
-                                    navigate(
-                                        "/book-session"
-                                    )
+                                    navigate("/book-session")
                                 }
                             >
 
@@ -1158,7 +997,7 @@ const Dashboard = () => {
 
 
                 {/* =================================================
-                    MY SESSIONS
+                    MENTORSHIP HISTORY
                 ================================================== */}
 
                 <div
@@ -1173,7 +1012,6 @@ const Dashboard = () => {
                             <p className="card-eyebrow">
                                 MY SESSIONS
                             </p>
-
 
                             <h2>
                                 Mentorship History
@@ -1191,38 +1029,30 @@ const Dashboard = () => {
                     {paymentError && (
 
                         <div className="booking-error">
-
                             {paymentError}
-
                         </div>
 
                     )}
 
 
                     {/* =================================================
-                        EMPTY
+                        EMPTY STATE
                     ================================================== */}
 
-                    {mentorshipBookings.length ===
-                        0 ? (
+                    {mentorshipBookings.length === 0 ? (
 
                         <div className="empty-sessions">
 
                             <p>
-
                                 You don't have any
                                 mentorship bookings yet.
-
                             </p>
-
 
                             <button
                                 type="button"
                                 className="primary-button"
                                 onClick={() =>
-                                    navigate(
-                                        "/book-session"
-                                    )
+                                    navigate("/book-session")
                                 }
                             >
 
@@ -1236,114 +1066,148 @@ const Dashboard = () => {
 
                         <div className="sessions-list">
 
-                            {mentorshipBookings.map(
-                                (booking) => {
+                            {mentorshipBookings.map((booking) => {
 
-                                    const isPaid =
-                                        booking.paymentStatus ===
-                                        "paid";
+                                const isPaid =
+                                    booking.paymentStatus === "paid";
 
 
-                                    const isPendingPayment =
-                                        booking.paymentStatus ===
-                                        "pending";
+                                const isCompleted =
+                                    booking.bookingStatus === "completed";
 
 
-                                    const isScheduled =
-                                        booking.bookingStatus ===
-                                        "scheduled";
+                                /*
+                                 * A meeting is considered scheduled when:
+                                 *
+                                 * 1. bookingStatus is scheduled, or
+                                 * 2. a Zoom link exists, or
+                                 * 3. a scheduled date exists.
+                                 *
+                                 * This prevents Continue Payment from
+                                 * appearing after the meeting has already
+                                 * been arranged.
+                                 */
+
+                                const isScheduled =
+                                    booking.bookingStatus === "scheduled" ||
+                                    Boolean(booking.zoomJoinUrl) ||
+                                    Boolean(booking.scheduledAt);
 
 
-                                    const isCompleted =
-                                        booking.bookingStatus ===
-                                        "completed";
+                                const isPendingPayment =
+                                    booking.paymentStatus === "pending" &&
+                                    !isScheduled;
 
 
-                                    return (
-
-                                        <div
-                                            className="session-item"
-                                            key={booking._id}
-                                        >
+                                const isPaidReadyToSchedule =
+                                    isPaid &&
+                                    !isScheduled &&
+                                    !isCompleted;
 
 
-                                            {/* =================================
-                                                INFORMATION
-                                            ================================== */}
+                                return (
 
-                                            <div className="session-main">
-
-                                                <h3>
-
-                                                    {
-                                                        booking.sessionType
-                                                    }
-
-                                                </h3>
+                                    <div
+                                        className="session-item"
+                                        key={booking._id}
+                                    >
 
 
-                                                <div className="session-meta">
+                                        {/* =================================
+                                            INFORMATION
+                                        ================================== */}
 
-                                                    <span>
+                                        <div className="session-main">
 
-                                                        {
-                                                            booking.durationMinutes
-                                                        }{" "}
-                                                        minutes
+                                            <h3>
+                                                {booking.sessionType}
+                                            </h3>
 
-                                                    </span>
+                                            <div className="session-meta">
 
+                                                <span>
+                                                    {booking.durationMinutes}
+                                                    {" "}minutes
+                                                </span>
 
-                                                    <span>
-
-                                                        CA$
-                                                        {
-                                                            booking.amount
-                                                        }{" "}
-                                                        {
-                                                            booking.currency
-                                                        }
-
-                                                    </span>
+                                                <span>
+                                                    CA${booking.amount}{" "}
+                                                    {booking.currency}
+                                                </span>
 
 
-                                                    {isScheduled &&
-                                                        booking.scheduledAt && (
+                                                {isScheduled &&
+                                                    booking.scheduledAt && (
 
-                                                            <span>
+                                                        <span>
 
-                                                                {new Date(
-                                                                    booking.scheduledAt
-                                                                ).toLocaleString(
-                                                                    undefined,
-                                                                    {
-                                                                        dateStyle:
-                                                                            "medium",
+                                                            {new Date(
+                                                                booking.scheduledAt
+                                                            ).toLocaleString(
+                                                                undefined,
+                                                                {
+                                                                    dateStyle:
+                                                                        "medium",
+                                                                    timeStyle:
+                                                                        "short",
+                                                                }
+                                                            )}
 
-                                                                        timeStyle:
-                                                                            "short",
-                                                                    }
-                                                                )}
+                                                        </span>
 
-                                                            </span>
-
-                                                        )}
-
-                                                </div>
+                                                    )}
 
                                             </div>
 
-
-                                            {/* =================================
-                                                STATUS
-                                            ================================== */}
-
-                                            <div className="session-status">
+                                        </div>
 
 
-                                                {/* Pending Payment */}
+                                        {/* =================================
+                                            STATUS
+                                        ================================== */}
 
-                                                {isPendingPayment && (
+                                        <div className="session-status">
+
+
+                                            {isCompleted && (
+
+                                                <span className="status-badge completed">
+
+                                                    ✓ Completed
+
+                                                </span>
+
+                                            )}
+
+
+                                            {!isCompleted &&
+                                                isScheduled && (
+
+                                                    <span className="status-badge scheduled">
+
+                                                        ✓ Scheduled
+
+                                                    </span>
+
+                                                )}
+
+
+                                            {!isCompleted &&
+                                                !isScheduled &&
+                                                isPaidReadyToSchedule && (
+
+                                                    <span className="status-badge not-scheduled">
+
+                                                        ✓ Paid · Ready to Schedule
+
+                                                    </span>
+
+                                                )}
+
+
+                                            {!isCompleted &&
+                                                !isScheduled &&
+                                                isPendingPayment && (
 
                                                     <span className="status-badge pending">
 
@@ -1353,149 +1217,98 @@ const Dashboard = () => {
 
                                                 )}
 
-
-                                                {/* Paid / Ready */}
-
-                                                {isPaid &&
-                                                    !isScheduled &&
-                                                    !isCompleted && (
-
-                                                        <span className="status-badge not-scheduled">
-
-                                                            ✓ Paid · Ready to Schedule
-
-                                                        </span>
-
-                                                    )}
-
-
-                                                {/* Scheduled */}
-
-                                                {isPaid &&
-                                                    isScheduled &&
-                                                    !isCompleted && (
-
-                                                        <span className="status-badge scheduled">
-
-                                                            ✓ Scheduled
-
-                                                        </span>
-
-                                                    )}
-
-
-                                                {/* Completed */}
-
-                                                {isCompleted && (
-
-                                                    <span className="status-badge completed">
-
-                                                        ✓ Completed
-
-                                                    </span>
-
-                                                )}
-
-                                            </div>
-
-
-                                            {/* =================================
-    PENDING PAYMENT
-================================== */}
-
-                                            {isPendingPayment &&
-                                                !isScheduled &&
-                                                !booking.zoomJoinUrl && (
-
-                                                    <button
-                                                        type="button"
-                                                        className="secondary-button"
-                                                        onClick={() =>
-                                                            handleContinuePayment(
-                                                                booking._id
-                                                            )
-                                                        }
-                                                    >
-
-                                                        Continue Payment →
-
-                                                    </button>
-
-                                                )}
-
-
-                                            {/* =================================
-                                                PAID / NOT SCHEDULED
-                                            ================================== */}
-
-                                            {isPaid &&
-                                                !isScheduled &&
-                                                !isCompleted && (
-
-                                                    <button
-                                                        type="button"
-                                                        className="secondary-button"
-                                                        onClick={
-                                                            handleScheduleSession
-                                                        }
-                                                    >
-
-                                                        Schedule →
-
-                                                    </button>
-
-                                                )}
-
-
-                                            {/* =================================
-                                                SCHEDULED / ZOOM
-                                            ================================== */}
-
-                                            {isPaid &&
-                                                isScheduled &&
-                                                booking.zoomJoinUrl && (
-
-                                                    <button
-                                                        type="button"
-                                                        className="primary-button"
-                                                        onClick={() =>
-                                                            handleJoinZoom(
-                                                                booking.zoomJoinUrl
-                                                            )
-                                                        }
-                                                    >
-
-                                                        Join Zoom →
-
-                                                    </button>
-
-                                                )}
-
-
-                                            {/* =================================
-                                                SCHEDULED BUT NO ZOOM YET
-                                            ================================== */}
-
-                                            {isPaid &&
-                                                isScheduled &&
-                                                !booking.zoomJoinUrl && (
-
-                                                    <span className="booking-status-message">
-
-                                                        Zoom link will
-                                                        appear here when
-                                                        available.
-
-                                                    </span>
-
-                                                )}
-
                                         </div>
 
-                                    );
 
-                                }
-                            )}
+                                        {/* =================================
+                                            CONTINUE PAYMENT
+                                        ================================== */}
+
+                                        {isPendingPayment && (
+
+                                            <button
+                                                type="button"
+                                                className="secondary-button"
+                                                onClick={() =>
+                                                    handleContinuePayment(
+                                                        booking._id
+                                                    )
+                                                }
+                                            >
+
+                                                Continue Payment →
+
+                                            </button>
+
+                                        )}
+
+
+                                        {/* =================================
+                                            PAID / NOT SCHEDULED
+                                        ================================== */}
+
+                                        {isPaidReadyToSchedule && (
+
+                                            <button
+                                                type="button"
+                                                className="secondary-button"
+                                                onClick={handleScheduleSession}
+                                            >
+
+                                                Schedule →
+
+                                            </button>
+
+                                        )}
+
+
+                                        {/* =================================
+                                            SCHEDULED / ZOOM
+                                        ================================== */}
+
+                                        {isScheduled &&
+                                            booking.zoomJoinUrl && (
+
+                                                <button
+                                                    type="button"
+                                                    className="primary-button"
+                                                    onClick={() =>
+                                                        handleJoinZoom(
+                                                            booking.zoomJoinUrl
+                                                        )
+                                                    }
+                                                >
+
+                                                    Join Zoom →
+
+                                                </button>
+
+                                            )}
+
+
+                                        {/* =================================
+                                            SCHEDULED WITHOUT ZOOM
+                                        ================================== */}
+
+                                        {isScheduled &&
+                                            !booking.zoomJoinUrl &&
+                                            !isCompleted && (
+
+                                                <span className="booking-status-message">
+
+                                                    Your session is scheduled.
+                                                    The Zoom link will appear
+                                                    here when available.
+
+                                                </span>
+
+                                            )}
+
+                                    </div>
+
+                                );
+
+                            })}
 
                         </div>
 
