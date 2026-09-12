@@ -154,77 +154,61 @@ const markBookingAsPaid = async ({
     }
 
 
-    // ========================================================
-    // SEND PAYMENT CONFIRMATION EMAIL
-    // ========================================================
+    // ============================================================
+    // SEND PAYMENT CONFIRMATION EMAIL WITHOUT BLOCKING WEBHOOK
+    // ============================================================
 
     if (
         booking.user?.email &&
         !booking.paymentConfirmationSent
     ) {
+        const emailData = {
+            to: booking.user.email,
+            firstName: booking.user.firstName,
+            amount: booking.amount,
+            currency: booking.currency,
+            sessionType: booking.sessionType,
+        };
 
-        try {
+        // Do not await this.
+        // Email failure must not delay Stripe's webhook response.
+        void sendPaymentReceivedEmail(emailData)
+            .then(async () => {
+                await Booking.updateOne(
+                    {
+                        _id: booking._id,
+                        paymentConfirmationSent: false,
+                    },
+                    {
+                        $set: {
+                            paymentConfirmationSent: true,
+                        },
+                    }
+                );
 
-            await sendPaymentReceivedEmail({
-
-                to:
-                    booking.user.email,
-
-                firstName:
-                    booking.user.firstName,
-
-                amount:
-                    booking.amount,
-
-                currency:
-                    booking.currency,
-
-                sessionType:
-                    booking.sessionType,
-
+                console.log(
+                    "📧 PAYMENT CONFIRMATION EMAIL SENT TO:",
+                    booking.user.email
+                );
+            })
+            .catch((emailError) => {
+                console.error(
+                    "❌ PAYMENT CONFIRMATION EMAIL FAILED:",
+                    emailError.message
+                );
             });
-
-
-            booking.paymentConfirmationSent =
-                true;
-
-
-            await booking.save();
-
-
-            console.log(
-                "📧 PAYMENT CONFIRMATION EMAIL SENT TO:",
-                booking.user.email
-            );
-
-
-        } catch (emailError) {
-
-            /*
-             * Email failure must not undo payment.
-             */
-
-            console.error(
-                "❌ PAYMENT CONFIRMATION EMAIL FAILED:",
-                emailError.message
-            );
-
-        }
 
     } else if (
         booking.paymentConfirmationSent
     ) {
-
         console.log(
             "ℹ️ Payment confirmation email already sent."
         );
 
     } else {
-
         console.warn(
             "⚠️ No customer email found. Payment email not sent."
         );
-
     }
 
 

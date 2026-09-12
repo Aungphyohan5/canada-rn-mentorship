@@ -1,13 +1,66 @@
 import nodemailer from "nodemailer";
 
 
+// ============================================================
+// EMAIL TRANSPORTER
+// ============================================================
+
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD,
     },
+
+    // Prefer IPv4 because Render reported an IPv6 connection error
+    family: 4,
+
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
 });
+
+
+// ============================================================
+// COMMON EMAIL SENDER
+// ============================================================
+
+const sendEmail = async (mailOptions) => {
+    if (!process.env.EMAIL_USER) {
+        throw new Error("EMAIL_USER is not configured.");
+    }
+
+    if (!process.env.EMAIL_APP_PASSWORD) {
+        throw new Error("EMAIL_APP_PASSWORD is not configured.");
+    }
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+
+        console.log(
+            "📧 Email sent successfully:",
+            info.messageId
+        );
+
+        return info;
+
+    } catch (error) {
+        console.error(
+            "❌ Email sending failed:",
+            error.message
+        );
+
+        throw error;
+    }
+};
+
+
+// ============================================================
+// MENTORSHIP SCHEDULING CONFIRMATION EMAIL
+// ============================================================
 
 export const sendMentorshipConfirmationEmail = async ({
     to,
@@ -26,6 +79,7 @@ export const sendMentorshipConfirmationEmail = async ({
     const mailOptions = {
         from: `"Canada RN Mentorship By Tin Zar" <${process.env.EMAIL_USER}>`,
         to,
+
         subject:
             "Your Canada RN Mentorship Session is Confirmed",
 
@@ -53,82 +107,158 @@ Canada RN Mentorship
         `,
 
         html: `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto;">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
 
-                <h2>
-                    Your Mentorship Session is Confirmed 🎉
-                </h2>
+<body style="
+    margin:0;
+    padding:0;
+    background:#f4f7fa;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#24344d;
+">
 
-                <p>
-                    Hi ${firstName || "there"},
-                </p>
+<div style="
+    max-width:600px;
+    margin:40px auto;
+    background:#ffffff;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 8px 30px rgba(16,42,76,0.08);
+">
 
-                <p>
-                    Your <strong>Canada RN Mentorship Session</strong>
-                    has been successfully scheduled.
-                </p>
+    <div style="
+        background:#102a4c;
+        padding:28px 32px;
+        text-align:center;
+    ">
+        <h1 style="
+            margin:0;
+            color:#ffffff;
+            font-size:24px;
+        ">
+            Canada RN Mentorship
+        </h1>
 
-                <div style="padding: 20px; background: #f7f7f7; border-radius: 10px;">
+        <p style="
+            margin:8px 0 0;
+            color:#dbe8f2;
+            font-size:14px;
+        ">
+            Session Confirmation
+        </p>
+    </div>
 
-                    <p>
-                        <strong>Date & Time</strong><br>
-                        ${formattedDate}
-                    </p>
+    <div style="padding:32px;">
 
-                    <p>
-                        <strong>Duration</strong><br>
-                        45 minutes
-                    </p>
+        <h2 style="
+            margin:0 0 16px;
+            color:#102a4c;
+            font-size:22px;
+        ">
+            Your Mentorship Session is Confirmed 🎉
+        </h2>
 
-                    ${zoomJoinUrl
+        <p style="font-size:16px; line-height:1.7;">
+            Hi ${firstName || "there"},
+        </p>
+
+        <p style="
+            font-size:15px;
+            line-height:1.7;
+            color:#5c6b7d;
+        ">
+            Your <strong>Canada RN Mentorship Session</strong>
+            has been successfully scheduled.
+        </p>
+
+        <div style="
+            padding:20px;
+            background:#f7fafc;
+            border:1px solid #e3ebf2;
+            border-radius:12px;
+        ">
+
+            <p>
+                <strong>Date &amp; Time</strong><br>
+                ${formattedDate}
+            </p>
+
+            <p>
+                <strong>Duration</strong><br>
+                45 minutes
+            </p>
+
+            ${zoomJoinUrl
                 ? `
-                                <p>
-                                    <strong>Zoom Meeting</strong><br><br>
-                                    <a
-                                        href="${zoomJoinUrl}"
-                                        style="
-                                            display:inline-block;
-                                            padding:12px 20px;
-                                            background:#2563eb;
-                                            color:white;
-                                            text-decoration:none;
-                                            border-radius:6px;
-                                        "
-                                    >
-                                        Join Zoom Meeting
-                                    </a>
-                                </p>
-                            `
+            <p>
+                <strong>Zoom Meeting</strong><br><br>
+
+                <a
+                    href="${zoomJoinUrl}"
+                    style="
+                        display:inline-block;
+                        padding:12px 20px;
+                        background:#2563eb;
+                        color:#ffffff;
+                        text-decoration:none;
+                        border-radius:6px;
+                    "
+                >
+                    Join Zoom Meeting
+                </a>
+            </p>
+                    `
                 : `
-                                <p>
-                                    Your Zoom meeting link will be
-                                    provided shortly.
-                                </p>
-                            `
+            <p>
+                Your Zoom meeting link will be provided shortly.
+            </p>
+                    `
             }
 
-                </div>
+        </div>
 
-                <p>
-                    Please save this appointment to your calendar.
-                </p>
+        <p style="
+            font-size:15px;
+            line-height:1.7;
+            color:#5c6b7d;
+        ">
+            Please save this appointment to your calendar.
+        </p>
 
-                <p>
-                    I look forward to speaking with you.
-                </p>
+        <p style="
+            font-size:15px;
+            line-height:1.7;
+            color:#5c6b7d;
+        ">
+            I look forward to speaking with you.
+        </p>
 
-                <p>
-                    Best regards,<br>
-                    <strong>Tin Zar</strong><br>
-                    Canada RN Mentorship
-                </p>
+        <p style="line-height:1.6;">
+            Best regards,<br>
+            <strong>Tin Zar</strong><br>
+            Canada RN Mentorship
+        </p>
 
-            </div>
+    </div>
+</div>
+
+</body>
+</html>
         `,
     };
 
-    await transporter.sendMail(mailOptions);
+    return sendEmail(mailOptions);
 };
+
+
+// ============================================================
+// PAYMENT RECEIVED EMAIL
+// ============================================================
 
 export const sendPaymentReceivedEmail = async ({
     to,
@@ -137,25 +267,33 @@ export const sendPaymentReceivedEmail = async ({
     currency,
     sessionType,
 }) => {
-    const formattedAmount = new Intl.NumberFormat("en-CA", {
-        style: "currency",
-        currency: currency || "CAD",
-    }).format(amount || 0);
+    const formattedAmount = new Intl.NumberFormat(
+        "en-CA",
+        {
+            style: "currency",
+            currency: currency || "CAD",
+        }
+    ).format(amount || 0);
+
+    const serviceName =
+        sessionType || "Canada RN Mentorship Session";
 
     const mailOptions = {
         from: `"Canada RN Mentorship By Tin Zar" <${process.env.EMAIL_USER}>`,
         to,
-        subject: "Payment Received — Canada RN Mentorship",
+
+        subject:
+            "Payment Received — Canada RN Mentorship",
 
         text: `
 Hi ${firstName || "there"},
 
 Thank you for your payment for Canada RN Mentorship.
 
-Payment received successfully.
+Your payment has been successfully received.
 
 Service:
-${sessionType || "Canada RN Mentorship Session"}
+${serviceName}
 
 Amount:
 ${formattedAmount}
@@ -163,10 +301,8 @@ ${formattedAmount}
 Payment Status:
 Paid
 
-Your payment has been successfully received.
-
 Next Step:
-You can now schedule your mentorship session through the scheduling link provided in your Canada RN Mentorship dashboard.
+You can now schedule your mentorship session through your Canada RN Mentorship dashboard.
 
 We look forward to meeting with you.
 
@@ -210,7 +346,6 @@ Canada RN Mentorship
             margin:0;
             color:#ffffff;
             font-size:24px;
-            line-height:1.3;
         ">
             Canada RN Mentorship
         </h1>
@@ -237,7 +372,6 @@ Canada RN Mentorship
         <p style="
             font-size:16px;
             line-height:1.7;
-            margin:0 0 20px;
         ">
             Hi ${firstName || "there"},
         </p>
@@ -248,7 +382,7 @@ Canada RN Mentorship
             color:#5c6b7d;
         ">
             Thank you for your payment. Your payment for
-            <strong>${sessionType || "Canada RN Mentorship Session"}</strong>
+            <strong>${serviceName}</strong>
             has been successfully received.
         </p>
 
@@ -262,7 +396,7 @@ Canada RN Mentorship
 
             <p style="margin:0 0 14px;">
                 <strong>Service</strong><br>
-                ${sessionType || "Canada RN Mentorship Session"}
+                ${serviceName}
             </p>
 
             <p style="margin:0 0 14px;">
@@ -272,7 +406,10 @@ Canada RN Mentorship
 
             <p style="margin:0;">
                 <strong>Payment Status</strong><br>
-                <span style="color:#198754; font-weight:700;">
+                <span style="
+                    color:#198754;
+                    font-weight:700;
+                ">
                     Paid
                 </span>
             </p>
@@ -311,20 +448,16 @@ Canada RN Mentorship
             line-height:1.7;
             color:#5c6b7d;
         ">
-            We look forward to speaking with you!
+            We look forward to meeting with you!
         </p>
 
-        <p style="
-            margin-top:28px;
-            line-height:1.6;
-        ">
+        <p style="line-height:1.6;">
             Best regards,<br>
             <strong>Tin Zar</strong><br>
             Canada RN Mentorship
         </p>
 
     </div>
-
 </div>
 
 </body>
@@ -332,5 +465,5 @@ Canada RN Mentorship
         `,
     };
 
-    await transporter.sendMail(mailOptions);
+    return sendEmail(mailOptions);
 };
