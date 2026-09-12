@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import "./BookSession.css";
 
 const CALENDLY_URL =
     "https://calendly.com/canadarnmentorshipbytz/canada-rn-mentorship";
@@ -262,7 +263,7 @@ const BookSession = () => {
                         </span>
 
                         <strong>
-                            CA$125 CAD
+                            CA$125
                         </strong>
                     </div>
 
