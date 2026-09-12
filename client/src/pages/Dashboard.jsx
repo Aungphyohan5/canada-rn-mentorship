@@ -1400,26 +1400,28 @@ const Dashboard = () => {
 
 
                                             {/* =================================
-                                                PENDING PAYMENT
-                                            ================================== */}
+    PENDING PAYMENT
+================================== */}
 
-                                            {isPendingPayment && (
+                                            {isPendingPayment &&
+                                                !isScheduled &&
+                                                !booking.zoomJoinUrl && (
 
-                                                <button
-                                                    type="button"
-                                                    className="secondary-button"
-                                                    onClick={() =>
-                                                        handleContinuePayment(
-                                                            booking._id
-                                                        )
-                                                    }
-                                                >
+                                                    <button
+                                                        type="button"
+                                                        className="secondary-button"
+                                                        onClick={() =>
+                                                            handleContinuePayment(
+                                                                booking._id
+                                                            )
+                                                        }
+                                                    >
 
-                                                    Continue Payment →
+                                                        Continue Payment →
 
-                                                </button>
+                                                    </button>
 
-                                            )}
+                                                )}
 
 
                                             {/* =================================
