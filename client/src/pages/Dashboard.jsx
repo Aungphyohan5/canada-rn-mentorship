@@ -46,7 +46,63 @@ const Dashboard = () => {
 
     const [paymentError, setPaymentError] = useState("");
 
+    // =========================================================
+    // AUTOMATICALLY RECOVER COMPLETED PAYMENTS
+    // =========================================================
 
+    const recoverPendingPayments = async (bookings) => {
+        const pendingBookings = bookings.filter(
+            (booking) =>
+                booking.sessionType === MENTORSHIP_SESSION_TYPE &&
+                booking.paymentStatus === "pending"
+        );
+
+        let paymentRecovered = false;
+
+        for (const booking of pendingBookings) {
+            try {
+                console.log(
+                    "Checking payment status automatically:",
+                    booking._id
+                );
+
+                const response = await api.get(
+                    "/payments/resume-checkout-session",
+                    {
+                        params: {
+                            bookingId: booking._id,
+                        },
+                    }
+                );
+
+                const responseData = response?.data || {};
+
+                const code = responseData.code;
+
+                if (
+                    code === "PAYMENT_RECOVERED" ||
+                    code === "PAYMENT_ALREADY_COMPLETED" ||
+                    code === "ALREADY_PAID"
+                ) {
+                    console.log(
+                        "Payment automatically recovered:",
+                        booking._id
+                    );
+
+                    paymentRecovered = true;
+                }
+            } catch (error) {
+                console.error(
+                    "AUTOMATIC PAYMENT RECOVERY ERROR:",
+                    error.response?.data ||
+                    error.message ||
+                    error
+                );
+            }
+        }
+
+        return paymentRecovered;
+    };
     // =========================================================
     // LOAD DASHBOARD DATA
     // =========================================================
@@ -114,13 +170,36 @@ const Dashboard = () => {
                 // BOOKINGS
                 // =====================================================
 
-                const bookingsResponse = await api.get(
+                let bookingsResponse = await api.get(
                     "/bookings/me"
                 );
 
                 let userBookings =
-                    bookingsResponse.data?.data?.bookings || [];
+                    bookingsResponse.data
+                        ?.data
+                        ?.bookings || [];
 
+
+                // =====================================================
+                // AUTOMATIC PAYMENT RECOVERY
+                // =====================================================
+
+                const paymentRecovered =
+                    await recoverPendingPayments(userBookings);
+
+                if (paymentRecovered) {
+                    console.log(
+                        "Payment recovered. Reloading booking information..."
+                    );
+
+                    const refreshedBookingsResponse =
+                        await api.get("/bookings/me");
+
+                    userBookings =
+                        refreshedBookingsResponse.data
+                            ?.data
+                            ?.bookings || [];
+                }
 
                 // =====================================================
                 // CALENDLY SYNCHRONIZATION
