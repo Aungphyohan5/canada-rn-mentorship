@@ -7,20 +7,30 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
+    family: 4,
 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD,
     },
 
-    // Prefer IPv4 because Render reported an IPv6 connection error
-    family: 4,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
 
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    tls: {
+        minVersion: "TLSv1.2",
+    },
+});
+
+transporter.verify((error) => {
+    if (error) {
+        console.error("❌ SMTP CONNECTION ERROR:", error.message);
+    } else {
+        console.log("✅ SMTP SERVER READY");
+    }
 });
 
 
