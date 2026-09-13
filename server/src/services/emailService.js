@@ -1,75 +1,97 @@
-import nodemailer from "nodemailer";
+// ============================================================
+// EMAIL SERVICE — RESEND API
+// ============================================================
+
+const RESEND_API_URL = "https://api.resend.com/emails";
+
+const EMAIL_FROM =
+    process.env.EMAIL_FROM ||
+    "Canada RN Mentorship <onboarding@resend.dev>";
 
 
 // ============================================================
-// EMAIL TRANSPORTER
+// ESCAPE HTML CONTENT
 // ============================================================
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    family: 4,
-
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD,
-    },
-
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-
-    tls: {
-        minVersion: "TLSv1.2",
-    },
-});
-
-transporter.verify((error) => {
-    if (error) {
-        console.error("❌ SMTP CONNECTION ERROR:", error.message);
-    } else {
-        console.log("✅ SMTP SERVER READY");
-    }
-});
-
-
-// ============================================================
-// COMMON EMAIL SENDER
-// ============================================================
-
-const sendEmail = async (mailOptions) => {
-    if (!process.env.EMAIL_USER) {
-        throw new Error("EMAIL_USER is not configured.");
-    }
-
-    if (!process.env.EMAIL_APP_PASSWORD) {
-        throw new Error("EMAIL_APP_PASSWORD is not configured.");
-    }
-
-    try {
-        const info = await transporter.sendMail(mailOptions);
-
-        console.log(
-            "📧 Email sent successfully:",
-            info.messageId
-        );
-
-        return info;
-
-    } catch (error) {
-        console.error(
-            "❌ Email sending failed:",
-            error.message
-        );
-
-        throw error;
-    }
+const escapeHtml = (value = "") => {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 };
 
 
 // ============================================================
-// MENTORSHIP SCHEDULING CONFIRMATION EMAIL
+// SEND EMAIL THROUGH RESEND
+// ============================================================
+
+const sendEmail = async ({
+    to,
+    subject,
+    html,
+}) => {
+    if (!process.env.RESEND_API_KEY) {
+        throw new Error(
+            "RESEND_API_KEY is not configured."
+        );
+    }
+
+    if (!to) {
+        throw new Error(
+            "Recipient email address is missing."
+        );
+    }
+
+    const response = await fetch(
+        RESEND_API_URL,
+        {
+            method: "POST",
+
+            headers: {
+                Authorization:
+                    `Bearer ${process.env.RESEND_API_KEY}`,
+
+                "Content-Type":
+                    "application/json",
+            },
+
+            body: JSON.stringify({
+                from: EMAIL_FROM,
+                to: [to],
+                subject,
+                html,
+            }),
+        }
+    );
+
+    const responseData =
+        await response.json();
+
+    if (!response.ok) {
+        console.error(
+            "RESEND API ERROR:",
+            responseData
+        );
+
+        throw new Error(
+            responseData?.message ||
+            "Resend email delivery failed."
+        );
+    }
+
+    console.log(
+        "✅ EMAIL SENT THROUGH RESEND:",
+        responseData?.id || "No email ID returned"
+    );
+
+    return responseData;
+};
+
+
+// ============================================================
+// MENTORSHIP CONFIRMATION EMAIL
 // ============================================================
 
 export const sendMentorshipConfirmationEmail = async ({
@@ -78,191 +100,81 @@ export const sendMentorshipConfirmationEmail = async ({
     scheduledAt,
     zoomJoinUrl,
 }) => {
-    const formattedDate = new Date(
-        scheduledAt
-    ).toLocaleString("en-CA", {
-        dateStyle: "full",
-        timeStyle: "short",
-        timeZone: "America/Halifax",
-    });
+    const recipientName =
+        escapeHtml(firstName || "there");
 
-    const mailOptions = {
-        from: `"Canada RN Mentorship By Tin Zar" <${process.env.EMAIL_USER}>`,
-        to,
+    const formattedDate = scheduledAt
+        ? new Date(scheduledAt).toLocaleString(
+            "en-CA",
+            {
+                dateStyle: "full",
+                timeStyle: "short",
+            }
+        )
+        : "Your scheduled appointment time";
 
-        subject:
-            "Your Canada RN Mentorship Session is Confirmed",
+    const safeDate =
+        escapeHtml(formattedDate);
 
-        text: `
-Hi ${firstName || "there"},
+    const safeZoomUrl =
+        escapeHtml(zoomJoinUrl || "");
 
-Your Canada RN Mentorship Session has been successfully scheduled.
+    const html = `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #172033;">
+            <h2 style="color: #10233f;">
+                Your Canada RN Mentorship Session Is Confirmed
+            </h2>
 
-Date & Time:
-${formattedDate}
-
-Duration:
-45 minutes
-
-Zoom Meeting:
-${zoomJoinUrl || "The Zoom link will be provided shortly."}
-
-Please save this appointment to your calendar.
-
-I look forward to speaking with you.
-
-Best regards,
-Tin Zar
-Canada RN Mentorship
-        `,
-
-        html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
-
-<body style="
-    margin:0;
-    padding:0;
-    background:#f4f7fa;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#24344d;
-">
-
-<div style="
-    max-width:600px;
-    margin:40px auto;
-    background:#ffffff;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 8px 30px rgba(16,42,76,0.08);
-">
-
-    <div style="
-        background:#102a4c;
-        padding:28px 32px;
-        text-align:center;
-    ">
-        <h1 style="
-            margin:0;
-            color:#ffffff;
-            font-size:24px;
-        ">
-            Canada RN Mentorship
-        </h1>
-
-        <p style="
-            margin:8px 0 0;
-            color:#dbe8f2;
-            font-size:14px;
-        ">
-            Session Confirmation
-        </p>
-    </div>
-
-    <div style="padding:32px;">
-
-        <h2 style="
-            margin:0 0 16px;
-            color:#102a4c;
-            font-size:22px;
-        ">
-            Your Mentorship Session is Confirmed 🎉
-        </h2>
-
-        <p style="font-size:16px; line-height:1.7;">
-            Hi ${firstName || "there"},
-        </p>
-
-        <p style="
-            font-size:15px;
-            line-height:1.7;
-            color:#5c6b7d;
-        ">
-            Your <strong>Canada RN Mentorship Session</strong>
-            has been successfully scheduled.
-        </p>
-
-        <div style="
-            padding:20px;
-            background:#f7fafc;
-            border:1px solid #e3ebf2;
-            border-radius:12px;
-        ">
+            <p>Hello ${recipientName},</p>
 
             <p>
-                <strong>Date &amp; Time</strong><br>
-                ${formattedDate}
+                Your Canada RN Mentorship session has been
+                successfully scheduled.
             </p>
 
             <p>
-                <strong>Duration</strong><br>
-                45 minutes
+                <strong>Date and time:</strong><br />
+                ${safeDate}
             </p>
 
             ${zoomJoinUrl
-                ? `
-            <p>
-                <strong>Zoom Meeting</strong><br><br>
-
-                <a
-                    href="${zoomJoinUrl}"
-                    style="
-                        display:inline-block;
-                        padding:12px 20px;
-                        background:#2563eb;
-                        color:#ffffff;
-                        text-decoration:none;
-                        border-radius:6px;
-                    "
-                >
-                    Join Zoom Meeting
-                </a>
-            </p>
+            ? `
+                        <p>
+                            <strong>Zoom meeting:</strong><br />
+                            <a
+                                href="${safeZoomUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Join Zoom Meeting
+                            </a>
+                        </p>
                     `
-                : `
-            <p>
-                Your Zoom meeting link will be provided shortly.
-            </p>
+            : `
+                        <p>
+                            Your Zoom meeting link will be
+                            provided separately.
+                        </p>
                     `
-            }
+        }
 
+            <p>
+                Please keep this email for your records.
+            </p>
+
+            <p>
+                Best regards,<br />
+                Canada RN Mentorship
+            </p>
         </div>
+    `;
 
-        <p style="
-            font-size:15px;
-            line-height:1.7;
-            color:#5c6b7d;
-        ">
-            Please save this appointment to your calendar.
-        </p>
-
-        <p style="
-            font-size:15px;
-            line-height:1.7;
-            color:#5c6b7d;
-        ">
-            I look forward to speaking with you.
-        </p>
-
-        <p style="line-height:1.6;">
-            Best regards,<br>
-            <strong>Tin Zar</strong><br>
-            Canada RN Mentorship
-        </p>
-
-    </div>
-</div>
-
-</body>
-</html>
-        `,
-    };
-
-    return sendEmail(mailOptions);
+    return sendEmail({
+        to,
+        subject:
+            "Your Canada RN Mentorship Session Is Confirmed",
+        html,
+    });
 };
 
 
@@ -274,206 +186,66 @@ export const sendPaymentReceivedEmail = async ({
     to,
     firstName,
     amount,
-    currency,
-    sessionType,
+    currency = "CAD",
+    sessionType = "Canada RN Mentorship Session",
 }) => {
-    const formattedAmount = new Intl.NumberFormat(
-        "en-CA",
-        {
-            style: "currency",
-            currency: currency || "CAD",
-        }
-    ).format(amount || 0);
+    const recipientName =
+        escapeHtml(firstName || "there");
 
-    const serviceName =
-        sessionType || "Canada RN Mentorship Session";
+    const formattedAmount =
+        new Intl.NumberFormat(
+            "en-CA",
+            {
+                style: "currency",
+                currency,
+            }
+        ).format(Number(amount || 0));
 
-    const mailOptions = {
-        from: `"Canada RN Mentorship By Tin Zar" <${process.env.EMAIL_USER}>`,
+    const safeSessionType =
+        escapeHtml(sessionType);
+
+    const safeAmount =
+        escapeHtml(formattedAmount);
+
+    const html = `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #172033;">
+            <h2 style="color: #10233f;">
+                Payment Received
+            </h2>
+
+            <p>Hello ${recipientName},</p>
+
+            <p>
+                We have successfully received your payment
+                for your Canada RN Mentorship session.
+            </p>
+
+            <p>
+                <strong>Session:</strong><br />
+                ${safeSessionType}
+            </p>
+
+            <p>
+                <strong>Amount paid:</strong><br />
+                ${safeAmount}
+            </p>
+
+            <p>
+                You can now return to your dashboard and
+                arrange your mentorship session.
+            </p>
+
+            <p>
+                Best regards,<br />
+                Canada RN Mentorship
+            </p>
+        </div>
+    `;
+
+    return sendEmail({
         to,
-
         subject:
             "Payment Received — Canada RN Mentorship",
-
-        text: `
-Hi ${firstName || "there"},
-
-Thank you for your payment for Canada RN Mentorship.
-
-Your payment has been successfully received.
-
-Service:
-${serviceName}
-
-Amount:
-${formattedAmount}
-
-Payment Status:
-Paid
-
-Next Step:
-You can now schedule your mentorship session through your Canada RN Mentorship dashboard.
-
-We look forward to meeting with you.
-
-Best regards,
-
-Tin Zar
-Canada RN Mentorship
-        `,
-
-        html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
-
-<body style="
-    margin:0;
-    padding:0;
-    background:#f4f7fa;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#24344d;
-">
-
-<div style="
-    max-width:600px;
-    margin:40px auto;
-    background:#ffffff;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 8px 30px rgba(16,42,76,0.08);
-">
-
-    <div style="
-        background:#102a4c;
-        padding:28px 32px;
-        text-align:center;
-    ">
-        <h1 style="
-            margin:0;
-            color:#ffffff;
-            font-size:24px;
-        ">
-            Canada RN Mentorship
-        </h1>
-
-        <p style="
-            margin:8px 0 0;
-            color:#dbe8f2;
-            font-size:14px;
-        ">
-            Payment Confirmation
-        </p>
-    </div>
-
-    <div style="padding:32px;">
-
-        <h2 style="
-            margin:0 0 16px;
-            color:#102a4c;
-            font-size:22px;
-        ">
-            Payment Received ✓
-        </h2>
-
-        <p style="
-            font-size:16px;
-            line-height:1.7;
-        ">
-            Hi ${firstName || "there"},
-        </p>
-
-        <p style="
-            font-size:15px;
-            line-height:1.7;
-            color:#5c6b7d;
-        ">
-            Thank you for your payment. Your payment for
-            <strong>${serviceName}</strong>
-            has been successfully received.
-        </p>
-
-        <div style="
-            margin:24px 0;
-            padding:22px;
-            background:#f7fafc;
-            border:1px solid #e3ebf2;
-            border-radius:12px;
-        ">
-
-            <p style="margin:0 0 14px;">
-                <strong>Service</strong><br>
-                ${serviceName}
-            </p>
-
-            <p style="margin:0 0 14px;">
-                <strong>Amount Paid</strong><br>
-                ${formattedAmount}
-            </p>
-
-            <p style="margin:0;">
-                <strong>Payment Status</strong><br>
-                <span style="
-                    color:#198754;
-                    font-weight:700;
-                ">
-                    Paid
-                </span>
-            </p>
-
-        </div>
-
-        <div style="
-            margin:24px 0;
-            padding:20px;
-            background:#eef6fb;
-            border-radius:12px;
-        ">
-
-            <h3 style="
-                margin:0 0 8px;
-                color:#102a4c;
-                font-size:17px;
-            ">
-                Next Step
-            </h3>
-
-            <p style="
-                margin:0;
-                color:#5c6b7d;
-                line-height:1.6;
-                font-size:14px;
-            ">
-                You can now schedule your mentorship session
-                through your Canada RN Mentorship dashboard.
-            </p>
-
-        </div>
-
-        <p style="
-            font-size:15px;
-            line-height:1.7;
-            color:#5c6b7d;
-        ">
-            We look forward to meeting with you!
-        </p>
-
-        <p style="line-height:1.6;">
-            Best regards,<br>
-            <strong>Tin Zar</strong><br>
-            Canada RN Mentorship
-        </p>
-
-    </div>
-</div>
-
-</body>
-</html>
-        `,
-    };
-
-    return sendEmail(mailOptions);
+        html,
+    });
 };
