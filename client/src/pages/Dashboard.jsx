@@ -38,7 +38,7 @@ const Dashboard = () => {
     const [paymentError, setPaymentError] = useState("");
 
     // ========================================================
-    // AUTOMATIC PAYMENT RECOVERY
+    // AUTOMATIC STRIPE PAYMENT RECOVERY
     // ========================================================
 
     const recoverPendingPayments = async (currentBookings) => {
@@ -169,7 +169,7 @@ const Dashboard = () => {
                     bookingsResponse.data?.data?.bookings || [];
 
                 // ====================================================
-                // AUTOMATICALLY RECOVER MISSED STRIPE WEBHOOKS
+                // RECOVER MISSED STRIPE WEBHOOKS
                 // ====================================================
 
                 const paymentRecovered =
@@ -245,7 +245,7 @@ const Dashboard = () => {
                 }
 
                 // ====================================================
-                // SAVE FINAL BOOKINGS TO STATE
+                // SAVE BOOKINGS TO STATE
                 // ====================================================
 
                 if (!isMounted) {
@@ -388,7 +388,11 @@ const Dashboard = () => {
     // ========================================================
 
     const handleScheduleSession = () => {
-        window.location.href = CALENDLY_URL;
+        window.open(
+            CALENDLY_URL,
+            "_blank",
+            "noopener,noreferrer"
+        );
     };
 
     // ========================================================
@@ -919,13 +923,6 @@ const Dashboard = () => {
                                 const isCompleted =
                                     booking.bookingStatus === "completed";
 
-                                /*
-                                 * A booking is scheduled only when:
-                                 *
-                                 * 1. Payment is paid, and
-                                 * 2. bookingStatus is scheduled OR
-                                 *    a Zoom link exists.
-                                 */
                                 const isScheduled =
                                     isPaid &&
                                     (
