@@ -1,148 +1,124 @@
-// ============================================================
-// EMAIL SERVICE — RESEND API
-// ============================================================
+const DEFAULT_EMAIL_FROM =
+    "Canada RN Mentorship <onboarding@resend.dev>";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
-const EMAIL_FROM =
-    process.env.EMAIL_FROM ||
-    "Canada RN Mentorship <onboarding@resend.dev>";
+/**
+ * Send an email through Resend API.
+ */
+const sendEmail = async ({ to, subject, html }) => {
+    const apiKey = process.env.RESEND_API_KEY;
 
-
-// ============================================================
-// ESCAPE HTML CONTENT
-// ============================================================
-
-const escapeHtml = (value = "") => {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-};
-
-
-// ============================================================
-// SEND EMAIL THROUGH RESEND
-// ============================================================
-
-const sendEmail = async ({
-    to,
-    subject,
-    html,
-}) => {
-    if (!process.env.RESEND_API_KEY) {
-        throw new Error(
-            "RESEND_API_KEY is not configured."
-        );
+    if (!apiKey) {
+        throw new Error("RESEND_API_KEY is not configured");
     }
 
     if (!to) {
-        throw new Error(
-            "Recipient email address is missing."
-        );
+        throw new Error("Recipient email address is required");
     }
 
-    const response = await fetch(
-        RESEND_API_URL,
-        {
-            method: "POST",
+    if (!subject) {
+        throw new Error("Email subject is required");
+    }
 
-            headers: {
-                Authorization:
-                    `Bearer ${process.env.RESEND_API_KEY}`,
+    if (!html) {
+        throw new Error("Email HTML content is required");
+    }
 
-                "Content-Type":
-                    "application/json",
-            },
+    const emailFrom =
+        process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM;
 
-            body: JSON.stringify({
-                from: EMAIL_FROM,
-                to: [to],
-                subject,
-                html,
-            }),
-        }
-    );
+    const response = await fetch(RESEND_API_URL, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            from: emailFrom,
+            to: [to],
+            subject,
+            html,
+        }),
+    });
 
-    const responseData =
-        await response.json();
+    const responseText = await response.text();
+
+    let responseData;
+
+    try {
+        responseData = JSON.parse(responseText);
+    } catch {
+        responseData = {
+            raw: responseText,
+        };
+    }
 
     if (!response.ok) {
-        console.error(
-            "RESEND API ERROR:",
-            responseData
-        );
+        console.error("Resend email error:", {
+            status: response.status,
+            response: responseData,
+        });
 
         throw new Error(
             responseData?.message ||
-            "Resend email delivery failed."
+            responseData?.error ||
+            "Failed to send email through Resend"
         );
     }
 
-    console.log(
-        "✅ EMAIL SENT THROUGH RESEND:",
-        responseData?.id || "No email ID returned"
-    );
+    console.log("Email sent successfully through Resend:", {
+        to,
+        subject,
+        response: responseData,
+    });
 
     return responseData;
 };
 
-
-// ============================================================
-// MENTORSHIP CONFIRMATION EMAIL
-// ============================================================
-
+/**
+ * Send mentorship booking confirmation email.
+ */
 export const sendMentorshipConfirmationEmail = async ({
     to,
-    firstName,
+    name,
     scheduledAt,
     zoomJoinUrl,
 }) => {
-    const recipientName =
-        escapeHtml(firstName || "there");
+    const formattedDate = new Date(scheduledAt).toLocaleString(
+        "en-CA",
+        {
+            dateStyle: "full",
+            timeStyle: "short",
+            timeZone: "America/Halifax",
+        }
+    );
 
-    const formattedDate = scheduledAt
-        ? new Date(scheduledAt).toLocaleString(
-            "en-CA",
-            {
-                dateStyle: "full",
-                timeStyle: "short",
-            }
-        )
-        : "Your scheduled appointment time";
-
-    const safeDate =
-        escapeHtml(formattedDate);
-
-    const safeZoomUrl =
-        escapeHtml(zoomJoinUrl || "");
+    const recipientName = name || "there";
 
     const html = `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #172033;">
-            <h2 style="color: #10233f;">
-                Your Canada RN Mentorship Session Is Confirmed
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
+            <h2 style="color: #17324d;">
+                Canada RN Mentorship Session Confirmed
             </h2>
 
             <p>Hello ${recipientName},</p>
 
             <p>
-                Your Canada RN Mentorship session has been
-                successfully scheduled.
+                Your Canada RN Mentorship session has been confirmed.
             </p>
 
             <p>
-                <strong>Date and time:</strong><br />
-                ${safeDate}
+                <strong>Session date and time:</strong><br />
+                ${formattedDate}
             </p>
 
             ${zoomJoinUrl
             ? `
                         <p>
-                            <strong>Zoom meeting:</strong><br />
+                            <strong>Join your Zoom session:</strong><br />
                             <a
-                                href="${safeZoomUrl}"
+                                href="${zoomJoinUrl}"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -152,8 +128,8 @@ export const sendMentorshipConfirmationEmail = async ({
                     `
             : `
                         <p>
-                            Your Zoom meeting link will be
-                            provided separately.
+                            Your Zoom meeting link will be provided once
+                            the session details are finalized.
                         </p>
                     `
         }
@@ -164,88 +140,76 @@ export const sendMentorshipConfirmationEmail = async ({
 
             <p>
                 Best regards,<br />
-                Canada RN Mentorship
+                <strong>Canada RN Mentorship</strong>
             </p>
         </div>
     `;
 
     return sendEmail({
         to,
-        subject:
-            "Your Canada RN Mentorship Session Is Confirmed",
+        subject: "Your Canada RN Mentorship Session Is Confirmed",
         html,
     });
 };
 
-
-// ============================================================
-// PAYMENT RECEIVED EMAIL
-// ============================================================
-
+/**
+ * Send payment confirmation email.
+ */
 export const sendPaymentReceivedEmail = async ({
     to,
-    firstName,
+    name,
     amount,
     currency = "CAD",
-    sessionType = "Canada RN Mentorship Session",
+    sessionType = "Canada RN Mentorship",
 }) => {
-    const recipientName =
-        escapeHtml(firstName || "there");
+    const recipientName = name || "there";
 
-    const formattedAmount =
-        new Intl.NumberFormat(
-            "en-CA",
-            {
-                style: "currency",
-                currency,
-            }
-        ).format(Number(amount || 0));
-
-    const safeSessionType =
-        escapeHtml(sessionType);
-
-    const safeAmount =
-        escapeHtml(formattedAmount);
+    const formattedAmount = new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency,
+    }).format(Number(amount || 0));
 
     const html = `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #172033;">
-            <h2 style="color: #10233f;">
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
+            <h2 style="color: #17324d;">
                 Payment Received
             </h2>
 
             <p>Hello ${recipientName},</p>
 
             <p>
-                We have successfully received your payment
-                for your Canada RN Mentorship session.
-            </p>
-
-            <p>
-                <strong>Session:</strong><br />
-                ${safeSessionType}
+                We have successfully received your payment for
+                <strong>${sessionType}</strong>.
             </p>
 
             <p>
                 <strong>Amount paid:</strong><br />
-                ${safeAmount}
+                ${formattedAmount}
             </p>
 
             <p>
-                You can now return to your dashboard and
-                arrange your mentorship session.
+                Your mentorship booking has been recorded successfully.
+            </p>
+
+            <p>
+                You will receive your session details and Zoom meeting link
+                once the appointment has been confirmed.
+            </p>
+
+            <p>
+                Thank you for choosing Canada RN Mentorship.
             </p>
 
             <p>
                 Best regards,<br />
-                Canada RN Mentorship
+                <strong>Canada RN Mentorship</strong>
             </p>
         </div>
     `;
 
     return sendEmail({
         to,
-        subject:
-            "Payment Received — Canada RN Mentorship",
+        subject: "Payment Received — Canada RN Mentorship",
         html,
     });
 };
