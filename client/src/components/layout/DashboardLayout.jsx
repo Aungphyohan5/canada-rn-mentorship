@@ -4,49 +4,61 @@ import {
     useNavigate,
 } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import "./DashboardLayout.css";
 
-
 const DashboardLayout = ({ children }) => {
-
     const { user, logout } = useAuth();
 
     const navigate = useNavigate();
-
     const location = useLocation();
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    // Close the mobile menu whenever the route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname, location.hash]);
+
+    // Prevent background scrolling while the mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.classList.add("mobile-menu-open");
+        } else {
+            document.body.classList.remove("mobile-menu-open");
+        }
+
+        return () => {
+            document.body.classList.remove("mobile-menu-open");
+        };
+    }, [isMobileMenuOpen]);
+
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+    };
+
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen((previousState) => !previousState);
+    };
 
     // =========================================================
     // NAVIGATION HELPERS
     // =========================================================
 
     const goToDashboardSection = (sectionId) => {
-
-        /*
-         * If we are already on the dashboard,
-         * scroll directly to the section.
-         */
+        closeMobileMenu();
 
         if (location.pathname === "/dashboard") {
-
-            const element =
-                document.getElementById(
-                    sectionId
-                );
+            const element = document.getElementById(sectionId);
 
             if (element) {
-
                 element.scrollIntoView({
                     behavior: "smooth",
                     block: "start",
                 });
-
-                /*
-                 * Update the URL hash without
-                 * causing a page reload.
-                 */
 
                 window.history.replaceState(
                     null,
@@ -58,82 +70,74 @@ const DashboardLayout = ({ children }) => {
             }
         }
 
-
-        /*
-         * If we are on another page,
-         * navigate to the dashboard with
-         * the appropriate hash.
-         *
-         * Dashboard.jsx will handle
-         * scrolling after it loads.
-         */
-
-        navigate(
-            `/dashboard#${sectionId}`
-        );
+        navigate(`/dashboard#${sectionId}`);
     };
-
 
     // =========================================================
     // LOGOUT
     // =========================================================
 
     const handleLogout = async () => {
+        closeMobileMenu();
 
         try {
-
             await logout();
-
         } catch (error) {
-
-            console.error(
-                "LOGOUT ERROR:",
-                error
-            );
-
+            console.error("LOGOUT ERROR:", error);
         }
-
     };
-
 
     // =========================================================
     // USER INITIALS
     // =========================================================
 
     const firstInitial =
-        user?.firstName
-            ?.charAt(0)
-            ?.toUpperCase() || "";
+        user?.firstName?.charAt(0)?.toUpperCase() || "";
 
     const lastInitial =
-        user?.lastName
-            ?.charAt(0)
-            ?.toUpperCase() || "";
-
+        user?.lastName?.charAt(0)?.toUpperCase() || "";
 
     return (
-
         <div className="dashboard-layout">
+            {/* =================================================
+                MOBILE OVERLAY
+            ================================================== */}
 
+            {isMobileMenuOpen && (
+                <button
+                    type="button"
+                    className="mobile-menu-overlay"
+                    aria-label="Close navigation menu"
+                    onClick={closeMobileMenu}
+                />
+            )}
 
             {/* =================================================
                 SIDEBAR
             ================================================== */}
 
-            <aside className="sidebar">
-
-
+            <aside
+                className={`sidebar ${isMobileMenuOpen ? "sidebar-mobile-open" : ""
+                    }`}
+            >
                 {/* =================================================
                     BRAND
                 ================================================== */}
 
                 <div
                     className="dashboard-logo"
-                    onClick={() => navigate("/")}
+                    onClick={() => {
+                        closeMobileMenu();
+                        navigate("/");
+                    }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
+                        if (
+                            event.key === "Enter" ||
+                            event.key === " "
+                        ) {
+                            closeMobileMenu();
                             navigate("/");
                         }
                     }}
@@ -148,22 +152,27 @@ const DashboardLayout = ({ children }) => {
                     </div>
                 </div>
 
+                {/* =================================================
+                    MOBILE SIDEBAR CLOSE BUTTON
+                ================================================== */}
 
-
+                <button
+                    type="button"
+                    className="mobile-sidebar-close"
+                    onClick={closeMobileMenu}
+                    aria-label="Close navigation menu"
+                >
+                    ×
+                </button>
 
                 {/* =================================================
                     NAVIGATION
                 ================================================== */}
 
                 <nav className="sidebar-nav">
-
-
-                    {/* =================================================
-                        DASHBOARD
-                    ================================================== */}
-
                     <NavLink
                         to="/dashboard"
+                        onClick={closeMobileMenu}
                         className={({ isActive }) =>
                             isActive
                                 ? "nav-link active"
@@ -173,14 +182,9 @@ const DashboardLayout = ({ children }) => {
                         Dashboard
                     </NavLink>
 
-
-
-                    {/* =================================================
-                        PROFILE
-                    ================================================== */}
-
                     <NavLink
                         to="/profile"
+                        onClick={closeMobileMenu}
                         className={({ isActive }) =>
                             isActive
                                 ? "nav-link active"
@@ -190,50 +194,29 @@ const DashboardLayout = ({ children }) => {
                         My Profile
                     </NavLink>
 
-
-
-                    {/* =================================================
-                        MY JOURNEY
-                    ================================================== */}
-
                     <button
                         type="button"
                         className="nav-link nav-button"
                         onClick={() =>
-                            goToDashboardSection(
-                                "journey"
-                            )
+                            goToDashboardSection("journey")
                         }
                     >
                         My Journey
                     </button>
 
-
-
-                    {/* =================================================
-                        BOOKINGS
-                    ================================================== */}
-
                     <button
                         type="button"
                         className="nav-link nav-button"
                         onClick={() =>
-                            goToDashboardSection(
-                                "bookings"
-                            )
+                            goToDashboardSection("bookings")
                         }
                     >
                         Bookings
                     </button>
 
-
-
-                    {/* =================================================
-                        RESOURCES
-                    ================================================== */}
-
                     <NavLink
                         to="/resources"
+                        onClick={closeMobileMenu}
                         className={({ isActive }) =>
                             isActive
                                 ? "nav-link active"
@@ -242,165 +225,96 @@ const DashboardLayout = ({ children }) => {
                     >
                         Resources
                     </NavLink>
-
-
-
-                    {/* =================================================
-                        DOCUMENTS
-                    ================================================= */}
-
-                    {/* <button
-                        type="button"
-                        className="nav-link nav-button"
-                        onClick={() =>
-                            navigate(
-                                "/documents"
-                            )
-                        }
-                    >
-                        Documents
-                    </button> */}
-
                 </nav>
-
-
 
                 {/* =================================================
                     SIDEBAR BOTTOM
                 ================================================== */}
 
                 <div className="sidebar-bottom">
-
-
-                    {/* =================================================
-                        USER
-                    ================================================== */}
-
                     <div className="user-mini">
-
                         <div className="avatar">
-
                             {firstInitial}
-
                             {lastInitial}
-
                         </div>
-
 
                         <div>
-
                             <strong>
-
-                                {user?.firstName || ""}
-
-                                {" "}
-
+                                {user?.firstName || ""}{" "}
                                 {user?.lastName || ""}
-
                             </strong>
 
-
                             <span>
-
                                 {user?.role || "Nurse"}
-
                             </span>
-
                         </div>
-
                     </div>
-
-
-
-                    {/* =================================================
-                        LOGOUT
-                    ================================================== */}
 
                     <button
                         type="button"
                         className="logout-button"
-                        onClick={
-                            handleLogout
-                        }
+                        onClick={handleLogout}
                     >
                         Logout
                     </button>
-
                 </div>
-
             </aside>
-
-
 
             {/* =================================================
                 MAIN
             ================================================== */}
 
             <main className="dashboard-main">
-
-
                 {/* =================================================
                     TOP BAR
                 ================================================== */}
 
                 <header className="dashboard-topbar">
-
-
-                    <div>
+                    <div className="topbar-left">
+                        <button
+                            type="button"
+                            className="mobile-menu-toggle"
+                            onClick={toggleMobileMenu}
+                            aria-label={
+                                isMobileMenuOpen
+                                    ? "Close navigation menu"
+                                    : "Open navigation menu"
+                            }
+                            aria-expanded={isMobileMenuOpen}
+                        >
+                            <span />
+                            <span />
+                            <span />
+                        </button>
 
                         <span className="topbar-label">
-
                             Canada RN Mentorship
-
                         </span>
-
                     </div>
-
-
 
                     <div className="topbar-user">
-
-
                         <span>
-
-                            {user?.firstName || ""}
-
-                            {" "}
-
+                            {user?.firstName || ""}{" "}
                             {user?.lastName || ""}
-
                         </span>
 
-
                         <div className="avatar small">
-
                             {firstInitial}
-
                             {lastInitial}
-
                         </div>
-
                     </div>
-
                 </header>
-
-
 
                 {/* =================================================
                     PAGE CONTENT
                 ================================================== */}
 
                 <div className="dashboard-content">
-
                     {children}
-
                 </div>
-
             </main>
-
         </div>
     );
 };
-
 
 export default DashboardLayout;

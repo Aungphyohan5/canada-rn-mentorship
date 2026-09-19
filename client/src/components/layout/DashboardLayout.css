@@ -1,3 +1,7 @@
+/* =========================================================
+   DASHBOARD LAYOUT
+========================================================= */
+
 .dashboard-layout {
     min-height: 100vh;
     display: flex;
@@ -13,6 +17,7 @@
     display: flex;
     flex-direction: column;
     padding: 28px 18px;
+    flex-shrink: 0;
 }
 
 .sidebar-brand {
@@ -43,6 +48,11 @@
     font-size: 12px;
     opacity: 0.7;
 }
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+========================================================= */
 
 .sidebar-nav {
     display: flex;
@@ -79,6 +89,11 @@
     font-family: inherit;
 }
 
+
+/* =========================================================
+   SIDEBAR BOTTOM
+========================================================= */
+
 .sidebar-bottom {
     margin-top: auto;
 }
@@ -113,6 +128,7 @@
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .avatar.small {
@@ -134,6 +150,11 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
 .dashboard-main {
     flex: 1;
     min-width: 0;
@@ -147,6 +168,12 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 36px;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .topbar-label {
@@ -168,42 +195,69 @@
     max-width: 1400px;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 72px;
-        padding: 20px 10px;
-    }
 
-    .sidebar-brand h2,
-    .sidebar-brand span,
-    .nav-link,
-    .user-mini>div,
-    .logout-button {
-        display: none;
-    }
+/* =========================================================
+   MOBILE MENU BUTTON
+========================================================= */
 
-    .sidebar-brand {
-        justify-content: center;
-        padding: 0 0 30px;
-    }
+.mobile-menu-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    padding: 8px;
 
-    .nav-link {
-        text-align: center;
-        padding: 12px 8px;
-    }
+    border: 1px solid #e2e7ee;
+    border-radius: 10px;
 
-    .dashboard-topbar {
-        padding: 0 18px;
-    }
+    background: #ffffff;
 
-    .dashboard-content {
-        padding: 22px 18px;
-    }
+    cursor: pointer;
 
-    .topbar-label {
-        display: none;
-    }
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    flex-shrink: 0;
 }
+
+.mobile-menu-toggle span {
+    display: block;
+
+    width: 22px;
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: #10233f;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR CLOSE BUTTON
+========================================================= */
+
+.mobile-sidebar-close {
+    display: none;
+}
+
+
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+.mobile-menu-overlay {
+    display: none;
+}
+
+
+/* =========================================================
+   DASHBOARD WELCOME
+========================================================= */
 
 .dashboard-welcome {
     margin-bottom: 32px;
@@ -230,6 +284,11 @@
     font-size: 16px;
 }
 
+
+/* =========================================================
+   DASHBOARD CARDS
+========================================================= */
+
 .dashboard-placeholder-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -255,11 +314,10 @@
     line-height: 1.6;
 }
 
-@media (max-width: 900px) {
-    .dashboard-placeholder-grid {
-        grid-template-columns: 1fr;
-    }
-}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
 
 .card-header {
     display: flex;
@@ -279,7 +337,9 @@
 .dashboard-card h2 {
     margin: 0;
     color: #10233f;
-    font-size: 20px;
+    font-size: 21px;
+    line-height: 1.3;
+    font-weight: 600;
 }
 
 .progress-number {
@@ -287,6 +347,11 @@
     font-weight: 700;
     color: #10233f;
 }
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
 
 .progress-bar {
     width: 100%;
@@ -309,6 +374,11 @@
     color: #687386;
     font-size: 13px;
 }
+
+
+/* =========================================================
+   JOURNEY
+========================================================= */
 
 .journey-card {
     margin-bottom: 20px;
@@ -363,6 +433,11 @@
     font-size: 13px;
 }
 
+
+/* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -370,10 +445,10 @@
 }
 
 .card-description {
-    margin: 12px 0 22px;
+    margin: 14px 0 24px;
     color: #687386;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.7;
 }
 
 .profile-summary {
@@ -417,6 +492,11 @@
     font-weight: 600;
 }
 
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
 .primary-button {
     border: none;
     background: #d52b2b;
@@ -431,25 +511,6 @@
     opacity: 0.9;
 }
 
-@media (max-width: 1000px) {
-    .journey-steps {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 600px) {
-    .journey-steps {
-        grid-template-columns: 1fr;
-    }
-
-    .dashboard-welcome h1 {
-        font-size: 26px;
-    }
-}
 
 /* =========================================================
    DASHBOARD LOGO
@@ -474,7 +535,9 @@
 }
 
 
-/* LOGO MARK */
+/* =========================================================
+   LOGO MARK
+========================================================= */
 
 .dashboard-logo-mark {
     width: 38px;
@@ -491,7 +554,9 @@
 }
 
 
-/* LOGO TEXT */
+/* =========================================================
+   LOGO TEXT
+========================================================= */
 
 .dashboard-logo-text {
     display: flex;
@@ -520,25 +585,6 @@
     font-weight: 400;
 }
 
-
-/* =========================================================
-   DASHBOARD CARD TYPOGRAPHY & SPACING
-========================================================= */
-
-.dashboard-card h2 {
-    margin: 0;
-    color: #10233f;
-    font-size: 21px;
-    line-height: 1.3;
-    font-weight: 600;
-}
-
-.card-description {
-    margin: 14px 0 24px;
-    color: #687386;
-    font-size: 15px;
-    line-height: 1.7;
-}
 
 /* =========================================================
    MENTORSHIP CARD
@@ -575,6 +621,7 @@
     border-left: 1px solid #dfe4ea;
 }
 
+
 /* =========================================================
    BUTTON SPACING
 ========================================================= */
@@ -583,6 +630,7 @@
     align-self: flex-start;
     margin-top: 2px;
 }
+
 
 /* =========================================================
    PROFILE / NEXT STEP / MENTORSHIP CARDS
@@ -596,6 +644,7 @@
     min-height: 72px;
 }
 
+
 /* =========================================================
    SESSION CARD
 ========================================================= */
@@ -608,15 +657,265 @@
     margin-bottom: 20px;
 }
 
+
 /* =========================================================
-   MOBILE
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+    .journey-steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /* -----------------------------------------
+       MAIN LAYOUT
+    ----------------------------------------- */
+
+    .dashboard-layout {
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .dashboard-main {
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    /* -----------------------------------------
+       SIDEBAR
+    ----------------------------------------- */
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        z-index: 1000;
+
+        width: 280px;
+        height: 100vh;
+        min-height: 100vh;
+
+        padding: 28px 18px;
+
+        transform: translateX(-100%);
+        transition: transform 0.28s ease;
+
+        box-shadow: 8px 0 30px rgba(16, 35, 63, 0.20);
+
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidebar.sidebar-mobile-open {
+        transform: translateX(0);
+    }
+
+
+    /* -----------------------------------------
+       SIDEBAR LOGO
+    ----------------------------------------- */
+
+    .dashboard-logo {
+        height: 58px;
+        padding: 0 12px;
+        padding-right: 45px;
+    }
+
+    .dashboard-logo-text {
+        display: flex;
+    }
+
+    .dashboard-logo-text strong {
+        font-size: 17px;
+    }
+
+    .dashboard-logo-text span {
+        font-size: 13px;
+    }
+
+
+    /* -----------------------------------------
+       SIDEBAR NAVIGATION
+    ----------------------------------------- */
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 20px;
+    }
+
+    .nav-link {
+        display: block;
+
+        width: 100%;
+
+        padding: 13px 14px;
+
+        text-align: left;
+        font-size: 15px;
+    }
+
+
+    /* -----------------------------------------
+       SIDEBAR USER AREA
+    ----------------------------------------- */
+
+    .sidebar-bottom {
+        display: block;
+    }
+
+    .user-mini {
+        display: flex;
+    }
+
+    .user-mini>div {
+        display: block;
+    }
+
+    .logout-button {
+        display: block;
+    }
+
+
+    /* -----------------------------------------
+       SIDEBAR CLOSE BUTTON
+    ----------------------------------------- */
+
+    .mobile-sidebar-close {
+        position: absolute;
+        top: 25px;
+        right: 18px;
+
+        display: flex;
+
+        width: 34px;
+        height: 34px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        border-radius: 50%;
+
+        background: transparent;
+        color: white;
+
+        font-size: 25px;
+        line-height: 1;
+
+        cursor: pointer;
+
+        z-index: 2;
+    }
+
+    .mobile-sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+
+    /* -----------------------------------------
+       TOP BAR
+    ----------------------------------------- */
+
+    .dashboard-topbar {
+        height: 72px;
+        padding: 0 18px;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .topbar-label {
+        display: inline;
+        font-size: 14px;
+    }
+
+
+    /* -----------------------------------------
+       TOPBAR USER
+    ----------------------------------------- */
+
+    .topbar-user {
+        gap: 8px;
+        font-size: 13px;
+    }
+
+
+    /* -----------------------------------------
+       OVERLAY
+    ----------------------------------------- */
+
+    .mobile-menu-overlay {
+        display: block;
+
+        position: fixed;
+        inset: 0;
+
+        z-index: 999;
+
+        width: 100%;
+        height: 100%;
+
+        padding: 0;
+        border: none;
+
+        background: rgba(10, 24, 45, 0.45);
+
+        cursor: pointer;
+    }
+
+
+    /* -----------------------------------------
+       CONTENT
+    ----------------------------------------- */
+
+    .dashboard-content {
+        padding: 22px 18px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
 
+    .journey-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 26px;
+    }
+
     .mentorship-details {
         gap: 14px;
         font-size: 13px;
+        flex-wrap: wrap;
     }
 
     .mentorship-details span+span {
@@ -631,4 +930,67 @@
         font-size: 14px;
         line-height: 1.65;
     }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .dashboard-topbar {
+        padding: 0 14px;
+    }
+
+    .mobile-menu-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .topbar-label {
+        display: none;
+    }
+
+    .topbar-user>span {
+        max-width: 110px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dashboard-content {
+        padding: 20px 14px;
+    }
+
+    .dashboard-welcome {
+        margin-bottom: 24px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 25px;
+    }
+
+    .dashboard-card {
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .card-header {
+        gap: 12px;
+    }
+
+    .progress-number {
+        font-size: 26px;
+    }
+}
+
+
+/* =========================================================
+   BODY SCROLL LOCK
+========================================================= */
+
+body.mobile-menu-open {
+    overflow: hidden;
 }
