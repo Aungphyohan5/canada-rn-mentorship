@@ -577,9 +577,9 @@ const LandingPage = () => {
 
                                     </div>
 
-                                    <div className="nurse-stethoscope">
+                                    {/* <div className="nurse-stethoscope">
                                         ♡
-                                    </div>
+                                    </div> */}
 
                                 </div>
 
@@ -963,6 +963,8 @@ const LandingPage = () => {
                                 <span>
                                     ▣ Zoom Session
                                 </span>
+
+                                <span>🔒 Non-refundable</span>
 
                             </div>
 
