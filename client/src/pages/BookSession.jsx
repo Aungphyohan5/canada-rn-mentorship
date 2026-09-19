@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "./BookSession.css";
 
@@ -6,6 +7,7 @@ const CALENDLY_URL =
     "https://calendly.com/canadarnmentorshipbytz/canada-rn-mentorship";
 
 const BookSession = () => {
+    const navigate = useNavigate();
     const [checkingBooking, setCheckingBooking] = useState(true);
     const [activeBooking, setActiveBooking] = useState(null);
 
@@ -71,12 +73,28 @@ const BookSession = () => {
             setError("");
 
             /*
-             * If the user has already paid,
-             * don't create another Stripe payment.
+             * If the user already has a scheduled
+             * mentorship session, do NOT allow
+             * another booking.
+             */
+            if (
+                activeBooking?.bookingStatus ===
+                "scheduled"
+            ) {
+                navigate("/dashboard");
+                return;
+            }
+
+            /*
+             * If the user has already paid but
+             * has not scheduled yet, continue
+             * to the existing scheduling process.
              */
             if (
                 activeBooking?.paymentStatus ===
-                "paid"
+                "paid" &&
+                activeBooking?.bookingStatus ===
+                "pending"
             ) {
                 window.location.href =
                     CALENDLY_URL;
@@ -86,7 +104,7 @@ const BookSession = () => {
 
             /*
              * If a payment session is already pending,
-             * don't create another booking.
+             * resume the existing Stripe checkout.
              */
             if (
                 activeBooking?.paymentStatus ===
@@ -96,7 +114,8 @@ const BookSession = () => {
                     "/payments/resume-checkout-session",
                     {
                         params: {
-                            bookingId: activeBooking._id,
+                            bookingId:
+                                activeBooking._id,
                         },
                     }
                 );
@@ -115,6 +134,7 @@ const BookSession = () => {
 
                 return;
             }
+
             /*
              * No active booking.
              *
@@ -171,6 +191,7 @@ const BookSession = () => {
                 error.message ||
                 "Unable to start booking."
             );
+
         } finally {
             setLoading(false);
         }
@@ -222,6 +243,9 @@ const BookSession = () => {
 
     const isPending =
         activeBooking?.paymentStatus === "pending";
+
+    const isScheduled =
+        activeBooking?.bookingStatus === "scheduled";
 
     return (
         <div className="booking-page">
@@ -277,26 +301,27 @@ const BookSession = () => {
                 )}
 
                 {/* Paid Booking */}
-                {!checkingBooking && isPaid && (
-                    <div className="already-paid-message">
+                {/* Paid Booking Waiting for Scheduling */}
+                {!checkingBooking &&
+                    isPaid &&
+                    !isScheduled && (
+                        <div className="already-paid-message">
+                            <div className="already-paid-icon">
+                                ✓
+                            </div>
 
-                        <div className="already-paid-icon">
-                            ✓
+                            <div>
+                                <strong>
+                                    Payment already received
+                                </strong>
+
+                                <p>
+                                    Your mentorship session is
+                                    ready to be scheduled.
+                                </p>
+                            </div>
                         </div>
-
-                        <div>
-                            <strong>
-                                Payment already received
-                            </strong>
-
-                            <p>
-                                Your mentorship session is
-                                ready to be scheduled.
-                            </p>
-                        </div>
-
-                    </div>
-                )}
+                    )}
 
                 {/* Pending Payment */}
                 {!checkingBooking && isPending && (
@@ -322,6 +347,28 @@ const BookSession = () => {
                     </div>
                 )}
 
+                {/* Scheduled Booking */}
+                {!checkingBooking && isScheduled && (
+                    <div className="already-paid-message">
+                        <div className="already-paid-icon">
+                            ✓
+                        </div>
+
+                        <div>
+                            <strong>
+                                Your mentorship session is scheduled
+                            </strong>
+
+                            <p>
+                                You already have an upcoming
+                                mentorship session. You can view
+                                your session details from your
+                                dashboard.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Main Action */}
                 <button
                     type="button"
@@ -335,14 +382,14 @@ const BookSession = () => {
                     {checkingBooking
                         ? "Checking booking..."
                         : loading
-                            ? isPaid
-                                ? "Opening Calendly..."
-                                : "Please wait..."
-                            : isPaid
-                                ? "Schedule My Session →"
-                                : isPending
-                                    ? "Continue Existing Payment"
-                                    : "Continue to Payment →"}
+                            ? "Please wait..."
+                            : isScheduled
+                                ? "View My Session →"
+                                : isPaid
+                                    ? "Schedule My Session →"
+                                    : isPending
+                                        ? "Continue Existing Payment"
+                                        : "Continue to Payment →"}
                 </button>
 
                 {/* Cancel Pending Payment */}
@@ -368,11 +415,13 @@ const BookSession = () => {
 
                 {/* Bottom Note */}
                 <p className="booking-note">
-                    {isPaid
-                        ? "Your payment has already been received. You'll be taken to Calendly to choose your session time."
-                        : isPending
-                            ? "Complete your existing payment session or cancel it before starting a new booking."
-                            : "After successful payment, you'll be able to continue to scheduling."}
+                    {isScheduled
+                        ? "You already have a scheduled mentorship session. Please use your dashboard to view your session details."
+                        : isPaid
+                            ? "Your payment has already been received. You can continue to scheduling."
+                            : isPending
+                                ? "Complete your existing payment session or cancel it before starting a new booking."
+                                : "After successful payment, you'll be able to continue to scheduling."}
                 </p>
 
             </div>

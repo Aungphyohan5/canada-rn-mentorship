@@ -1,8 +1,16 @@
 import "./LandingPage.css";
 
+import {
+    useEffect,
+    useState,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 
+import api from "../services/api";
+
 import { useAuth } from "../context/AuthContext.jsx";
+
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -12,6 +20,126 @@ const LandingPage = () => {
         loading,
         logout,
     } = useAuth();
+
+
+    // =========================================================
+    // ACTIVE BOOKING STATE
+    // =========================================================
+
+    const [activeBooking, setActiveBooking] =
+        useState(null);
+
+    const [checkingBooking, setCheckingBooking] =
+        useState(false);
+
+
+    // =========================================================
+    // CHECK ACTIVE BOOKING
+    // =========================================================
+    //
+    // If the user is logged in, check whether they already
+    // have an active mentorship booking.
+    //
+    // The backend should consider these active:
+    //
+    // - paymentStatus: pending
+    // - paymentStatus: paid + bookingStatus: pending
+    // - paymentStatus: paid + bookingStatus: scheduled
+    //
+    // Completed / cancelled bookings should not be active.
+    // =========================================================
+
+    useEffect(() => {
+        if (!user || loading) {
+            setActiveBooking(null);
+            return;
+        }
+
+        let isMounted = true;
+
+        const checkActiveBooking = async () => {
+            try {
+                setCheckingBooking(true);
+
+                const response = await api.get(
+                    "/scheduling/my-active-booking"
+                );
+
+                const booking =
+                    response.data?.data?.booking;
+
+                if (isMounted) {
+                    setActiveBooking(
+                        booking || null
+                    );
+                }
+
+            } catch (error) {
+
+                /*
+                 * 404 simply means the user does not
+                 * currently have an active booking.
+                 */
+                if (
+                    error.response?.status === 404
+                ) {
+                    if (isMounted) {
+                        setActiveBooking(null);
+                    }
+
+                    return;
+                }
+
+                console.error(
+                    "LANDING PAGE ACTIVE BOOKING CHECK ERROR:",
+                    error
+                );
+
+                /*
+                 * Do not block the landing page if
+                 * the booking check temporarily fails.
+                 */
+                if (isMounted) {
+                    setActiveBooking(null);
+                }
+
+            } finally {
+                if (isMounted) {
+                    setCheckingBooking(false);
+                }
+            }
+        };
+
+        checkActiveBooking();
+
+        return () => {
+            isMounted = false;
+        };
+
+    }, [user, loading]);
+
+
+    // =========================================================
+    // BOOKING STATUS HELPERS
+    // =========================================================
+
+    const hasActiveBooking =
+        Boolean(activeBooking);
+
+
+    const isScheduled =
+        activeBooking?.bookingStatus ===
+        "scheduled";
+
+
+    const isPaid =
+        activeBooking?.paymentStatus ===
+        "paid";
+
+
+    const isPaymentPending =
+        activeBooking?.paymentStatus ===
+        "pending";
 
 
     // =========================================================
@@ -28,15 +156,47 @@ const LandingPage = () => {
     };
 
 
+    // =========================================================
+    // MENTORSHIP BOOKING HANDLER
+    // =========================================================
+
     const handleBookMentorship = () => {
-        if (user) {
-            navigate("/book-session");
+
+        /*
+         * User is not logged in.
+         */
+        if (!user) {
+            navigate("/login");
             return;
         }
 
-        navigate("/login");
+
+        /*
+         * User already has an active booking.
+         *
+         * Do NOT allow another booking.
+         *
+         * Send them to Dashboard where they can
+         * see their payment/session information.
+         */
+        if (hasActiveBooking) {
+            navigate("/dashboard");
+            return;
+        }
+
+
+        /*
+         * No active booking.
+         *
+         * Continue to booking/payment.
+         */
+        navigate("/book-session");
     };
 
+
+    // =========================================================
+    // RESOURCE HANDLER
+    // =========================================================
 
     const handleResources = () => {
         if (user) {
@@ -48,17 +208,50 @@ const LandingPage = () => {
     };
 
 
-    const handleLogout = () => {
-        logout();
-        navigate("/");
+    // =========================================================
+    // LOGOUT
+    // =========================================================
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate("/");
+        } catch (error) {
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
+        }
     };
 
+
+    // =========================================================
+    // LOGO
+    // =========================================================
 
     const handleLogoClick = () => {
         window.scrollTo({
             top: 0,
             behavior: "smooth",
         });
+    };
+
+
+    // =========================================================
+    // BOOKING BUTTON TEXT
+    // =========================================================
+
+    const getMentorshipButtonText = () => {
+
+        if (checkingBooking) {
+            return "Checking...";
+        }
+
+        if (hasActiveBooking) {
+            return "View My Session";
+        }
+
+        return "Book Your Mentorship";
     };
 
 
@@ -109,7 +302,6 @@ const LandingPage = () => {
                     </button>
 
 
-
                     {/* ===============================
                         NAVIGATION LINKS
                     =============================== */}
@@ -143,7 +335,6 @@ const LandingPage = () => {
                     </nav>
 
 
-
                     {/* ===============================
                         NAV ACTIONS
                     =============================== */}
@@ -151,12 +342,6 @@ const LandingPage = () => {
                     <div className="nav-actions">
 
                         {loading ? (
-
-                            /*
-                             * While AuthContext is checking
-                             * /auth/me, don't show the wrong
-                             * logged-in/logged-out state.
-                             */
 
                             <div
                                 className="nav-auth-loading"
@@ -166,14 +351,7 @@ const LandingPage = () => {
 
                         ) : user ? (
 
-                            /*
-                             * ============================
-                             * LOGGED IN
-                             * ============================
-                             */
-
                             <>
-
                                 <button
                                     type="button"
                                     className="nav-login-button"
@@ -196,19 +374,11 @@ const LandingPage = () => {
                                 >
                                     Log Out
                                 </button>
-
                             </>
 
                         ) : (
 
-                            /*
-                             * ============================
-                             * LOGGED OUT
-                             * ============================
-                             */
-
                             <>
-
                                 <button
                                     type="button"
                                     className="nav-login-button"
@@ -231,7 +401,6 @@ const LandingPage = () => {
                                 >
                                     Get Started
                                 </button>
-
                             </>
 
                         )}
@@ -241,7 +410,6 @@ const LandingPage = () => {
                 </div>
 
             </header>
-
 
 
             <main>
@@ -267,26 +435,21 @@ const LandingPage = () => {
 
 
                             <h1>
-
                                 Your Path to Becoming
 
                                 <span>
                                     a Registered Nurse in Canada
                                 </span>
-
                             </h1>
 
 
                             <p className="hero-description">
-
                                 Personalized 1-on-1 mentorship
                                 for internationally educated
                                 nurses. Get expert guidance,
                                 clear direction, and the support
                                 you need — every step of the way.
-
                             </p>
-
 
 
                             <div className="hero-buttons">
@@ -320,9 +483,7 @@ const LandingPage = () => {
                             </div>
 
 
-
                             <div className="hero-features">
-
 
                                 <div className="hero-feature">
 
@@ -337,7 +498,6 @@ const LandingPage = () => {
                                     </span>
 
                                 </div>
-
 
 
                                 <div className="hero-feature">
@@ -355,7 +515,6 @@ const LandingPage = () => {
                                 </div>
 
 
-
                                 <div className="hero-feature">
 
                                     <span className="feature-icon">
@@ -369,7 +528,6 @@ const LandingPage = () => {
                                     </span>
 
                                 </div>
-
 
 
                                 <div className="hero-feature">
@@ -386,11 +544,9 @@ const LandingPage = () => {
 
                                 </div>
 
-
                             </div>
 
                         </div>
-
 
 
                         {/* ===============================
@@ -398,7 +554,6 @@ const LandingPage = () => {
                         =============================== */}
 
                         <div className="hero-visual">
-
 
                             <div className="hero-circle">
 
@@ -409,16 +564,17 @@ const LandingPage = () => {
                             </div>
 
 
-
                             <div className="hero-nurse-card">
 
                                 <div className="nurse-placeholder">
 
                                     <div className="nurse-avatar">
+
                                         <img
                                             src="/images/tin zar-profile.png"
                                             alt="Canada RN Mentorship"
                                         />
+
                                     </div>
 
                                     <div className="nurse-stethoscope">
@@ -428,7 +584,6 @@ const LandingPage = () => {
                                 </div>
 
                             </div>
-
 
 
                             <div className="hero-floating-card">
@@ -451,13 +606,11 @@ const LandingPage = () => {
 
                             </div>
 
-
                         </div>
 
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -523,7 +676,6 @@ const LandingPage = () => {
                         </div>
 
 
-
                         <div>
 
                             <p className="section-eyebrow">
@@ -539,105 +691,73 @@ const LandingPage = () => {
                             <div className="red-line" />
 
 
-
                             <div className="help-grid">
 
-
                                 <div className="help-card">
-
                                     <span>📄</span>
-
                                     <strong>
                                         NNAS
                                     </strong>
-
                                     <small>
                                         Application guidance
                                     </small>
-
                                 </div>
 
 
-
                                 <div className="help-card">
-
                                     <span>🏛️</span>
-
                                     <strong>
                                         Provincial
                                         Registration
                                     </strong>
-
                                     <small>
                                         Understand requirements
                                     </small>
-
                                 </div>
 
 
-
                                 <div className="help-card">
-
                                     <span>📋</span>
-
                                     <strong>
                                         NCLEX-RN
                                     </strong>
-
                                     <small>
                                         Understand your pathway
                                     </small>
-
                                 </div>
 
 
-
                                 <div className="help-card">
-
                                     <span>✈️</span>
-
                                     <strong>
                                         Immigration
                                     </strong>
-
                                     <small>
                                         Explore pathways
                                     </small>
-
                                 </div>
 
 
-
                                 <div className="help-card">
-
                                     <span>🎯</span>
-
                                     <strong>
                                         Career Planning
                                     </strong>
-
                                     <small>
                                         Plan your next step
                                     </small>
-
                                 </div>
-
 
 
                                 <div className="help-card">
-
                                     <span>•••</span>
-
                                     <strong>
                                         And More
                                     </strong>
-
                                     <small>
                                         Personalized support
                                     </small>
-
                                 </div>
-
 
                             </div>
 
@@ -646,7 +766,6 @@ const LandingPage = () => {
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -659,7 +778,6 @@ const LandingPage = () => {
                 >
 
                     <div className="landing-container">
-
 
                         <div className="section-heading">
 
@@ -676,9 +794,7 @@ const LandingPage = () => {
                         </div>
 
 
-
                         <div className="steps-grid">
-
 
                             <div className="step-card">
 
@@ -700,7 +816,6 @@ const LandingPage = () => {
                                 </p>
 
                             </div>
-
 
 
                             <div className="step-card">
@@ -726,7 +841,6 @@ const LandingPage = () => {
                             </div>
 
 
-
                             <div className="step-card">
 
                                 <div className="step-number">
@@ -748,7 +862,6 @@ const LandingPage = () => {
                                 </p>
 
                             </div>
-
 
 
                             <div className="step-card">
@@ -773,13 +886,11 @@ const LandingPage = () => {
 
                             </div>
 
-
                         </div>
 
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -814,7 +925,6 @@ const LandingPage = () => {
                         </div>
 
 
-
                         <div className="mentorship-content">
 
                             <p className="section-eyebrow light">
@@ -832,15 +942,12 @@ const LandingPage = () => {
 
 
                             <p>
-
                                 A personalized 45-minute
                                 session to understand your
                                 background, answer your
                                 questions, and help you
                                 identify the right next step.
-
                             </p>
-
 
 
                             <div className="mentorship-meta">
@@ -860,6 +967,9 @@ const LandingPage = () => {
                             </div>
 
 
+                            {/* =================================================
+                                MENTORSHIP BOOKING BUTTON
+                            ================================================= */}
 
                             <button
                                 type="button"
@@ -867,11 +977,12 @@ const LandingPage = () => {
                                 onClick={
                                     handleBookMentorship
                                 }
+                                disabled={
+                                    checkingBooking
+                                }
                             >
 
-                                {user
-                                    ? "Book Your Mentorship"
-                                    : "Book Your Mentorship"}
+                                {getMentorshipButtonText()}
 
                                 <span>
                                     →
@@ -879,12 +990,30 @@ const LandingPage = () => {
 
                             </button>
 
+
+                            {/* =================================================
+                                ACTIVE BOOKING MESSAGE
+                            ================================================= */}
+
+                            {hasActiveBooking && (
+                                <p className="mentorship-active-note">
+
+                                    {isScheduled
+                                        ? "You already have a scheduled session. View your session details from your dashboard."
+                                        : isPaid
+                                            ? "Your payment has been received. Continue from your dashboard to view your session details."
+                                            : isPaymentPending
+                                                ? "You already have a booking in progress. Continue from your dashboard."
+                                                : "You already have an active mentorship booking."}
+
+                                </p>
+                            )}
+
                         </div>
 
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -912,19 +1041,15 @@ const LandingPage = () => {
                             <div className="red-line center" />
 
                             <p className="section-subtitle">
-
                                 Practical information to help
                                 you understand your Canadian
                                 nursing journey.
-
                             </p>
 
                         </div>
 
 
-
                         <div className="resources-grid">
-
 
                             <div className="resource-card">
 
@@ -946,7 +1071,6 @@ const LandingPage = () => {
                                 </span>
 
                             </div>
-
 
 
                             <div className="resource-card">
@@ -971,7 +1095,6 @@ const LandingPage = () => {
                             </div>
 
 
-
                             <div className="resource-card">
 
                                 <div className="resource-icon">
@@ -992,7 +1115,6 @@ const LandingPage = () => {
                                 </span>
 
                             </div>
-
 
 
                             <div className="resource-card">
@@ -1017,7 +1139,6 @@ const LandingPage = () => {
                             </div>
 
 
-
                             <div className="resource-card">
 
                                 <div className="resource-icon">
@@ -1039,9 +1160,7 @@ const LandingPage = () => {
 
                             </div>
 
-
                         </div>
-
 
 
                         <div className="resources-button">
@@ -1053,9 +1172,7 @@ const LandingPage = () => {
                                     handleResources
                                 }
                             >
-
                                 View All Resources
-
                             </button>
 
                         </div>
@@ -1063,7 +1180,6 @@ const LandingPage = () => {
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -1081,17 +1197,14 @@ const LandingPage = () => {
                         <div className="about-visual">
 
                             <div className="canada-placeholder">
-
                                 🍁
 
                                 <span>
                                     CANADA
                                 </span>
-
                             </div>
 
                         </div>
-
 
 
                         <div className="about-content">
@@ -1114,29 +1227,23 @@ const LandingPage = () => {
 
 
                             <p>
-
                                 Starting a nursing career
                                 in a new country can feel
                                 overwhelming.
-
                             </p>
 
 
                             <p>
-
                                 This mentorship platform
                                 was created to provide
                                 practical guidance and
                                 support so you don't have
                                 to navigate the journey
                                 alone.
-
                             </p>
 
 
-
                             <ul className="about-list">
-
 
                                 <li>
                                     <span>✓</span>
@@ -1163,7 +1270,6 @@ const LandingPage = () => {
                                     Judgment-Free Guidance
                                 </li>
 
-
                             </ul>
 
                         </div>
@@ -1171,7 +1277,6 @@ const LandingPage = () => {
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -1201,9 +1306,7 @@ const LandingPage = () => {
                         </div>
 
 
-
                         <div className="faq-list">
-
 
                             <details>
 
@@ -1213,17 +1316,14 @@ const LandingPage = () => {
                                 </summary>
 
                                 <p>
-
                                     The service is designed
                                     primarily for internationally
                                     educated nurses and nurses
                                     exploring registration and
                                     career pathways in Canada.
-
                                 </p>
 
                             </details>
-
 
 
                             <details>
@@ -1234,17 +1334,14 @@ const LandingPage = () => {
                                 </summary>
 
                                 <p>
-
                                     This is educational
                                     mentorship and general
                                     information only. It is not
                                     legal advice or regulated
                                     immigration representation.
-
                                 </p>
 
                             </details>
-
 
 
                             <details>
@@ -1256,15 +1353,12 @@ const LandingPage = () => {
                                 </summary>
 
                                 <p>
-
                                     The current mentorship
                                     session is 45 minutes and
                                     is conducted online.
-
                                 </p>
 
                             </details>
-
 
 
                             <details>
@@ -1275,25 +1369,21 @@ const LandingPage = () => {
                                 </summary>
 
                                 <p>
-
                                     After payment, you will
                                     choose an available
                                     appointment time through
                                     Calendly. Your confirmed
                                     session information will
                                     appear in your account.
-
                                 </p>
 
                             </details>
-
 
                         </div>
 
                     </div>
 
                 </section>
-
 
 
                 {/* ==================================================
@@ -1305,10 +1395,8 @@ const LandingPage = () => {
                     <div className="landing-container final-cta-inner">
 
                         <h2>
-
                             Your Canadian Nursing
                             Journey Starts Here
-
                         </h2>
 
 
@@ -1337,20 +1425,16 @@ const LandingPage = () => {
             </main>
 
 
-
             {/* ==================================================
                 FOOTER
             ================================================== */}
 
-            {/* ==================================================
-    FOOTER
-================================================== */}
-
             <footer className="landing-footer">
 
+
                 {/* ==================================================
-        DESKTOP FOOTER
-    ================================================== */}
+                    DESKTOP FOOTER
+                ================================================== */}
 
                 <div className="landing-desktop-footer">
 
@@ -1391,7 +1475,6 @@ const LandingPage = () => {
                         </div>
 
 
-
                         {/* QUICK LINKS */}
 
                         <div className="footer-column">
@@ -1419,7 +1502,6 @@ const LandingPage = () => {
                         </div>
 
 
-
                         {/* MORE */}
 
                         <div className="footer-column">
@@ -1440,15 +1522,22 @@ const LandingPage = () => {
                                 type="button"
                                 onClick={
                                     user
-                                        ? () => navigate("/dashboard")
-                                        : () => navigate("/login")
+                                        ? () =>
+                                            navigate(
+                                                "/dashboard"
+                                            )
+                                        : () =>
+                                            navigate(
+                                                "/login"
+                                            )
                                 }
                             >
-                                {user ? "Dashboard" : "Log In"}
+                                {user
+                                    ? "Dashboard"
+                                    : "Log In"}
                             </button>
 
                         </div>
-
 
 
                         {/* LEGAL */}
@@ -1472,7 +1561,6 @@ const LandingPage = () => {
                             </span>
 
                         </div>
-
 
 
                         {/* CONNECT */}
@@ -1502,12 +1590,12 @@ const LandingPage = () => {
                 </div>
 
 
-
                 {/* ==================================================
-        MOBILE FOOTER
-    ================================================== */}
+                    MOBILE FOOTER
+                ================================================== */}
 
                 <div className="landing-mobile-footer">
+
 
                     <div className="mobile-footer-brand">
 
@@ -1518,6 +1606,7 @@ const LandingPage = () => {
                             </span>
 
                             <div>
+
                                 <strong>
                                     Canada RN
                                 </strong>
@@ -1525,9 +1614,11 @@ const LandingPage = () => {
                                 <span>
                                     Mentorship
                                 </span>
+
                             </div>
 
                         </div>
+
 
                         <p>
                             Guidance. Support. Success.
@@ -1536,7 +1627,6 @@ const LandingPage = () => {
                         </p>
 
                     </div>
-
 
 
                     {/* QUICK LINKS */}
@@ -1571,7 +1661,6 @@ const LandingPage = () => {
                     </details>
 
 
-
                     {/* MORE */}
 
                     <details className="mobile-footer-accordion">
@@ -1595,17 +1684,24 @@ const LandingPage = () => {
                                 type="button"
                                 onClick={
                                     user
-                                        ? () => navigate("/dashboard")
-                                        : () => navigate("/login")
+                                        ? () =>
+                                            navigate(
+                                                "/dashboard"
+                                            )
+                                        : () =>
+                                            navigate(
+                                                "/login"
+                                            )
                                 }
                             >
-                                {user ? "Dashboard" : "Log In"}
+                                {user
+                                    ? "Dashboard"
+                                    : "Log In"}
                             </button>
 
                         </div>
 
                     </details>
-
 
 
                     {/* LEGAL */}
@@ -1636,7 +1732,6 @@ const LandingPage = () => {
                     </details>
 
 
-
                     {/* CONNECT */}
 
                     <details className="mobile-footer-accordion">
@@ -1665,7 +1760,6 @@ const LandingPage = () => {
                     </details>
 
 
-
                     {/* COPYRIGHT */}
 
                     <div className="mobile-footer-bottom">
@@ -1682,5 +1776,6 @@ const LandingPage = () => {
         </div>
     );
 };
+
 
 export default LandingPage;

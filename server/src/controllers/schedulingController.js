@@ -12,10 +12,11 @@ import {
 } from "../services/emailService.js";
 
 
-
-
 // ============================================================
 // GET MY PAID BOOKING
+// ============================================================
+// Returns the latest paid mentorship booking that has not yet
+// been scheduled through Calendly.
 // ============================================================
 
 export const getMyPaidBooking = async (req, res) => {
@@ -60,12 +61,13 @@ export const getMyPaidBooking = async (req, res) => {
 // ============================================================
 // GET MY ACTIVE BOOKING
 // ============================================================
+// Active bookings include:
 //
-// Active means:
-// - payment pending + booking pending
-// - payment paid + booking pending
+// 1. Payment pending + booking pending
+// 2. Payment paid + booking pending
+// 3. Payment paid + booking scheduled
 //
-// Scheduled bookings are not considered "active" here.
+// Completed and cancelled bookings are not considered active.
 // ============================================================
 
 export const getMyActiveBooking = async (req, res) => {
@@ -80,7 +82,12 @@ export const getMyActiveBooking = async (req, res) => {
                 ],
             },
 
-            bookingStatus: "pending",
+            bookingStatus: {
+                $in: [
+                    "pending",
+                    "scheduled",
+                ],
+            },
 
         }).sort({
             createdAt: -1,
@@ -89,8 +96,7 @@ export const getMyActiveBooking = async (req, res) => {
         if (!booking) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "No active booking found.",
+                message: "No active booking found.",
             });
         }
 
@@ -118,45 +124,36 @@ export const getMyActiveBooking = async (req, res) => {
 // ============================================================
 // SYNC CALENDLY BOOKING
 // ============================================================
+// Finds the user's Calendly appointment and synchronizes:
 //
-// This function:
-// 1. Finds the user's latest paid mentorship booking
-// 2. Looks for the user's Calendly appointment
-// 3. Saves Calendly event/invitee information
-// 4. Saves scheduled date/time
-// 5. Retrieves Zoom information
-// 6. Saves Zoom join URL
+// - Booking status
+// - Scheduled date/time
+// - Calendly event URI
+// - Calendly invitee URI
+// - Zoom meeting URL
+// - Zoom meeting ID
 //
-// It works for BOTH:
-// - paid + pending
-// - paid + scheduled
+// This is used because Calendly Free does not provide the
+// webhook functionality needed for instant synchronization.
 //
-// This allows us to refresh Zoom information later.
+// The Dashboard can call this endpoint after the user books
+// through Calendly.
 // ============================================================
 
-export const syncMyCalendlyBooking = async (
-    req,
-    res
-) => {
-
+export const syncMyCalendlyBooking = async (req, res) => {
     try {
 
-        /*
-         * Find the latest paid mentorship booking.
-         *
-         * IMPORTANT:
-         * We do NOT require bookingStatus === "pending"
-         * here because the booking may already be scheduled.
-         */
+        // ========================================================
+        // 1. FIND THE USER'S LATEST PAID MENTORSHIP BOOKING
+        // ========================================================
+
         const booking = await Booking.findOne({
             user: req.user._id,
             paymentStatus: "paid",
-            sessionType:
-                "Canada RN Mentorship Session",
+            sessionType: "Canada RN Mentorship Session",
         }).sort({
             createdAt: -1,
         });
-
 
         if (!booking) {
             return res.status(404).json({
@@ -167,14 +164,14 @@ export const syncMyCalendlyBooking = async (
         }
 
 
-        /*
-         * Get logged-in user's email.
-         */
+        // ========================================================
+        // 2. GET USER EMAIL
+        // ========================================================
+
         const userEmail =
             req.user.email
                 ?.trim()
                 .toLowerCase();
-
 
         if (!userEmail) {
             return res.status(400).json({
@@ -185,22 +182,35 @@ export const syncMyCalendlyBooking = async (
         }
 
 
-        /*
-         * Get Calendly account.
-         */
+        // ========================================================
+        // 3. GET CALENDLY USER
+        // ========================================================
+
         const calendlyUser =
             await getCurrentCalendlyUser();
 
 
-        /*
-         * Search from booking creation date
-         * through one year into the future.
-         */
+        if (!calendlyUser?.uri) {
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Unable to identify the Calendly account.",
+            });
+        }
+
+
+        // ========================================================
+        // 4. SET CALENDLY SEARCH WINDOW
+        // ========================================================
+        //
+        // Search from the MongoDB booking creation date through
+        // one year into the future.
+        //
+
         const minStartTime =
             new Date(
                 booking.createdAt
             ).toISOString();
-
 
         const maxStartTime =
             new Date(
@@ -213,9 +223,10 @@ export const syncMyCalendlyBooking = async (
             ).toISOString();
 
 
-        /*
-         * Get scheduled Calendly events.
-         */
+        // ========================================================
+        // 5. GET CALENDLY EVENTS
+        // ========================================================
+
         const events =
             await getCalendlyScheduledEvents({
                 userUri:
@@ -233,45 +244,46 @@ export const syncMyCalendlyBooking = async (
         );
 
 
-        /*
-         * Find the event belonging
-         * to the logged-in user's email.
-         */
-        /*
- * Find Calendly events belonging to this user.
- *
- * IMPORTANT:
- * A user may have multiple Calendly bookings.
- * We therefore do NOT simply take the first match.
- *
- * We prefer events created AFTER this payment/booking
- * was created.
- */
+        // ========================================================
+        // 6. FIND EVENTS BELONGING TO THIS USER
+        // ========================================================
+        //
+        // We inspect invitees for every event and compare the
+        // Calendly invitee email with the logged-in user's email.
+        //
 
         const matchingEvents = [];
 
         for (const event of events) {
+            try {
+                const invitees =
+                    await getCalendlyEventInvitees(
+                        event.uri
+                    );
 
-            const invitees =
-                await getCalendlyEventInvitees(
-                    event.uri
+                const invitee =
+                    invitees.find(
+                        (item) =>
+                            item.email
+                                ?.trim()
+                                .toLowerCase() ===
+                            userEmail
+                    );
+
+                if (invitee) {
+                    matchingEvents.push({
+                        event,
+                        invitee,
+                    });
+                }
+
+            } catch (inviteeError) {
+                console.error(
+                    "CALENDLY INVITEE ERROR:",
+                    inviteeError.response?.data ||
+                    inviteeError.message ||
+                    inviteeError
                 );
-
-            const invitee =
-                invitees.find(
-                    (item) =>
-                        item.email
-                            ?.trim()
-                            .toLowerCase() ===
-                        userEmail
-                );
-
-            if (invitee) {
-
-                matchingEvents.push({
-                    event,
-                    invitee,
-                });
             }
         }
 
@@ -283,43 +295,42 @@ export const syncMyCalendlyBooking = async (
                     uri: event.uri,
                     createdAt: event.created_at,
                     startTime: event.start_time,
-                    location: event.location,
                 })
             )
         );
 
 
-        /*
-         * Prefer a Calendly event created AFTER
-         * our MongoDB booking was created.
-         */
+        // ========================================================
+        // 7. SELECT THE CORRECT CALENDLY EVENT
+        // ========================================================
+        //
+        // Prefer an event created after the MongoDB booking.
+        // This helps prevent an older Calendly booking from
+        // being incorrectly attached to a new payment.
+        //
+
         const bookingCreatedAt =
             new Date(
                 booking.createdAt
             );
 
-
         const newerMatchingEvents =
             matchingEvents.filter(
                 ({ event }) =>
+                    event.created_at &&
                     new Date(
                         event.created_at
                     ) >= bookingCreatedAt
             );
 
 
-        /*
-         * Choose the newest matching event.
-         *
-         * If no event was created after the booking,
-         * fall back to the newest matching event.
-         */
         const candidates =
             newerMatchingEvents.length > 0
                 ? newerMatchingEvents
                 : matchingEvents;
 
 
+        // Sort newest event first
         candidates.sort(
             (a, b) =>
                 new Date(
@@ -331,35 +342,38 @@ export const syncMyCalendlyBooking = async (
         );
 
 
+        const selectedMatch =
+            candidates[0] || null;
+
+
         const matchingEvent =
-            candidates[0]?.event || null;
+            selectedMatch?.event || null;
 
         const matchingInvitee =
-            candidates[0]?.invitee || null;
+            selectedMatch?.invitee || null;
 
 
         console.log(
             "SELECTED CALENDLY EVENT:",
-            matchingEvent?.uri
+            matchingEvent?.uri || "NONE"
         );
 
         console.log(
             "SELECTED CALENDLY EVENT CREATED AT:",
-            matchingEvent?.created_at
+            matchingEvent?.created_at || "NONE"
         );
 
 
-        /*
-         * No Calendly appointment found.
-         */
+        // ========================================================
+        // 8. NO CALENDLY BOOKING FOUND
+        // ========================================================
+
         if (
             !matchingEvent ||
             !matchingInvitee
         ) {
-
             return res.status(200).json({
                 success: true,
-
                 scheduled: false,
 
                 message:
@@ -372,11 +386,9 @@ export const syncMyCalendlyBooking = async (
         }
 
 
-        /*
-         * ====================================================
-         * CALENDLY EVENT FOUND
-         * ====================================================
-         */
+        // ========================================================
+        // 9. CALENDLY EVENT FOUND
+        // ========================================================
 
         console.log(
             "MATCHING CALENDLY EVENT:",
@@ -384,38 +396,28 @@ export const syncMyCalendlyBooking = async (
         );
 
 
-        /*
-         * Update booking status.
-         */
+        // ========================================================
+        // 10. UPDATE BOOKING
+        // ========================================================
+
         booking.bookingStatus =
             "scheduled";
 
-
-        /*
-         * Save scheduled date/time.
-         */
         booking.scheduledAt =
             new Date(
                 matchingEvent.start_time
             );
 
-
-        /*
-         * Save Calendly references.
-         */
         booking.calendlyEventUri =
             matchingEvent.uri;
-
 
         booking.calendlyInviteeUri =
             matchingInvitee.uri;
 
 
-        /*
-         * ====================================================
-         * GET FULL CALENDLY EVENT
-         * ====================================================
-         */
+        // ========================================================
+        // 11. GET FULL CALENDLY EVENT
+        // ========================================================
 
         const fullEvent =
             await getCalendlyEvent(
@@ -433,13 +435,12 @@ export const syncMyCalendlyBooking = async (
         );
 
 
-        /*
-         * ====================================================
-         * GET LOCATION
-         * ====================================================
-         */
+        // ========================================================
+        // 12. GET CALENDLY LOCATION
+        // ========================================================
 
-        const location = fullEvent?.location;
+        const location =
+            fullEvent?.location;
 
         console.log(
             "CALENDLY LOCATION:",
@@ -451,37 +452,45 @@ export const syncMyCalendlyBooking = async (
         );
 
 
-        // ============================================================
-        // EXTRACT ZOOM INFORMATION
-        // ============================================================
+        // ========================================================
+        // 13. EXTRACT ZOOM INFORMATION
+        // ========================================================
 
         let zoomJoinUrl = null;
         let zoomMeetingId = null;
 
 
-        // Direct Calendly location
+        // Direct Zoom join URL
         if (location?.join_url) {
-            zoomJoinUrl = location.join_url;
+            zoomJoinUrl =
+                location.join_url;
         }
 
 
-        // Some Calendly responses may expose Zoom
-        // information inside data
-        if (!zoomJoinUrl && location?.data?.join_url) {
-            zoomJoinUrl = location.data.join_url;
+        // Zoom information inside location.data
+        if (
+            !zoomJoinUrl &&
+            location?.data?.join_url
+        ) {
+            zoomJoinUrl =
+                location.data.join_url;
         }
 
 
         // Zoom meeting ID
         if (location?.data?.id) {
             zoomMeetingId =
-                String(location.data.id);
+                String(
+                    location.data.id
+                );
         }
 
 
-        // Save Zoom URL
-        if (zoomJoinUrl) {
+        // ========================================================
+        // 14. SAVE ZOOM JOIN URL
+        // ========================================================
 
+        if (zoomJoinUrl) {
             booking.zoomJoinUrl =
                 zoomJoinUrl;
 
@@ -491,17 +500,17 @@ export const syncMyCalendlyBooking = async (
             );
 
         } else {
-
             console.log(
                 "NO ZOOM JOIN URL FOUND IN CALENDLY LOCATION"
             );
-
         }
 
 
-        // Save Zoom meeting ID
-        if (zoomMeetingId) {
+        // ========================================================
+        // 15. SAVE ZOOM MEETING ID
+        // ========================================================
 
+        if (zoomMeetingId) {
             booking.zoomMeetingId =
                 zoomMeetingId;
 
@@ -509,34 +518,49 @@ export const syncMyCalendlyBooking = async (
                 "ZOOM MEETING ID SAVED:",
                 zoomMeetingId
             );
-
         }
 
 
-        /*
-         * Save everything to MongoDB.
-         */
+        // ========================================================
+        // 16. SAVE BOOKING
+        // ========================================================
+
         await booking.save();
 
-        /*
-         * Send confirmation email only once.
-         */
+
+        // ========================================================
+        // 17. SEND CONFIRMATION EMAIL
+        // ========================================================
+        //
+        // Only send the confirmation email once.
+        //
+        // IMPORTANT:
+        // emailService.js expects "name", not "firstName".
+        //
+
         if (!booking.confirmationSent) {
             try {
+
                 await sendMentorshipConfirmationEmail({
                     to: userEmail,
-                    firstName:
+
+                    name:
                         req.user.firstName ||
                         "there",
+
                     scheduledAt:
                         booking.scheduledAt,
+
                     zoomJoinUrl:
                         booking.zoomJoinUrl,
                 });
 
-                booking.confirmationSent = true;
+
+                booking.confirmationSent =
+                    true;
 
                 await booking.save();
+
 
                 console.log(
                     "MENTORSHIP CONFIRMATION EMAIL SENT:",
@@ -544,19 +568,25 @@ export const syncMyCalendlyBooking = async (
                 );
 
             } catch (emailError) {
-                /*
-                 * Email failure should NOT undo
-                 * the successful Calendly synchronization.
-                 */
+
+                // Email failure must not undo
+                // the successful booking synchronization.
+
                 console.error(
                     "MENTORSHIP EMAIL ERROR:",
+                    emailError.response?.data ||
+                    emailError.message ||
                     emailError
                 );
             }
         }
 
-        return res.status(200).json({
 
+        // ========================================================
+        // 18. RETURN SUCCESS
+        // ========================================================
+
+        return res.status(200).json({
             success: true,
 
             scheduled: true,
@@ -567,9 +597,7 @@ export const syncMyCalendlyBooking = async (
             data: {
                 booking,
             },
-
         });
-
 
     } catch (error) {
 
@@ -580,15 +608,11 @@ export const syncMyCalendlyBooking = async (
             error
         );
 
-
         return res.status(500).json({
-
             success: false,
 
             message:
                 "Unable to synchronize Calendly booking.",
-
         });
-
     }
 };
