@@ -1574,7 +1574,7 @@ const LandingPage = () => {
                             </h4>
 
                             <span>
-                                ✉ info@canadarnmentorship.com
+                                ✉ canadarnmentorshipbytz@gmail.com
                             </span>
 
                             <span>
