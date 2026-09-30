@@ -7,11 +7,13 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
+
         lastName: {
             type: String,
             required: true,
             trim: true,
         },
+
         email: {
             type: String,
             required: true,
@@ -19,6 +21,7 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
         },
+
         password: {
             type: String,
             required: true,
@@ -40,11 +43,24 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+
+        // =========================================================
+        // PASSWORD RESET
+        // =========================================================
+
+        passwordResetToken: {
+            type: String,
+            default: null,
+        },
+
+        passwordResetExpires: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true,
     }
-
 );
 
 export default mongoose.model("User", userSchema);

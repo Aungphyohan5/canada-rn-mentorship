@@ -579,3 +579,23 @@
         font-size: 22px;
     }
 }
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.login-success {
+    padding: 12px 14px;
+
+    border: 1px solid #b7dfc5;
+
+    border-radius: 9px;
+
+    background: #f0fbf4;
+
+    color: #176b36;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}

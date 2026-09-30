@@ -321,14 +321,11 @@ const Login = () => {
                                 className="login-forgot"
                                 disabled={loading}
                                 onClick={() =>
-                                    alert(
-                                        "Password reset will be available soon."
-                                    )
+                                    navigate("/forgot-password")
                                 }
                             >
                                 Forgot password?
                             </button>
-
                         </div>
 
 
