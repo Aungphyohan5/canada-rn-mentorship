@@ -21,158 +21,165 @@ import AdminNurseProfile from "./pages/AdminNurseProfile";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
+import { Analytics } from "@vercel/analytics/react";
+
 
 function App() {
   return (
-    <Routes>
+    <>
+      <Routes>
 
-      {/* ==========================================
-                PUBLIC
-            ========================================== */}
+        {/* ==========================================
+                  PUBLIC
+              ========================================== */}
 
-      <Route
-        path="/"
-        element={<LandingPage />}
-      />
+        <Route
+          path="/"
+          element={<LandingPage />}
+        />
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-      <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
-      />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
 
-      <Route
-        path="/reset-password"
-        element={<ResetPassword />}
-      />
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
 
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
-
-      {/* ==========================================
-                NURSE ONBOARDING
-            ========================================== */}
-
-      <Route
-        path="/onboarding"
-        element={
-          <ProtectedRoute>
-            <Onboarding />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
 
-      {/* ==========================================
-                NURSE DASHBOARD
-            ========================================== */}
+        {/* ==========================================
+                  NURSE ONBOARDING
+              ========================================== */}
 
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/resources"
-        element={
-          <ProtectedRoute>
-            <Resources />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/bookings"
-        element={
-          <ProtectedRoute>
-            <Bookings />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/book-session"
-        element={
-          <ProtectedRoute>
-            <BookSession />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
 
 
-      {/* ==========================================
-                STRIPE
-            ========================================== */}
+        {/* ==========================================
+                  NURSE DASHBOARD
+              ========================================== */}
 
-      <Route
-        path="/booking/success"
-        element={<BookingSuccess />}
-      />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/booking/cancelled"
-        element={<BookingCancelled />}
-      />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/resources"
+          element={
+            <ProtectedRoute>
+              <Resources />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/bookings"
+          element={
+            <ProtectedRoute>
+              <Bookings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/book-session"
+          element={
+            <ProtectedRoute>
+              <BookSession />
+            </ProtectedRoute>
+          }
+        />
 
 
-      {/* ==========================================
-                ADMIN
-            ========================================== */}
+        {/* ==========================================
+                  STRIPE
+              ========================================== */}
 
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/booking/success"
+          element={<BookingSuccess />}
+        />
 
-      <Route
-        path="/admin/nurses/:id"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminNurseProfile />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/booking/cancelled"
+          element={<BookingCancelled />}
+        />
 
 
-      {/* ==========================================
-                UNKNOWN ROUTE
-            ========================================== */}
+        {/* ==========================================
+                  ADMIN
+              ========================================== */}
 
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to="/"
-            replace
-          />
-        }
-      />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-    </Routes>
+        <Route
+          path="/admin/nurses/:id"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminNurseProfile />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ==========================================
+                  UNKNOWN ROUTE
+              ========================================== */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
+
+      </Routes>
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
+    </>
   );
 }
 
