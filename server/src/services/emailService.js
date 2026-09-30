@@ -317,3 +317,101 @@ export const sendPasswordResetEmail = async ({
         html,
     });
 };
+
+// =========================================================
+// ACCOUNT CREATED EMAIL
+// =========================================================
+
+export const sendAccountCreatedEmail = async ({
+    to,
+    name,
+}) => {
+    const recipientName = name || "there";
+
+    const frontendUrl =
+        process.env.FRONTEND_URL ||
+        "https://www.canadarnmentorship.ca";
+
+    const loginUrl = `${frontendUrl}/login`;
+
+    const html = `
+        <div
+            style="
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #1f2937;
+                max-width: 600px;
+                margin: 0 auto;
+            "
+        >
+
+            <h2
+                style="
+                    color: #17324d;
+                    margin-bottom: 20px;
+                "
+            >
+                Welcome to Canada RN Mentorship
+            </h2>
+
+            <p>
+                Hello ${recipientName},
+            </p>
+
+            <p>
+                Your Canada RN Mentorship account has been
+                successfully created.
+            </p>
+
+            <p>
+                You can now log in to your account and continue
+                your Canadian nursing journey.
+            </p>
+
+            <p style="margin: 30px 0;">
+                <a
+                    href="${loginUrl}"
+                    style="
+                        display: inline-block;
+                        background: #df2b2f;
+                        color: #ffffff;
+                        text-decoration: none;
+                        padding: 13px 22px;
+                        border-radius: 8px;
+                        font-weight: 700;
+                    "
+                >
+                    Log In to Your Account
+                </a>
+            </p>
+
+            <p>
+                Your registered email address is:
+                <strong>${to}</strong>
+            </p>
+
+            <p>
+                For your security, we will never send your
+                password by email.
+            </p>
+
+            <p>
+                If you did not create this account, please
+                contact us.
+            </p>
+
+            <p style="margin-top: 30px;">
+                Best regards,<br />
+                <strong>Canada RN Mentorship</strong>
+            </p>
+
+        </div>
+    `;
+
+    return sendEmail({
+        to,
+        subject:
+            "Welcome to Canada RN Mentorship — Your Account Is Ready",
+        html,
+    });
+};

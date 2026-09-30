@@ -4,7 +4,10 @@ import crypto from "crypto";
 import User from "../models/user.js";
 import generateToken from "../utils/generateToken.js";
 
-import { sendPasswordResetEmail } from "../services/emailService.js";
+import {
+    sendPasswordResetEmail,
+    sendAccountCreatedEmail,
+} from "../services/emailService.js";
 
 
 // =========================================================
@@ -20,6 +23,10 @@ export const register = async (req, res) => {
             password,
         } = req.body;
 
+        // -----------------------------------------------------
+        // Validate required fields
+        // -----------------------------------------------------
+
         if (
             !firstName ||
             !lastName ||
@@ -32,8 +39,16 @@ export const register = async (req, res) => {
             });
         }
 
+        // -----------------------------------------------------
+        // Normalize email
+        // -----------------------------------------------------
+
         const normalizedEmail =
             email.toLowerCase().trim();
+
+        // -----------------------------------------------------
+        // Check if email already exists
+        // -----------------------------------------------------
 
         const existingUser = await User.findOne({
             email: normalizedEmail,
@@ -46,19 +61,58 @@ export const register = async (req, res) => {
             });
         }
 
+        // -----------------------------------------------------
+        // Hash password
+        // -----------------------------------------------------
+
         const hashedPassword =
             await bcrypt.hash(password, 10);
 
+        // -----------------------------------------------------
+        // Create user
+        // -----------------------------------------------------
+
         const user = await User.create({
-            firstName,
-            lastName,
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
             email: normalizedEmail,
             password: hashedPassword,
         });
 
-        res.status(201).json({
+        // -----------------------------------------------------
+        // Send account-created email
+        //
+        // This runs after the account is successfully created.
+        //
+        // If Resend has a temporary problem, the user's
+        // registration will still succeed.
+        // -----------------------------------------------------
+
+        void sendAccountCreatedEmail({
+            to: user.email,
+            name: user.firstName,
+        })
+            .then(() => {
+                console.log(
+                    "ACCOUNT CREATED EMAIL SENT:",
+                    user.email
+                );
+            })
+            .catch((emailError) => {
+                console.error(
+                    "ACCOUNT CREATED EMAIL ERROR:",
+                    emailError
+                );
+            });
+
+        // -----------------------------------------------------
+        // Registration response
+        // -----------------------------------------------------
+
+        return res.status(201).json({
             success: true,
-            message: "User Registered successfully",
+            message:
+                "Account created successfully.",
             data: {
                 id: user._id,
                 firstName: user.firstName,
@@ -68,9 +122,12 @@ export const register = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("REGISTER ERROR:", error);
+        console.error(
+            "REGISTER ERROR:",
+            error
+        );
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Server Error",
         });
@@ -89,6 +146,10 @@ export const login = async (req, res) => {
             password,
         } = req.body;
 
+        // -----------------------------------------------------
+        // Validate fields
+        // -----------------------------------------------------
+
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -96,6 +157,10 @@ export const login = async (req, res) => {
                     "Email and password are required",
             });
         }
+
+        // -----------------------------------------------------
+        // Find user
+        // -----------------------------------------------------
 
         const user = await User.findOne({
             email: email.toLowerCase().trim(),
@@ -108,6 +173,10 @@ export const login = async (req, res) => {
                     "Invalid email or password",
             });
         }
+
+        // -----------------------------------------------------
+        // Check password
+        // -----------------------------------------------------
 
         const isPasswordCorrect =
             await bcrypt.compare(
@@ -123,10 +192,18 @@ export const login = async (req, res) => {
             });
         }
 
+        // -----------------------------------------------------
+        // Generate JWT
+        // -----------------------------------------------------
+
         const token =
             generateToken(user._id.toString());
 
-        res.status(200).json({
+        // -----------------------------------------------------
+        // Login response
+        // -----------------------------------------------------
+
+        return res.status(200).json({
             success: true,
             message: "Login successful",
 
@@ -144,9 +221,12 @@ export const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("LOGIN ERROR:", error);
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Server Error",
         });
@@ -162,15 +242,24 @@ export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
 
+        // -----------------------------------------------------
+        // Validate email
+        // -----------------------------------------------------
+
         if (!email) {
             return res.status(400).json({
                 success: false,
-                message: "Email address is required.",
+                message:
+                    "Email address is required.",
             });
         }
 
         const normalizedEmail =
             email.toLowerCase().trim();
+
+        // -----------------------------------------------------
+        // Find user
+        // -----------------------------------------------------
 
         const user = await User.findOne({
             email: normalizedEmail,
@@ -180,9 +269,7 @@ export const forgotPassword = async (req, res) => {
          * Always return the same response whether
          * the email exists or not.
          *
-         * This prevents people from using the
-         * password-reset form to discover registered
-         * email addresses.
+         * This prevents email/account enumeration.
          */
 
         if (!user) {
@@ -194,14 +281,14 @@ export const forgotPassword = async (req, res) => {
         }
 
         // -----------------------------------------------------
-        // Generate secure random token
+        // Generate secure reset token
         // -----------------------------------------------------
 
         const resetToken =
             crypto.randomBytes(32).toString("hex");
 
         // -----------------------------------------------------
-        // Store only the HASH of the token in MongoDB
+        // Hash reset token before storing it
         // -----------------------------------------------------
 
         const hashedToken =
@@ -214,7 +301,10 @@ export const forgotPassword = async (req, res) => {
 
         // Token expires after 1 hour
         user.passwordResetExpires =
-            new Date(Date.now() + 60 * 60 * 1000);
+            new Date(
+                Date.now() +
+                60 * 60 * 1000
+            );
 
         await user.save();
 
@@ -230,7 +320,7 @@ export const forgotPassword = async (req, res) => {
             `${frontendUrl}/reset-password?token=${resetToken}`;
 
         // -----------------------------------------------------
-        // Send email
+        // Send reset email
         // -----------------------------------------------------
 
         try {
@@ -239,18 +329,14 @@ export const forgotPassword = async (req, res) => {
                 name: user.firstName,
                 resetUrl,
             });
+
         } catch (emailError) {
             console.error(
                 "PASSWORD RESET EMAIL ERROR:",
                 emailError
             );
 
-            /*
-             * Remove token if email could not be sent.
-             * This prevents creating a reset token that
-             * the user never received.
-             */
-
+            // Remove unused reset token
             user.passwordResetToken = null;
             user.passwordResetExpires = null;
 
@@ -262,6 +348,10 @@ export const forgotPassword = async (req, res) => {
                     "We could not send the password reset email. Please try again later.",
             });
         }
+
+        // -----------------------------------------------------
+        // Success
+        // -----------------------------------------------------
 
         return res.status(200).json({
             success: true,
@@ -294,6 +384,10 @@ export const resetPassword = async (req, res) => {
             password,
         } = req.body;
 
+        // -----------------------------------------------------
+        // Validate request
+        // -----------------------------------------------------
+
         if (!token || !password) {
             return res.status(400).json({
                 success: false,
@@ -301,6 +395,10 @@ export const resetPassword = async (req, res) => {
                     "Reset token and new password are required.",
             });
         }
+
+        // -----------------------------------------------------
+        // Validate password length
+        // -----------------------------------------------------
 
         if (password.length < 6) {
             return res.status(400).json({
@@ -311,7 +409,7 @@ export const resetPassword = async (req, res) => {
         }
 
         // -----------------------------------------------------
-        // Hash the token received from the user
+        // Hash token received from frontend
         // -----------------------------------------------------
 
         const hashedToken =
@@ -321,7 +419,7 @@ export const resetPassword = async (req, res) => {
                 .digest("hex");
 
         // -----------------------------------------------------
-        // Find user with valid, non-expired token
+        // Find user with valid token
         // -----------------------------------------------------
 
         const user = await User.findOne({
@@ -356,6 +454,10 @@ export const resetPassword = async (req, res) => {
 
         await user.save();
 
+        // -----------------------------------------------------
+        // Success
+        // -----------------------------------------------------
+
         return res.status(200).json({
             success: true,
             message:
@@ -382,7 +484,7 @@ export const resetPassword = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
 
             data: {
@@ -396,7 +498,7 @@ export const getMe = async (req, res) => {
             error
         );
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Server Error",
         });
