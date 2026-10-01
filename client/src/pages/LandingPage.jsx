@@ -1746,7 +1746,7 @@ const LandingPage = () => {
                         <div className="mobile-footer-links">
 
                             <span>
-                                ✉ info@canadarnmentorship.com
+                                ✉ canadarnmentorshipbytz@gmail.com
                             </span>
 
                             <span>
