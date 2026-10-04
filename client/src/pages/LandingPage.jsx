@@ -282,21 +282,11 @@ const LandingPage = () => {
                         onClick={handleLogoClick}
                     >
 
-                        <div className="logo-mark">
-                            🍁
-                        </div>
-
-
-                        <div className="logo-text">
-
-                            <strong>
-                                Canada RN
-                            </strong>
-
-                            <span>
-                                Mentorship
-                            </span>
-
+                        <div className="logo">
+                            <img
+                                src="/images/canada-rn-logo.png"
+                                alt="Canada RN Mentorship"
+                            />
                         </div>
 
                     </button>
@@ -613,151 +603,183 @@ const LandingPage = () => {
                 </section>
 
 
-                {/* ==================================================
-                    WHO THIS IS FOR
-                ================================================== */}
+                {/* ============================================================
+    WHO THIS IS FOR
+============================================================ */}
 
-                <section className="audience-section">
+                <section className="who-section">
 
-                    <div className="landing-container audience-grid">
+                    <div className="landing-container">
+
+                        <div className="who-heading-row">
+
+                            <div className="who-heading">
+
+                                <p className="section-eyebrow">
+                                    WHO THIS IS FOR
+                                </p>
+
+                                <h2>
+                                    You don’t have to
+                                    <br />
+                                    figure it out alone.
+                                </h2>
+
+                            </div>
 
 
-                        <div>
+                            <div className="who-intro">
 
-                            <p className="section-eyebrow">
-                                WHO THIS IS FOR
-                            </p>
+                                <p>
+                                    Support for nurses from around the world
+                                    who are exploring, planning, and navigating
+                                    their Canadian journey.
+                                </p>
 
-
-                            <h2>
-                                Guidance for Nurses
-                                Navigating Their
-                                Canadian Journey
-                            </h2>
-
-
-                            <div className="red-line" />
-
-
-                            <ul className="check-list">
-
-                                <li>
-                                    <span>✓</span>
-                                    Internationally educated
-                                    nurses (IENs)
-                                </li>
-
-                                <li>
-                                    <span>✓</span>
-                                    Nurses exploring
-                                    Canadian registration
-                                </li>
-
-                                <li>
-                                    <span>✓</span>
-                                    Nurses unsure about
-                                    their next steps
-                                </li>
-
-                                <li>
-                                    <span>✓</span>
-                                    Nurses needing
-                                    personalized guidance
-                                </li>
-
-                                <li>
-                                    <span>✓</span>
-                                    Anyone seeking clarity
-                                    and support
-                                </li>
-
-                            </ul>
+                            </div>
 
                         </div>
 
 
-                        <div>
+                        {/* ====================================================
+            AUDIENCE CARDS
+        ==================================================== */}
 
-                            <p className="section-eyebrow">
-                                WHAT YOU CAN GET HELP WITH
-                            </p>
+                        <div className="who-cards">
 
+                            <div className="who-card">
 
-                            <h2>
-                                Understand Your Options
-                            </h2>
-
-
-                            <div className="red-line" />
-
-
-                            <div className="help-grid">
-
-                                <div className="help-card">
-                                    <span>📄</span>
-                                    <strong>
-                                        NNAS
-                                    </strong>
-                                    <small>
-                                        Application guidance
-                                    </small>
+                                <div className="who-card-icon">
+                                    🌐
                                 </div>
 
+                                <h3>
+                                    Internationally
+                                    <br />
+                                    Educated Nurses
+                                </h3>
 
-                                <div className="help-card">
-                                    <span>🏛️</span>
-                                    <strong>
-                                        Provincial
-                                        Registration
-                                    </strong>
-                                    <small>
-                                        Understand requirements
-                                    </small>
+                                <p>
+                                    Exploring nursing
+                                    <br />
+                                    opportunities
+                                    <br />
+                                    in Canada.
+                                </p>
+
+                            </div>
+
+
+                            <div className="who-card">
+
+                                <div className="who-card-icon">
+                                    📄
                                 </div>
 
+                                <h3>
+                                    Nurses Navigating
+                                    <br />
+                                    Registration
+                                </h3>
 
-                                <div className="help-card">
-                                    <span>📋</span>
-                                    <strong>
-                                        NCLEX-RN
-                                    </strong>
-                                    <small>
-                                        Understand your pathway
-                                    </small>
+                                <p>
+                                    Unsure about NNAS,
+                                    <br />
+                                    provincial registration
+                                    <br />
+                                    or NCLEX.
+                                </p>
+
+                            </div>
+
+
+                            <div className="who-card">
+
+                                <div className="who-card-icon">
+                                    🧭
                                 </div>
 
+                                <h3>
+                                    Nurses Unsure of
+                                    <br />
+                                    Their Next Step
+                                </h3>
 
-                                <div className="help-card">
-                                    <span>✈️</span>
-                                    <strong>
-                                        Immigration
-                                    </strong>
-                                    <small>
-                                        Explore pathways
-                                    </small>
+                                <p>
+                                    Need help
+                                    <br />
+                                    understanding
+                                    <br />
+                                    your options.
+                                </p>
+
+                            </div>
+
+
+                            <div className="who-card">
+
+                                <div className="who-card-icon">
+                                    💬
                                 </div>
 
+                                <h3>
+                                    Nurses Looking for
+                                    <br />
+                                    Personal Guidance
+                                </h3>
 
-                                <div className="help-card">
-                                    <span>🎯</span>
-                                    <strong>
-                                        Career Planning
-                                    </strong>
-                                    <small>
-                                        Plan your next step
-                                    </small>
-                                </div>
+                                <p>
+                                    Want to talk through
+                                    <br />
+                                    your specific
+                                    <br />
+                                    situation.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
 
-                                <div className="help-card">
-                                    <span>•••</span>
-                                    <strong>
-                                        And More
-                                    </strong>
-                                    <small>
-                                        Personalized support
-                                    </small>
-                                </div>
+                    {/* ========================================================
+        CANADA JOURNEY BANNER
+    ======================================================== */}
+
+                    <div className="journey-banner">
+
+                        <div className="journey-banner-overlay"></div>
+
+
+                        <div className="landing-container journey-banner-inner">
+
+                            <div className="journey-banner-title">
+
+                                <span className="journey-red-line"></span>
+
+                                <h2>
+                                    Different Journeys.
+                                    <br />
+                                    A Brighter Future
+                                    <br />
+                                    in Canada.
+                                </h2>
+
+                            </div>
+
+
+                            <div className="journey-banner-card">
+
+                                <h3>
+                                    Knowledge today.
+                                    <br />
+                                    More possibilities
+                                    <br />
+                                    tomorrow.
+                                </h3>
+
+                                <span className="journey-card-line"></span>
 
                             </div>
 
@@ -767,7 +789,6 @@ const LandingPage = () => {
 
                 </section>
 
-
                 {/* ==================================================
                     HOW IT WORKS
                 ================================================== */}
@@ -776,10 +797,10 @@ const LandingPage = () => {
                     id="how-it-works"
                     className="how-section"
                 >
-
                     <div className="landing-container">
 
-                        <div className="section-heading">
+                        {/* Section Heading */}
+                        <div className="section-heading how-heading">
 
                             <p className="section-eyebrow">
                                 HOW IT WORKS
@@ -794,8 +815,10 @@ const LandingPage = () => {
                         </div>
 
 
+                        {/* Steps */}
                         <div className="steps-grid">
 
+                            {/* Step 1 */}
                             <div className="step-card">
 
                                 <div className="step-number">
@@ -803,21 +826,25 @@ const LandingPage = () => {
                                 </div>
 
                                 <div className="step-icon">
-                                    👤
+                                    <span>👤</span>
                                 </div>
 
-                                <h3>
-                                    Create Account
-                                </h3>
+                                <div className="step-content">
 
-                                <p>
-                                    Sign up and create
-                                    your account.
-                                </p>
+                                    <h3>
+                                        Create Account
+                                    </h3>
+
+                                    <p>
+                                        Sign up and create your account.
+                                    </p>
+
+                                </div>
 
                             </div>
 
 
+                            {/* Step 2 */}
                             <div className="step-card">
 
                                 <div className="step-number">
@@ -825,22 +852,26 @@ const LandingPage = () => {
                                 </div>
 
                                 <div className="step-icon">
-                                    📋
+                                    <span>📋</span>
                                 </div>
 
-                                <h3>
-                                    Complete Profile
-                                </h3>
+                                <div className="step-content">
 
-                                <p>
-                                    Tell us about your
-                                    nursing background
-                                    and goals.
-                                </p>
+                                    <h3>
+                                        Complete Profile
+                                    </h3>
+
+                                    <p>
+                                        Tell us about your nursing
+                                        background and goals.
+                                    </p>
+
+                                </div>
 
                             </div>
 
 
+                            {/* Step 3 */}
                             <div className="step-card">
 
                                 <div className="step-number">
@@ -848,22 +879,26 @@ const LandingPage = () => {
                                 </div>
 
                                 <div className="step-icon">
-                                    📚
+                                    <span>📚</span>
                                 </div>
 
-                                <h3>
-                                    Explore Resources
-                                </h3>
+                                <div className="step-content">
 
-                                <p>
-                                    Access helpful
-                                    guidance and
-                                    preparation resources.
-                                </p>
+                                    <h3>
+                                        Explore Resources
+                                    </h3>
+
+                                    <p>
+                                        Access helpful guidance and
+                                        preparation resources.
+                                    </p>
+
+                                </div>
 
                             </div>
 
 
+                            {/* Step 4 */}
                             <div className="step-card">
 
                                 <div className="step-number">
@@ -871,25 +906,27 @@ const LandingPage = () => {
                                 </div>
 
                                 <div className="step-icon">
-                                    📅
+                                    <span>📅</span>
                                 </div>
 
-                                <h3>
-                                    Book Mentorship
-                                </h3>
+                                <div className="step-content">
 
-                                <p>
-                                    Schedule your
-                                    45-minute
-                                    1-on-1 session.
-                                </p>
+                                    <h3>
+                                        Book Mentorship
+                                    </h3>
+
+                                    <p>
+                                        Schedule your 45-minute
+                                        1-on-1 session.
+                                    </p>
+
+                                </div>
 
                             </div>
 
                         </div>
 
                     </div>
-
                 </section>
 
 
@@ -1026,81 +1063,107 @@ const LandingPage = () => {
                     id="resources"
                     className="resources-section"
                 >
-
                     <div className="landing-container">
 
+                        {/* =====================================================
+            RESOURCES HEADER
+        ===================================================== */}
 
-                        <div className="section-heading">
+                        <div className="resources-heading">
 
-                            <p className="section-eyebrow">
-                                RESOURCES
-                            </p>
+                            <div className="resources-heading-left">
 
-                            <h2>
-                                Resources at Your Fingertips
-                            </h2>
+                                <p className="section-eyebrow">
+                                    FREE RESOURCES
+                                </p>
 
-                            <div className="red-line center" />
+                                <h2>
+                                    Start Exploring
+                                </h2>
 
-                            <p className="section-subtitle">
-                                Practical information to help
-                                you understand your Canadian
-                                nursing journey.
-                            </p>
+                                <p className="resources-subtitle">
+                                    Practical information to help you understand
+                                    your Canadian nursing journey.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                className="resources-view-all"
+                                onClick={handleResources}
+                            >
+                                View All Resources
+                                <span>→</span>
+                            </button>
 
                         </div>
 
 
+                        {/* =====================================================
+            RESOURCE CARDS
+        ===================================================== */}
+
                         <div className="resources-grid">
 
+
+                            {/* NNAS */}
+
                             <div className="resource-card">
 
                                 <div className="resource-icon">
-                                    📘
+                                    <span>▤</span>
                                 </div>
 
                                 <h3>
-                                    NNAS Guide
+                                    NNAS
                                 </h3>
 
                                 <p>
-                                    Step-by-step guidance
-                                    for your NNAS application.
+                                    Application
+                                    <br />
+                                    guidance
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
                                 </p>
-
-                                <span>
-                                    Explore →
-                                </span>
 
                             </div>
 
 
+                            {/* PROVINCIAL REGISTRATION */}
+
                             <div className="resource-card">
 
                                 <div className="resource-icon">
-                                    🏛️
+                                    <span>♜</span>
                                 </div>
 
                                 <h3>
-                                    Provincial Registration
+                                    Provincial
+                                    <br />
+                                    Registration
                                 </h3>
 
                                 <p>
-                                    Understand registration
-                                    requirements by province.
+                                    Understand
+                                    <br />
+                                    requirements
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
                                 </p>
-
-                                <span>
-                                    Explore →
-                                </span>
 
                             </div>
 
 
+                            {/* NCLEX */}
+
                             <div className="resource-card">
 
                                 <div className="resource-icon">
-                                    📋
+                                    <span>▱</span>
                                 </div>
 
                                 <h3>
@@ -1108,79 +1171,95 @@ const LandingPage = () => {
                                 </h3>
 
                                 <p>
-                                    Learn about the
-                                    NCLEX-RN journey.
+                                    Understand
+                                    <br />
+                                    your pathway
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
                                 </p>
-
-                                <span>
-                                    Explore →
-                                </span>
 
                             </div>
 
+
+                            {/* IMMIGRATION */}
 
                             <div className="resource-card">
 
                                 <div className="resource-icon">
-                                    ✈️
+                                    <span>✈</span>
                                 </div>
 
                                 <h3>
-                                    Immigration Pathways
+                                    Immigration
+                                    <br />
+                                    Pathways
                                 </h3>
 
                                 <p>
-                                    Explore immigration
-                                    options and requirements.
+                                    Explore options
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
                                 </p>
-
-                                <span>
-                                    Explore →
-                                </span>
 
                             </div>
 
+
+                            {/* CAREER */}
 
                             <div className="resource-card">
 
                                 <div className="resource-icon">
-                                    🌐
+                                    <span>◎</span>
                                 </div>
 
                                 <h3>
-                                    Useful Links
+                                    Career
+                                    <br />
+                                    Planning
                                 </h3>
 
                                 <p>
-                                    Official websites and
-                                    important resources.
+                                    Plan your
+                                    <br />
+                                    next step
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
                                 </p>
-
-                                <span>
-                                    Explore →
-                                </span>
 
                             </div>
 
-                        </div>
 
+                            {/* MORE RESOURCES */}
 
-                        <div className="resources-button">
+                            <div className="resource-card">
 
-                            <button
-                                type="button"
-                                className="outline-button"
-                                onClick={
-                                    handleResources
-                                }
-                            >
-                                View All Resources
-                            </button>
+                                <div className="resource-icon">
+                                    <span>▱</span>
+                                </div>
+
+                                <h3>
+                                    More
+                                    <br />
+                                    Resources
+                                </h3>
+
+                                <p>
+                                    Explore the
+                                    <br />
+                                    library
+                                    <span className="resource-arrow">
+                                        →
+                                    </span>
+                                </p>
+
+                            </div>
 
                         </div>
 
                     </div>
-
                 </section>
 
 
@@ -1192,22 +1271,31 @@ const LandingPage = () => {
                     id="about"
                     className="about-section"
                 >
-
                     <div className="landing-container about-grid">
 
+                        {/* =====================================================
+            LEFT — CANADA / TORONTO VISUAL
+        ===================================================== */}
 
                         <div className="about-visual">
 
-                            <div className="canada-placeholder">
-                                🍁
+                            <div className="about-image-wrap">
 
-                                <span>
-                                    CANADA
-                                </span>
+                                <img
+                                    src="/images/toronto-about.png"
+                                    alt="Toronto skyline and CN Tower with Canadian maple leaf"
+                                />
+
+                                <div className="about-image-overlay"></div>
+
                             </div>
 
                         </div>
 
+
+                        {/* =====================================================
+            RIGHT — ABOUT CONTENT
+        ===================================================== */}
 
                         <div className="about-content">
 
@@ -1228,48 +1316,78 @@ const LandingPage = () => {
                             <div className="red-line" />
 
 
-                            <p>
-                                Starting a nursing career
-                                in a new country can feel
-                                overwhelming.
-                            </p>
+                            <div className="about-description">
+
+                                <p>
+                                    Starting a nursing career in a new
+                                    country can feel overwhelming.
+                                </p>
+
+                                <p>
+                                    Canada RN Mentorship was created to
+                                    provide practical guidance and support
+                                    so you don't have to navigate your
+                                    Canadian nursing journey alone.
+                                </p>
+
+                            </div>
 
 
-                            <p>
-                                This mentorship platform
-                                was created to provide
-                                practical guidance and
-                                support so you don't have
-                                to navigate the journey
-                                alone.
-                            </p>
-
+                            {/* =================================================
+                ABOUT FEATURES
+            ================================================= */}
 
                             <ul className="about-list">
 
                                 <li>
                                     <span>✓</span>
-                                    Experienced RN Mentor
+                                    <div>
+                                        <strong>
+                                            Experienced RN Mentor
+                                        </strong>
+                                        <small>
+                                            Guidance grounded in real nursing experience.
+                                        </small>
+                                    </div>
                                 </li>
 
 
                                 <li>
                                     <span>✓</span>
-                                    Canadian Healthcare
-                                    Knowledge
+                                    <div>
+                                        <strong>
+                                            Canadian Healthcare Knowledge
+                                        </strong>
+                                        <small>
+                                            Understand Canadian nursing pathways.
+                                        </small>
+                                    </div>
                                 </li>
 
 
                                 <li>
                                     <span>✓</span>
-                                    Empathetic &
-                                    Personalized Support
+                                    <div>
+                                        <strong>
+                                            Empathetic & Personalized Support
+                                        </strong>
+                                        <small>
+                                            Guidance tailored to your situation.
+                                        </small>
+                                    </div>
                                 </li>
 
 
                                 <li>
                                     <span>✓</span>
-                                    Judgment-Free Guidance
+                                    <div>
+                                        <strong>
+                                            Judgment-Free Guidance
+                                        </strong>
+                                        <small>
+                                            A safe space to ask questions.
+                                        </small>
+                                    </div>
                                 </li>
 
                             </ul>
@@ -1277,7 +1395,6 @@ const LandingPage = () => {
                         </div>
 
                     </div>
-
                 </section>
 
 
@@ -1289,40 +1406,61 @@ const LandingPage = () => {
                     id="faq"
                     className="faq-section"
                 >
-
                     <div className="landing-container">
 
+                        <div className="faq-header">
 
-                        <div className="section-heading">
+                            <div className="faq-header-left">
 
-                            <p className="section-eyebrow">
-                                FAQ
-                            </p>
+                                <p className="section-eyebrow">
+                                    FAQ
+                                </p>
 
-                            <h2>
-                                Frequently Asked Questions
-                            </h2>
+                                <h2>
+                                    Frequently Asked
+                                    <br />
+                                    Questions
+                                </h2>
 
-                            <div className="red-line center" />
+                                <div className="faq-red-line" />
+
+                            </div>
+
+
+                            <div className="faq-header-right">
+
+                                <p>
+                                    A few common questions about
+                                    Canada RN Mentorship and what
+                                    to expect from your session.
+                                </p>
+
+                            </div>
 
                         </div>
 
 
                         <div className="faq-list">
 
+
                             <details>
 
                                 <summary>
-                                    Who is the mentorship for?
-                                    <span>+</span>
+                                    <span className="faq-question">
+                                        Who is the mentorship for?
+                                    </span>
+
+                                    <span className="faq-toggle">
+                                        +
+                                    </span>
                                 </summary>
 
                                 <p>
-                                    The service is designed
-                                    primarily for internationally
-                                    educated nurses and nurses
-                                    exploring registration and
-                                    career pathways in Canada.
+                                    Canada RN Mentorship is designed for
+                                    internationally educated nurses who are
+                                    exploring nursing opportunities in Canada,
+                                    navigating registration, or simply unsure
+                                    about their next step.
                                 </p>
 
                             </details>
@@ -1331,16 +1469,21 @@ const LandingPage = () => {
                             <details>
 
                                 <summary>
-                                    Is this immigration advice?
-                                    <span>+</span>
+                                    <span className="faq-question">
+                                        Is this immigration advice?
+                                    </span>
+
+                                    <span className="faq-toggle">
+                                        +
+                                    </span>
                                 </summary>
 
                                 <p>
-                                    This is educational
-                                    mentorship and general
-                                    information only. It is not
-                                    legal advice or regulated
-                                    immigration representation.
+                                    Mentorship can help you understand
+                                    general immigration pathways and how
+                                    they may relate to your nursing journey.
+                                    It is not legal immigration advice or
+                                    representation.
                                 </p>
 
                             </details>
@@ -1349,15 +1492,19 @@ const LandingPage = () => {
                             <details>
 
                                 <summary>
-                                    How long is a mentorship
-                                    session?
-                                    <span>+</span>
+                                    <span className="faq-question">
+                                        How long is a mentorship session?
+                                    </span>
+
+                                    <span className="faq-toggle">
+                                        +
+                                    </span>
                                 </summary>
 
                                 <p>
-                                    The current mentorship
-                                    session is 45 minutes and
-                                    is conducted online.
+                                    Each 1-on-1 mentorship session is
+                                    approximately 45 minutes and is held
+                                    online through Zoom.
                                 </p>
 
                             </details>
@@ -1366,20 +1513,121 @@ const LandingPage = () => {
                             <details>
 
                                 <summary>
-                                    What happens after I book?
-                                    <span>+</span>
+                                    <span className="faq-question">
+                                        What happens after I book?
+                                    </span>
+
+                                    <span className="faq-toggle">
+                                        +
+                                    </span>
                                 </summary>
 
                                 <p>
-                                    After payment, you will
-                                    choose an available
-                                    appointment time through
-                                    Calendly. Your confirmed
-                                    session information will
-                                    appear in your account.
+                                    After your payment is received, you will
+                                    complete your booking through Calendly.
+                                    Your Zoom meeting details will be provided
+                                    once your session is scheduled.
                                 </p>
 
                             </details>
+
+                        </div>
+
+                    </div>
+                </section>
+
+
+                {/* ==================================================
+    FINAL CTA
+================================================== */}
+
+                <section className="final-cta">
+
+                    <div className="final-cta-bg"></div>
+
+                    <div className="landing-container final-cta-inner">
+
+                        <div className="final-cta-content">
+
+                            <p className="final-cta-eyebrow">
+                                READY TO TAKE THE NEXT STEP?
+                            </p>
+
+                            <h2>
+                                Your Canadian Nursing
+                                <br />
+                                Journey Starts Here.
+                            </h2>
+
+                            <p className="final-cta-description">
+                                Get personalized guidance, practical support,
+                                and the confidence to build your nursing
+                                career in Canada.
+                            </p>
+
+                        </div>
+
+
+                        <div className="final-cta-action">
+
+                            <button
+                                type="button"
+                                className="final-cta-button"
+                                onClick={handleGetStarted}
+                            >
+
+                                {user
+                                    ? "Go to Dashboard"
+                                    : "Get Started Today"}
+
+                                <span>
+                                    →
+                                </span>
+
+                            </button>
+
+
+                            <div className="final-cta-benefits">
+
+                                <div className="final-cta-benefit">
+
+                                    <span className="final-cta-benefit-icon">
+                                        ✓
+                                    </span>
+
+                                    <span>
+                                        1-on-1 Guidance
+                                    </span>
+
+                                </div>
+
+
+                                <div className="final-cta-benefit">
+
+                                    <span className="final-cta-benefit-icon">
+                                        ✓
+                                    </span>
+
+                                    <span>
+                                        Practical Support
+                                    </span>
+
+                                </div>
+
+
+                                <div className="final-cta-benefit">
+
+                                    <span className="final-cta-benefit-icon">
+                                        ✓
+                                    </span>
+
+                                    <span>
+                                        Nursing Success
+                                    </span>
+
+                                </div>
+
+                            </div>
 
                         </div>
 
@@ -1388,91 +1636,73 @@ const LandingPage = () => {
                 </section>
 
 
-                {/* ==================================================
-                    FINAL CTA
-                ================================================== */}
-
-                <section className="final-cta">
-
-                    <div className="landing-container final-cta-inner">
-
-                        <h2>
-                            Your Canadian Nursing
-                            Journey Starts Here
-                        </h2>
-
-
-                        <button
-                            type="button"
-                            className="cta-outline-button"
-                            onClick={
-                                handleGetStarted
-                            }
-                        >
-
-                            {user
-                                ? "Go to Dashboard"
-                                : "Get Started Today"}
-
-                            <span>
-                                →
-                            </span>
-
-                        </button>
-
-                    </div>
-
-                </section>
-
             </main>
 
 
             {/* ==================================================
-                FOOTER
-            ================================================== */}
+    FOOTER
+================================================== */}
 
             <footer className="landing-footer">
 
 
                 {/* ==================================================
-                    DESKTOP FOOTER
-                ================================================== */}
+        DESKTOP FOOTER
+    ================================================== */}
 
                 <div className="landing-desktop-footer">
 
                     <div className="landing-container footer-grid">
 
 
-                        {/* FOOTER BRAND */}
+                        {/* BRAND */}
 
                         <div className="footer-brand">
 
-                            <div className="footer-logo">
+                            <a
+                                href="#home"
+                                className="footer-logo"
+                            >
 
-                                <div className="logo-mark">
-                                    🍁
-                                </div>
+                                <img
+                                    src="/images/canada-rn-logo.png"
+                                    alt="Canada RN Mentorship"
+                                />
 
-                                <div className="logo-text">
-
-                                    <strong>
-                                        Canada RN
-                                    </strong>
-
-                                    <span>
-                                        Mentorship
-                                    </span>
-
-                                </div>
-
-                            </div>
+                            </a>
 
 
-                            <p>
+                            <p className="footer-tagline">
                                 Guidance. Support. Success.
                                 <br />
                                 Every step of the way.
                             </p>
+
+
+                            <div className="footer-socials">
+
+                                <a
+                                    href="#"
+                                    aria-label="Instagram"
+                                >
+                                    ◎
+                                </a>
+
+                                <a
+                                    href="#"
+                                    aria-label="YouTube"
+                                >
+                                    ▶
+                                </a>
+
+                                <a
+                                    href="#"
+                                    aria-label="LinkedIn"
+                                >
+                                    in
+                                </a>
+
+                            </div>
 
                         </div>
 
@@ -1501,6 +1731,10 @@ const LandingPage = () => {
                                 Resources
                             </a>
 
+                            <a href="#faq">
+                                FAQ
+                            </a>
+
                         </div>
 
 
@@ -1516,8 +1750,8 @@ const LandingPage = () => {
                                 Mentorship
                             </a>
 
-                            <a href="#faq">
-                                FAQ
+                            <a href="#resources">
+                                Free Resources
                             </a>
 
                             <button
@@ -1534,9 +1768,11 @@ const LandingPage = () => {
                                             )
                                 }
                             >
+
                                 {user
                                     ? "Dashboard"
                                     : "Log In"}
+
                             </button>
 
                         </div>
@@ -1550,38 +1786,41 @@ const LandingPage = () => {
                                 Legal
                             </h4>
 
-                            <span>
+                            <button type="button">
                                 Terms of Service
-                            </span>
+                            </button>
 
-                            <span>
+                            <button type="button">
                                 Privacy Policy
-                            </span>
+                            </button>
 
-                            <span>
+                            <button type="button">
                                 Disclaimer
-                            </span>
+                            </button>
 
                         </div>
 
 
                         {/* CONNECT */}
 
-                        <div className="footer-column">
+                        <div className="footer-column footer-connect">
 
                             <h4>
                                 Connect With Me
                             </h4>
 
                             <span>
-                                ✉ canadarnmentorshipbytz@gmail.com
+                                ✉
+                                canadarnmentorshipbytz@gmail.com
                             </span>
 
                             <span>
-                                📍 Canada
+                                📍
+                                Canada
                             </span>
 
                             <span>
+                                ✦
                                 Future RNs in Canada
                             </span>
 
@@ -1589,37 +1828,45 @@ const LandingPage = () => {
 
                     </div>
 
+
+                    {/* FOOTER BOTTOM */}
+
+                    <div className="landing-container footer-bottom">
+
+                        <span>
+                            © 2026 Canada RN Mentorship.
+                            All rights reserved.
+                        </span>
+
+                        <span>
+                            🍁 Empowering Internationally Educated Nurses in Canada.
+                        </span>
+
+                    </div>
+
                 </div>
 
 
                 {/* ==================================================
-                    MOBILE FOOTER
-                ================================================== */}
+        MOBILE FOOTER
+    ================================================== */}
 
                 <div className="landing-mobile-footer">
 
 
                     <div className="mobile-footer-brand">
 
-                        <div className="mobile-footer-logo">
+                        <a
+                            href="#home"
+                            className="mobile-footer-logo"
+                        >
 
-                            <span className="mobile-footer-logo-mark">
-                                🍁
-                            </span>
+                            <img
+                                src="/images/canada-rn-logo.png"
+                                alt="Canada RN Mentorship"
+                            />
 
-                            <div>
-
-                                <strong>
-                                    Canada RN
-                                </strong>
-
-                                <span>
-                                    Mentorship
-                                </span>
-
-                            </div>
-
-                        </div>
+                        </a>
 
 
                         <p>
@@ -1627,6 +1874,23 @@ const LandingPage = () => {
                             <br />
                             Every step of the way.
                         </p>
+
+
+                        <div className="mobile-footer-socials">
+
+                            <a href="#" aria-label="Instagram">
+                                ◎
+                            </a>
+
+                            <a href="#" aria-label="YouTube">
+                                ▶
+                            </a>
+
+                            <a href="#" aria-label="LinkedIn">
+                                in
+                            </a>
+
+                        </div>
 
                     </div>
 
@@ -1658,6 +1922,10 @@ const LandingPage = () => {
                                 Resources
                             </a>
 
+                            <a href="#faq">
+                                FAQ
+                            </a>
+
                         </div>
 
                     </details>
@@ -1678,8 +1946,8 @@ const LandingPage = () => {
                                 Mentorship
                             </a>
 
-                            <a href="#faq">
-                                FAQ
+                            <a href="#resources">
+                                Free Resources
                             </a>
 
                             <button
@@ -1696,9 +1964,11 @@ const LandingPage = () => {
                                             )
                                 }
                             >
+
                                 {user
                                     ? "Dashboard"
                                     : "Log In"}
+
                             </button>
 
                         </div>
@@ -1754,15 +2024,13 @@ const LandingPage = () => {
                             </span>
 
                             <span>
-                                Future RNs in Canada
+                                ✦ Future RNs in Canada
                             </span>
 
                         </div>
 
                     </details>
 
-
-                    {/* COPYRIGHT */}
 
                     <div className="mobile-footer-bottom">
 

@@ -1,10 +1,12 @@
 /* ============================================================
    CANADA RN MENTORSHIP — LANDING PAGE
+   Complete Responsive Stylesheet
+   Clean Final Version
 ============================================================ */
 
 
 /* ============================================================
-   GLOBAL
+   01. GLOBAL
 ============================================================ */
 
 .landing-page {
@@ -35,21 +37,27 @@
 }
 
 .landing-page img {
+    display: block;
     max-width: 100%;
-    height: auto;
+}
+
+.landing-page button,
+.landing-page a {
+    -webkit-tap-highlight-color: transparent;
 }
 
 .landing-page section,
 .landing-page header,
 .landing-page footer,
 .landing-page main {
+    width: 100%;
     max-width: 100%;
     min-width: 0;
 }
 
 .landing-container {
     width: 100%;
-    max-width: none;
+    max-width: 1400px;
 
     margin: 0 auto;
 
@@ -59,7 +67,7 @@
 
 
 /* ============================================================
-   HEADER
+   02. HEADER
 ============================================================ */
 
 .landing-page .landing-header {
@@ -67,16 +75,18 @@
     top: 0;
     z-index: 1000;
 
+    width: 100%;
+
     background: rgba(255, 255, 255, 0.97);
 
-    border-bottom: 1px solid #edf0f4;
+    border-bottom: 1px solid #e7edf3;
 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .landing-page .nav-container {
-    min-height: 76px;
+    min-height: 72px;
 
     display: flex;
     align-items: center;
@@ -87,14 +97,12 @@
 
 
 /* ============================================================
-   LOGO
+   03. LOGO
 ============================================================ */
 
 .landing-page .landing-logo {
     display: flex;
     align-items: center;
-
-    gap: 10px;
 
     padding: 0;
 
@@ -105,6 +113,15 @@
 
     cursor: pointer;
     text-decoration: none;
+
+    flex-shrink: 0;
+}
+
+.landing-page .landing-logo img {
+    width: 100px;
+    height: auto;
+
+    object-fit: contain;
 }
 
 .landing-page .logo-mark {
@@ -156,56 +173,86 @@
 
 
 /* ============================================================
-   NAVIGATION
+   04. NAVIGATION
 ============================================================ */
 
 .landing-page .landing-nav {
     display: flex;
     align-items: center;
 
-    gap: 26px;
+    gap: 30px;
+
+    margin-left: auto;
 }
 
 .landing-page .landing-nav a {
+    position: relative;
+
+    padding: 8px 0;
+
     color: #102a4c;
 
     text-decoration: none;
 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
 
     transition: color 0.2s ease;
+}
+
+.landing-page .landing-nav a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 1px;
+
+    width: 0;
+    height: 2px;
+
+    background: #d9272e;
+
+    transition: width 0.2s ease;
 }
 
 .landing-page .landing-nav a:hover {
     color: #d9272e;
 }
 
+.landing-page .landing-nav a:hover::after {
+    width: 100%;
+}
+
 
 /* ============================================================
-   NAV ACTIONS
+   05. NAV ACTIONS
 ============================================================ */
 
 .landing-page .nav-actions {
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 10px;
+
+    flex-shrink: 0;
 }
 
 .landing-page .nav-auth-loading {
     color: #718094;
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .landing-page .nav-login-button,
 .landing-page .nav-primary-button {
+    min-height: 42px;
+
+    padding: 0 17px;
+
     border-radius: 6px;
 
-    padding: 11px 19px;
-
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 700;
 
     cursor: pointer;
@@ -219,7 +266,7 @@
 .landing-page .nav-login-button {
     background: #ffffff;
 
-    border: 1px solid #9caec2;
+    border: 1px solid #a9b7c6;
 
     color: #102a4c;
 }
@@ -230,6 +277,9 @@
     border: 1px solid #d9272e;
 
     color: #ffffff;
+
+    box-shadow:
+        0 6px 16px rgba(217, 39, 46, 0.15);
 }
 
 .landing-page .nav-login-button:hover,
@@ -237,52 +287,129 @@
     transform: translateY(-1px);
 }
 
+.landing-page .nav-primary-button:hover {
+    background: #c92329;
+
+    box-shadow:
+        0 9px 22px rgba(217, 39, 46, 0.22);
+}
+
 
 /* ============================================================
-   HERO
+   06. HERO
 ============================================================ */
 
 .landing-page .hero-section {
-    width: 100%;
+    position: relative;
 
-    background:
-        linear-gradient(110deg,
-            #ffffff 0%,
-            #f7fbff 55%,
-            #edf7ff 100%);
+    width: 100%;
+    min-height: 650px;
 
     overflow: hidden;
+
+    background-color: #edf5fa;
+
+    background-image:
+        linear-gradient(90deg,
+            rgba(248, 251, 253, 0.98) 0%,
+            rgba(248, 251, 253, 0.94) 22%,
+            rgba(248, 251, 253, 0.78) 43%,
+            rgba(248, 251, 253, 0.40) 64%,
+            rgba(248, 251, 253, 0.10) 100%),
+        url("/images/toronto-hero-background.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
+.landing-page .hero-section::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(180deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0));
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+.landing-page .hero-section::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 80px;
+
+    background:
+        linear-gradient(to bottom,
+            transparent,
+            rgba(255, 255, 255, 0.35));
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+
+/* ============================================================
+   07. HERO GRID
+============================================================ */
+
 .landing-page .hero-grid {
-    min-height: 610px;
+    position: relative;
+    z-index: 5;
+
+    min-height: 650px;
 
     display: grid;
 
-    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-columns:
+        minmax(0, 1.05fr) minmax(420px, 0.95fr);
 
     align-items: center;
 
-    gap: 30px;
+    gap: 25px;
 }
 
+
+/* ============================================================
+   08. HERO CONTENT
+============================================================ */
+
 .landing-page .hero-content {
+    position: relative;
+    z-index: 10;
+
+    max-width: 700px;
+
     padding: 70px 0;
 }
 
 .landing-page .section-eyebrow {
-    margin: 0 0 14px;
+    margin: 0 0 15px;
 
     color: #d9272e;
 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
 
-    letter-spacing: 1.4px;
+    letter-spacing: 1.6px;
+
+    text-transform: uppercase;
 }
 
 .landing-page .hero-content h1 {
-    max-width: 650px;
+    max-width: 700px;
 
     margin: 0;
 
@@ -293,40 +420,51 @@
         "Times New Roman",
         serif;
 
-    font-size: clamp(42px, 5vw, 66px);
+    font-size: clamp(45px, 5vw, 67px);
 
-    line-height: 1.02;
+    font-weight: 400;
+
+    letter-spacing: -1.7px;
+
+    line-height: 1.01;
 }
 
 .landing-page .hero-content h1 span {
     display: block;
+
+    color: #102a4c;
 }
 
 .landing-page .hero-description {
-    max-width: 620px;
+    max-width: 600px;
 
     margin: 25px 0 30px;
 
-    color: #53657b;
+    color: #52667b;
 
-    font-size: 17px;
+    font-size: 16px;
+
     line-height: 1.7;
 }
 
 
 /* ============================================================
-   HERO BUTTONS
+   09. HERO BUTTONS
 ============================================================ */
 
 .landing-page .hero-buttons {
     display: flex;
     align-items: center;
 
-    gap: 13px;
+    flex-wrap: wrap;
+
+    gap: 12px;
 }
 
 .landing-page .primary-button {
-    padding: 13px 21px;
+    min-height: 49px;
+
+    padding: 0 21px;
 
     border: 0;
     border-radius: 6px;
@@ -334,81 +472,109 @@
     background: #d9272e;
     color: #ffffff;
 
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
 
     cursor: pointer;
 
     transition:
         transform 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .landing-page .primary-button:hover {
+    background: #c92329;
+
     transform: translateY(-1px);
 
     box-shadow:
-        0 8px 20px rgba(217, 39, 46, 0.2);
+        0 9px 24px rgba(217, 39, 46, 0.22);
 }
 
 .landing-page .secondary-button {
-    padding: 12px 20px;
+    min-height: 49px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 20px;
 
     border-radius: 6px;
 
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
 
     text-decoration: none;
+
+    cursor: pointer;
 }
 
 .landing-page .landing-secondary {
-    border: 1px solid #8ea0b5;
+    border: 1px solid #8b9daf;
 
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.86);
+
     color: #102a4c;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .landing-page .landing-secondary:hover {
-    background: #f8fafc;
+    background: #ffffff;
+
+    border-color: #102a4c;
+
+    transform: translateY(-1px);
 }
 
 .landing-page .landing-primary {
-    display: flex;
+    display: inline-flex;
     align-items: center;
 
-    gap: 18px;
+    gap: 16px;
+}
+
+.landing-page .landing-primary span {
+    font-size: 19px;
+    line-height: 1;
 }
 
 
 /* ============================================================
-   HERO FEATURES
+   10. HERO FEATURES
 ============================================================ */
 
 .landing-page .hero-features {
     display: flex;
     flex-wrap: wrap;
 
-    gap: 25px;
+    gap: 22px;
 
-    margin-top: 45px;
+    margin-top: 38px;
 }
 
 .landing-page .hero-feature {
     display: flex;
     align-items: center;
 
-    gap: 9px;
+    gap: 8px;
 
-    color: #253d59;
+    color: #243e59;
 
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
+
+    line-height: 1.25;
 }
 
 .landing-page .feature-icon {
-    width: 31px;
-    height: 31px;
+    width: 30px;
+    height: 30px;
 
     display: flex;
     align-items: center;
@@ -419,74 +585,60 @@
     border: 1px solid #d9272e;
     border-radius: 50%;
 
+    background: rgba(255, 255, 255, 0.75);
+
     color: #d9272e;
 
-    font-size: 15px;
+    font-size: 13px;
 }
 
 
 /* ============================================================
-   HERO VISUAL
+   11. HERO VISUAL
 ============================================================ */
 
 .landing-page .hero-visual {
     position: relative;
+    z-index: 6;
 
-    min-height: 560px;
+    width: 100%;
+    min-height: 600px;
 
     display: flex;
     align-items: flex-end;
     justify-content: center;
 }
 
-.landing-page .hero-circle {
-    position: absolute;
 
-    width: 560px;
-    height: 560px;
+/* ============================================================
+   12. HERO DECORATION
+============================================================ */
 
-    right: -60px;
-    bottom: -130px;
-
-    border-radius: 50%;
-
-    background:
-        linear-gradient(145deg,
-            #dff1ff,
-            #c4e5f8);
-
-    opacity: 0.9;
-}
-
+.landing-page .hero-circle,
 .landing-page .hero-map-shape {
-    position: absolute;
-
-    right: 110px;
-    top: 75px;
-
-    font-size: 80px;
-
-    opacity: 0.2;
+    display: none;
 }
+
+
+/* ============================================================
+   13. HERO NURSE PHOTO
+============================================================ */
 
 .landing-page .hero-nurse-card {
     position: relative;
-    z-index: 2;
+    z-index: 5;
 
-    width: 370px;
-    height: 475px;
+    width: 400px;
+    height: 535px;
 
-    overflow: hidden;
+    overflow: visible;
 
-    border-radius: 180px 180px 20px 20px;
+    background: transparent;
 
-    background:
-        linear-gradient(180deg,
-            #ffffff,
-            #d9eaf5);
+    border: none;
+    border-radius: 0;
 
-    box-shadow:
-        0 25px 60px rgba(16, 42, 76, 0.15);
+    box-shadow: none;
 }
 
 .landing-page .nurse-placeholder {
@@ -496,59 +648,78 @@
     height: 100%;
 
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
+
+    background: transparent;
+
+    border: none;
 }
 
 .landing-page .nurse-avatar {
-    font-size: 170px;
+    width: 100%;
+    height: 100%;
 
-    transform: translateY(-20px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    background: transparent;
 }
 
 .landing-page .nurse-avatar img {
     display: block;
 
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    background: transparent;
+
+    border: none;
+    border-radius: 0;
+
+    box-shadow: none;
 }
 
 .landing-page .nurse-stethoscope {
-    position: absolute;
-
-    right: 100px;
-    bottom: 85px;
-
-    color: #d9272e;
-
-    font-size: 70px;
+    display: none;
 }
+
+
+/* ============================================================
+   14. HERO FLOATING CARD
+============================================================ */
 
 .landing-page .hero-floating-card {
     position: absolute;
-    z-index: 4;
+    z-index: 10;
 
-    left: 10px;
-    bottom: 70px;
+    left: 0;
+    bottom: 75px;
+
+    min-width: 205px;
 
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
 
-    padding: 15px 18px;
+    padding: 13px 16px;
 
     background: #ffffff;
 
-    border-radius: 10px;
+    border-radius: 9px;
 
     box-shadow:
-        0 15px 40px rgba(16, 42, 76, 0.15);
+        0 15px 38px rgba(16, 42, 76, 0.16);
 }
 
 .landing-page .floating-check {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
 
     display: flex;
     align-items: center;
@@ -561,33 +732,340 @@
     background: #d9272e;
     color: #ffffff;
 
+    font-size: 14px;
     font-weight: 800;
 }
 
 .landing-page .hero-floating-card div {
     display: flex;
     flex-direction: column;
+
+    gap: 2px;
 }
 
 .landing-page .hero-floating-card strong {
     color: #102a4c;
 
-    font-size: 15px;
+    font-size: 13px;
 }
 
-.landing-page .hero-floating-card span {
-    color: #6d7c8d;
+.landing-page .hero-floating-card div span {
+    color: #718094;
 
-    font-size: 12px;
+    font-size: 11px;
 }
 
 
 /* ============================================================
-   AUDIENCE
+   15. WHO THIS IS FOR
+============================================================ */
+
+.landing-page .who-section {
+    width: 100%;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+.landing-page .who-heading-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr) minmax(300px, 0.8fr);
+
+    gap: 80px;
+
+    align-items: end;
+
+    padding-top: 78px;
+    padding-bottom: 30px;
+}
+
+.landing-page .who-heading {
+    max-width: 700px;
+}
+
+.landing-page .who-heading .section-eyebrow {
+    margin-bottom: 15px;
+}
+
+.landing-page .who-heading h2 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(42px, 4.4vw, 58px);
+
+    font-weight: 400;
+
+    letter-spacing: -1px;
+
+    line-height: 1.02;
+}
+
+.landing-page .who-intro {
+    max-width: 550px;
+
+    padding-bottom: 8px;
+}
+
+.landing-page .who-intro p {
+    margin: 0;
+
+    color: #607287;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* ============================================================
+   16. WHO CARDS
+============================================================ */
+
+.landing-page .who-cards {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 17px;
+
+    padding-bottom: 32px;
+}
+
+.landing-page .who-card {
+    min-height: 245px;
+
+    padding: 25px 24px 23px;
+
+    border: 1px solid #e2e9f0;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(145deg,
+            #ffffff 0%,
+            #f8fbfd 100%);
+
+    box-shadow:
+        0 7px 24px rgba(16, 42, 76, 0.045);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.landing-page .who-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #d2dfeb;
+
+    box-shadow:
+        0 14px 32px rgba(16, 42, 76, 0.09);
+}
+
+.landing-page .who-card-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 50%;
+
+    background: #edf5fb;
+
+    color: #102a4c;
+
+    font-size: 25px;
+
+    line-height: 1;
+}
+
+.landing-page .who-card h3 {
+    margin: 0 0 11px;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    line-height: 1.16;
+}
+
+.landing-page .who-card p {
+    margin: 0;
+
+    color: #708095;
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+
+/* ============================================================
+   17. CANADA JOURNEY IMAGE BANNER
+============================================================ */
+
+.landing-page .journey-banner {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 300px;
+
+    overflow: hidden;
+
+    background-color: #163e65;
+
+    background-image:
+        url("/images/canada-mountain-background.jpg");
+
+    background-size: cover;
+
+    background-position: center 58%;
+
+    background-repeat: no-repeat;
+}
+
+.landing-page .journey-banner-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(90deg,
+            rgba(5, 31, 58, 0.93) 0%,
+            rgba(7, 42, 76, 0.82) 32%,
+            rgba(7, 42, 76, 0.38) 58%,
+            rgba(7, 42, 76, 0.10) 100%);
+
+    z-index: 1;
+}
+
+.landing-page .journey-banner-inner {
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 60px;
+}
+
+.landing-page .journey-banner-title {
+    max-width: 560px;
+}
+
+.landing-page .journey-red-line {
+    display: block;
+
+    width: 48px;
+    height: 3px;
+
+    margin-bottom: 24px;
+
+    background: #d9272e;
+}
+
+.landing-page .journey-banner-title h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(37px, 4vw, 52px);
+
+    font-weight: 400;
+
+    letter-spacing: -0.5px;
+
+    line-height: 1.05;
+}
+
+.landing-page .journey-banner-card {
+    width: 370px;
+    min-height: 190px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 30px 35px;
+
+    border-radius: 14px;
+
+    background: rgba(248, 252, 255, 0.78);
+
+    box-shadow:
+        0 16px 38px rgba(0, 0, 0, 0.15);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.landing-page .journey-banner-card h3 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 28px;
+
+    font-weight: 400;
+
+    line-height: 1.14;
+}
+
+.landing-page .journey-card-line {
+    display: block;
+
+    width: 46px;
+    height: 3px;
+
+    margin-top: 23px;
+
+    background: #d9272e;
+}
+
+
+/* ============================================================
+   18. OLD AUDIENCE SUPPORT
 ============================================================ */
 
 .landing-page .audience-section {
-    padding: 85px 0;
+    padding: 90px 0;
 
     background: #f5f9fd;
 }
@@ -595,9 +1073,12 @@
 .landing-page .audience-grid {
     display: grid;
 
-    grid-template-columns: 0.85fr 1.15fr;
+    grid-template-columns:
+        minmax(280px, 0.8fr) minmax(0, 1.2fr);
 
-    gap: 75px;
+    gap: 70px;
+
+    align-items: center;
 }
 
 .landing-page .audience-section h2,
@@ -612,9 +1093,11 @@
         "Times New Roman",
         serif;
 
-    font-size: 36px;
+    font-size: 37px;
 
-    line-height: 1.15;
+    font-weight: 400;
+
+    line-height: 1.13;
 }
 
 .landing-page .red-line {
@@ -633,7 +1116,7 @@
 
 
 /* ============================================================
-   CHECK LIST
+   19. CHECK LIST
 ============================================================ */
 
 .landing-page .check-list {
@@ -645,18 +1128,18 @@
     display: flex;
     flex-direction: column;
 
-    gap: 16px;
+    gap: 15px;
 }
 
 .landing-page .check-list li {
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
 
     color: #3e536b;
 
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .landing-page .check-list li span {
@@ -674,54 +1157,69 @@
     background: #d9272e;
     color: #ffffff;
 
-    font-size: 15px;
+    font-size: 11px;
     font-weight: 800;
 }
 
 
 /* ============================================================
-   HELP CARDS
+   20. HELP CARDS
 ============================================================ */
 
 .landing-page .help-grid {
     display: grid;
 
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
 
     gap: 12px;
 }
 
 .landing-page .help-card {
-    min-height: 125px;
+    min-height: 135px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    padding: 15px;
+    padding: 16px;
 
     text-align: center;
 
     background: #ffffff;
 
-    border: 1px solid #e5ebf2;
+    border: 1px solid #e3eaf1;
+
     border-radius: 8px;
 
     box-shadow:
-        0 4px 15px rgba(16, 42, 76, 0.04);
+        0 5px 18px rgba(16, 42, 76, 0.045);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.landing-page .help-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(16, 42, 76, 0.08);
 }
 
 .landing-page .help-card>span {
     margin-bottom: 8px;
 
-    font-size: 25px;
+    color: #d9272e;
+
+    font-size: 24px;
 }
 
 .landing-page .help-card strong {
     color: #102a4c;
 
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .landing-page .help-card small {
@@ -729,64 +1227,151 @@
 
     color: #7a8898;
 
-    font-size: 15px;
+    font-size: 11px;
 }
 
 
 /* ============================================================
-   HOW IT WORKS
+   21. HOW IT WORKS
 ============================================================ */
 
 .landing-page .how-section {
-    padding: 90px 0;
+    position: relative;
+
+    width: 100%;
+
+    padding: 95px 0 105px;
+
+    background: #ffffff;
+
+    overflow: hidden;
 }
 
-.landing-page .section-heading {
-    max-width: 650px;
-
-    margin: 0 auto 50px;
+.landing-page .how-heading {
+    position: relative;
 
     text-align: center;
+
+    margin: 0 auto 72px;
 }
 
-.landing-page .section-subtitle {
-    color: #65758a;
+.landing-page .how-heading .section-eyebrow {
+    margin-bottom: 12px;
 
-    line-height: 1.7;
+    color: #d9272e;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+.landing-page .how-heading h2 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(38px, 4vw, 55px);
+
+    font-weight: 400;
+
+    line-height: 1.08;
+
+    letter-spacing: -1px;
+}
+
+.landing-page .how-heading .red-line {
+    width: 48px;
+    height: 3px;
+
+    margin: 22px auto 0;
+
+    background: #d9272e;
 }
 
 .landing-page .steps-grid {
+    position: relative;
+
     display: grid;
 
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 24px;
+
+    width: 100%;
+}
+
+.landing-page .steps-grid::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 11%;
+    right: 11%;
+
+    height: 2px;
+
+    background: #d6e0ea;
+
+    z-index: 0;
 }
 
 .landing-page .step-card {
     position: relative;
 
-    padding: 30px 24px;
+    min-height: 280px;
 
-    border: 1px solid #e7ecf2;
-    border-radius: 10px;
+    padding: 55px 30px 30px;
 
-    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     text-align: center;
 
+    background: #ffffff;
+
+    border: 1px solid #e2eaf2;
+
+    border-radius: 14px;
+
     box-shadow:
-        0 7px 25px rgba(16, 42, 76, 0.05);
+        0 10px 30px rgba(16, 42, 76, 0.045);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+
+    z-index: 1;
+}
+
+.landing-page .step-card:hover {
+    transform: translateY(-5px);
+
+    border-color: #d4e0ec;
+
+    box-shadow:
+        0 18px 38px rgba(16, 42, 76, 0.09);
 }
 
 .landing-page .step-number {
     position: absolute;
 
-    top: -13px;
+    top: -17px;
     left: 50%;
 
-    width: 27px;
-    height: 27px;
+    width: 36px;
+    height: 36px;
 
     display: flex;
     align-items: center;
@@ -797,64 +1382,155 @@
     border-radius: 50%;
 
     background: #d9272e;
+
     color: #ffffff;
 
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 10px rgba(217, 39, 46, 0.20);
+
+    z-index: 3;
 }
 
 .landing-page .step-icon {
-    margin: 12px 0 17px;
+    width: 68px;
+    height: 68px;
 
-    font-size: 33px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 24px;
+
+    border: 2px solid #d4deea;
+
+    border-radius: 17px;
+
+    background: #f7fafd;
+
+    box-shadow:
+        0 4px 12px rgba(16, 42, 76, 0.035);
+}
+
+.landing-page .step-icon span {
+    display: block;
+
+    font-size: 31px;
+
+    line-height: 1;
+
+    transform: translateY(-1px);
+}
+
+.landing-page .step-content {
+    width: 100%;
 }
 
 .landing-page .step-card h3 {
-    margin: 0 0 9px;
+    margin: 0 0 12px;
 
     color: #102a4c;
 
-    font-size: 15px;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 20px;
+
+    font-weight: 500;
+
+    line-height: 1.2;
 }
 
 .landing-page .step-card p {
-    margin: 0;
+    max-width: 260px;
 
-    color: #718094;
+    margin: 0 auto;
 
-    font-size: 15px;
-    line-height: 1.6;
+    color: #7a8ba1;
+
+    font-size: 14px;
+
+    line-height: 1.65;
 }
 
 
 /* ============================================================
-   MENTORSHIP SECTION
+   22. MENTORSHIP
+   IMPORTANT:
+   resources-background.png is used HERE.
 ============================================================ */
 
 .landing-page .mentorship-section {
+    position: relative;
+
     width: 100%;
 
-    padding: 64px 0 66px;
+    min-height: 650px;
 
-    background: #092b52;
+    padding: 90px 0 100px;
 
     overflow: hidden;
+
+    background-color: #102a4c;
+
+    background-image:
+        url("/images/resources-background.png");
+
+    background-size: cover;
+
+    background-position: center center;
+
+    background-repeat: no-repeat;
 }
 
+.landing-page .mentorship-section::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(90deg,
+            rgba(7, 28, 51, 0.95) 0%,
+            rgba(10, 39, 68, 0.90) 42%,
+            rgba(10, 39, 68, 0.72) 68%,
+            rgba(10, 39, 68, 0.58) 100%);
+
+    z-index: 1;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   23. MENTORSHIP INNER
+============================================================ */
+
 .landing-page .mentorship-inner {
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 460px;
+
     display: grid;
 
     grid-template-columns:
-        minmax(480px, 0.9fr) minmax(500px, 1.1fr);
+        minmax(430px, 0.9fr) minmax(450px, 1.1fr);
 
-    gap: 45px;
+    gap: 75px;
 
     align-items: center;
 }
 
 
 /* ============================================================
-   MENTORSHIP PHOTO
+   24. MENTORSHIP PHOTO
 ============================================================ */
 
 .landing-page .mentorship-visual {
@@ -864,110 +1540,100 @@
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
+    overflow: visible;
 
     background: transparent;
 
-    border-radius: 14px;
+    border-radius: 0;
 }
 
 .landing-page .mentorship-photo-placeholder {
-    width: 100%;
-    max-width: 640px;
+    position: relative;
 
-    display: block;
+    width: 100%;
+
+    max-width: 520px;
+
+    overflow: visible;
 
     margin: 0 auto;
 
-    overflow: hidden;
+    background: transparent;
 
-    border-radius: 13px;
+    border: 0;
 
-    background: #dcecf7;
+    border-radius: 0;
 
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.18);
+    box-shadow: none;
 }
 
 .landing-page .mentorship-photo-placeholder img {
     display: block;
 
     width: 100%;
+
     height: auto;
 
     margin: 0;
     padding: 0;
 
     object-fit: contain;
+
     object-position: center;
 
+    background: transparent;
+
     border: 0;
+
+    border-radius: 0;
+
+    box-shadow: none;
 }
-
-
-/* ============================================================
-   MENTORSHIP PHOTO CAPTION
-============================================================ */
 
 .landing-page .mentorship-photo-placeholder>span,
 .landing-page .mentorship-photo-caption {
-    display: block;
-
-    width: 100%;
-
-    margin: 0;
-
-    padding: 7px 15px 9px;
-
-    background: #dcecf7;
-
-    color: #102a4c;
-
-    text-align: center;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: 22px;
-    font-weight: 700;
-
-    line-height: 1.05;
+    display: none;
 }
 
 
 /* ============================================================
-   MENTORSHIP CONTENT
+   25. MENTORSHIP CONTENT
 ============================================================ */
 
 .landing-page .mentorship-content {
+    position: relative;
+
+    max-width: 600px;
+
     padding: 10px 0;
 
     color: #ffffff;
 }
 
 .landing-page .mentorship-content .section-eyebrow {
-    margin-bottom: 25px;
+    margin: 0 0 18px;
+
+    color: #e34248;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+
+    text-transform: uppercase;
 }
 
 .landing-page .section-eyebrow.light {
-    color: #ff6268;
-
-    font-size: 28px;
-    font-weight: 800;
-
-    letter-spacing: 0.5px;
+    color: #e34248;
 }
 
 .landing-page .white {
     color: #ffffff;
-
-    line-height: 1.05;
 }
 
 .landing-page .mentorship-content h2 {
-    max-width: 420px;
+    max-width: 600px;
 
     margin: 0;
 
@@ -978,211 +1644,207 @@
         "Times New Roman",
         serif;
 
-    font-size: 44px;
+    font-size: clamp(52px, 5vw, 72px);
+
     font-weight: 400;
 
-    line-height: 1.03;
+    letter-spacing: -1.5px;
+
+    line-height: 0.98;
 }
 
 .landing-page .mentorship-content>p {
-    max-width: 590px;
+    max-width: 550px;
 
-    margin: 24px 0;
+    margin: 28px 0;
 
-    color: #c5d4e4;
+    color: rgba(255, 255, 255, 0.78);
 
     font-size: 15px;
-    line-height: 1.7;
+
+    line-height: 1.75;
 }
 
 
 /* ============================================================
-   MENTORSHIP META
+   26. MENTORSHIP META
 ============================================================ */
 
 .landing-page .mentorship-meta {
     display: flex;
+
     flex-wrap: wrap;
-    align-items: center;
 
-    gap: 20px;
+    gap: 10px;
 
-    margin-bottom: 26px;
-
-    color: #ffffff;
-
-    font-size: 15px;
+    margin: 0 0 28px;
 }
 
 .landing-page .mentorship-meta span {
     display: inline-flex;
+
     align-items: center;
 
-    gap: 6px;
+    gap: 7px;
+
+    min-height: 42px;
+
+    padding: 0 15px;
+
+    border: 1px solid rgba(255, 255, 255, 0.20);
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: rgba(255, 255, 255, 0.90);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 
 /* ============================================================
-   MENTORSHIP BUTTON
+   27. MENTORSHIP BUTTON
 ============================================================ */
 
-.landing-page .light-button {
-    background: #d9272e;
-    color: #ffffff;
-}
+.landing-page .mentorship-content .light-button {
+    min-height: 50px;
 
-.landing-page .light-button:hover {
-    background: #c92128;
-}
+    display: inline-flex;
 
-
-/* ============================================================
-   RESOURCES
-============================================================ */
-
-.landing-page .resources-section {
-    padding: 90px 0;
-}
-
-.landing-page .resources-grid {
-    display: grid;
-
-    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
 
     gap: 15px;
-}
 
-.landing-page .resource-card {
-    padding: 25px 20px;
+    padding: 0 23px;
 
-    border: 1px solid #e4eaf1;
-    border-radius: 9px;
+    border: 0;
 
-    background: #ffffff;
-
-    box-shadow:
-        0 6px 20px rgba(16, 42, 76, 0.04);
-}
-
-.landing-page .resource-icon {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin-bottom: 17px;
-
-    border-radius: 9px;
-
-    background: #edf4fb;
-
-    font-size: 21px;
-}
-
-.landing-page .resource-card h3 {
-    margin: 0 0 9px;
-
-    color: #102a4c;
-
-    font-size: 21px;
-    line-height: 1.25;
-}
-
-.landing-page .resource-card p {
-    min-height: 54px;
-
-    margin: 0 0 15px;
-
-    color: #77879a;
-
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-.landing-page .resource-card span {
-    color: #d9272e;
-
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.landing-page .resources-button {
-    display: flex;
-    justify-content: center;
-
-    margin-top: 30px;
-}
-
-.landing-page .outline-button {
-    padding: 12px 22px;
-
-    border: 1px solid #71859c;
     border-radius: 6px;
 
-    background: #ffffff;
+    background: #d9272e;
 
-    color: #102a4c;
+    color: #ffffff;
+
+    font-size: 14px;
 
     font-weight: 700;
 
     cursor: pointer;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.18);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.landing-page .outline-button:hover {
-    background: #f5f8fb;
+.landing-page .mentorship-content .light-button:hover {
+    background: #c92329;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.landing-page .mentorship-content .light-button:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.landing-page .mentorship-content .light-button span {
+    font-size: 18px;
+
+    line-height: 1;
+}
+
+.landing-page .mentorship-active-note {
+    max-width: 520px;
+
+    margin: 15px 0 0 !important;
+
+    color: rgba(255, 255, 255, 0.68) !important;
+
+    font-size: 12px !important;
+
+    line-height: 1.55 !important;
 }
 
 
 /* ============================================================
-   ABOUT
+   28. RESOURCES
+   IMPORTANT:
+   NO resources-background.png here.
 ============================================================ */
 
-.landing-page .about-section {
-    padding: 90px 0;
+.landing-page .resources-section {
+    position: relative;
 
-    background: #f5f9fd;
-}
+    width: 100%;
 
-.landing-page .about-grid {
-    display: grid;
-
-    grid-template-columns: 0.9fr 1.1fr;
-
-    align-items: center;
-
-    gap: 60px;
-}
-
-.landing-page .about-visual {
-    min-height: 330px;
-
-    overflow: hidden;
-
-    border-radius: 12px;
+    padding: 72px 0 78px;
 
     background:
-        linear-gradient(135deg,
-            #c8dfec,
-            #eaf4f8);
+        linear-gradient(180deg,
+            #ffffff 0%,
+            #f9fbfd 100%);
+
+    overflow: hidden;
 }
 
-.landing-page .canada-placeholder {
-    min-height: 330px;
-    height: 100%;
+
+/* ============================================================
+   RESOURCES HEADER
+============================================================ */
+
+.landing-page .resources-heading {
+    width: 100%;
 
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 50px;
+
+    margin-bottom: 34px;
+}
+
+.landing-page .resources-heading-left {
+    min-width: 0;
+}
+
+.landing-page .resources-heading .section-eyebrow {
+    margin: 0 0 7px;
 
     color: #d9272e;
 
-    font-size: 100px;
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    line-height: 1.2;
+
+    text-transform: uppercase;
 }
 
-.landing-page .canada-placeholder span {
+.landing-page .resources-heading h2 {
+    margin: 0;
+
     color: #102a4c;
 
     font-family:
@@ -1190,136 +1852,1181 @@
         "Times New Roman",
         serif;
 
-    font-size: 25px;
-    font-weight: 700;
+    font-size: clamp(42px, 4.3vw, 58px);
+
+    font-weight: 400;
+
+    letter-spacing: -1.2px;
+
+    line-height: 1;
 }
 
-.landing-page .about-content>p {
-    max-width: 600px;
+.landing-page .resources-subtitle {
+    max-width: 850px;
 
-    color: #5c6e82;
+    margin: 12px 0 0;
 
-    font-size: 15px;
-    line-height: 1.7;
-}
+    color: #71839a;
 
-.landing-page .about-list {
-    list-style: none;
+    font-size: 16px;
 
-    margin: 25px 0 0;
-    padding: 0;
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 14px;
-}
-
-.landing-page .about-list li {
-    display: flex;
-    align-items: center;
-
-    gap: 9px;
-
-    color: #344b65;
-
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.landing-page .about-list li span {
-    color: #d9272e;
+    line-height: 1.55;
 }
 
 
 /* ============================================================
-   FAQ
+   VIEW ALL
 ============================================================ */
 
-.landing-page .faq-section {
-    padding: 90px 0;
-}
+.landing-page .resources-view-all {
+    flex-shrink: 0;
 
-.landing-page .faq-list {
-    max-width: 800px;
+    display: inline-flex;
 
-    margin: 0 auto;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 10px;
-}
-
-.landing-page .faq-list details {
-    padding: 0 20px;
-
-    border: 1px solid #e4eaf0;
-    border-radius: 8px;
-
-    background: #ffffff;
-}
-
-.landing-page .faq-list summary {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
 
-    padding: 19px 0;
+    gap: 9px;
 
-    color: #102a4c;
+    margin-bottom: 5px;
 
-    font-size: 16px;
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #d9272e;
+
+    font-size: 14px;
+
     font-weight: 700;
 
     cursor: pointer;
 
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.landing-page .resources-view-all span {
+    font-size: 19px;
+
+    line-height: 1;
+
+    transition: transform 0.2s ease;
+}
+
+.landing-page .resources-view-all:hover {
+    color: #b92127;
+
+    transform: translateY(-1px);
+}
+
+.landing-page .resources-view-all:hover span {
+    transform: translateX(3px);
+}
+
+
+/* ============================================================
+   RESOURCE GRID
+============================================================ */
+
+.landing-page .resources-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+
+/* ============================================================
+   RESOURCE CARD
+============================================================ */
+
+.landing-page .resource-card {
+    position: relative;
+
+    min-width: 0;
+
+    min-height: 238px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 22px 20px 20px;
+
+    border: 1px solid #e2eaf2;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(145deg,
+            #ffffff 0%,
+            #fbfdff 100%);
+
+    box-shadow:
+        0 5px 18px rgba(16, 42, 76, 0.035);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.landing-page .resource-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #d1dfec;
+
+    box-shadow:
+        0 12px 28px rgba(16, 42, 76, 0.08);
+}
+
+
+/* ============================================================
+   RESOURCE ICON
+============================================================ */
+
+.landing-page .resource-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 19px;
+
+    border: 1px solid #dce8f3;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(145deg,
+            #eef6fd,
+            #e5f0f9);
+
+    color: #102f58;
+
+    font-size: 27px;
+
+    line-height: 1;
+}
+
+.landing-page .resource-icon span {
+    display: block;
+
+    line-height: 1;
+
+    transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   RESOURCE TITLE
+============================================================ */
+
+.landing-page .resource-card h3 {
+    min-height: 46px;
+
+    margin: 0 0 9px;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.2px;
+
+    line-height: 1.15;
+}
+
+
+/* ============================================================
+   RESOURCE DESCRIPTION
+============================================================ */
+
+.landing-page .resource-card p {
+    margin: 0;
+
+    color: #71859c;
+
+    font-size: 13px;
+
+    line-height: 1.55;
+}
+
+.landing-page .resource-arrow {
+    display: inline-block;
+
+    margin-left: 5px;
+
+    color: #d9272e;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    transition: transform 0.2s ease;
+}
+
+.landing-page .resource-card:hover .resource-arrow {
+    transform: translateX(3px);
+}
+
+.landing-page .resources-button {
+    display: none;
+}
+
+
+/* ============================================================
+   29. ABOUT
+============================================================ */
+
+.landing-page .about-section {
+    position: relative;
+
+    width: 100%;
+
+    padding: 105px 0;
+
+    background-color: #f8fbff;
+
+    background-image:
+        url("/images/about-background.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   ABOUT GRID
+============================================================ */
+
+.landing-page .about-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(450px, 0.95fr) minmax(0, 1.05fr);
+
+    align-items: center;
+
+    gap: 85px;
+}
+
+
+/* ============================================================
+   ABOUT VISUAL
+============================================================ */
+
+.landing-page .about-visual {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 455px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: visible;
+
+    background: transparent;
+
+    border-radius: 0;
+}
+
+
+/* ============================================================
+   ABOUT IMAGE
+============================================================ */
+
+.landing-page .about-image-wrap {
+    position: relative;
+
+    width: 100%;
+
+    height: 455px;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background: #dcebf5;
+
+    box-shadow:
+        0 20px 50px rgba(16, 42, 76, 0.12);
+}
+
+.landing-page .about-image-wrap img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    object-position: center center;
+
+    border: 0;
+
+    border-radius: 18px;
+}
+
+.landing-page .about-image-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(16, 42, 76, 0.02));
+}
+
+.landing-page .about-visual::before,
+.landing-page .about-visual::after {
+    display: none;
+}
+
+
+/* ============================================================
+   ABOUT CONTENT
+============================================================ */
+
+.landing-page .about-content {
+    position: relative;
+
+    z-index: 3;
+
+    max-width: 650px;
+}
+
+.landing-page .about-content .section-eyebrow {
+    margin: 0 0 14px;
+
+    color: #d9272e;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+
+    line-height: 1.2;
+
+    text-transform: uppercase;
+}
+
+.landing-page .about-content h2 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(43px, 4.3vw, 58px);
+
+    font-weight: 400;
+
+    letter-spacing: -1.2px;
+
+    line-height: 1.02;
+}
+
+.landing-page .about-content .red-line {
+    width: 42px;
+
+    height: 3px;
+
+    margin: 22px 0 26px;
+
+    background: #d9272e;
+}
+
+.landing-page .about-description {
+    max-width: 600px;
+
+    margin-bottom: 28px;
+}
+
+.landing-page .about-description p {
+    margin: 0 0 13px;
+
+    color: #607287;
+
+    font-size: 14px;
+
+    line-height: 1.72;
+}
+
+.landing-page .about-description p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ============================================================
+   ABOUT FEATURE LIST
+============================================================ */
+
+.landing-page .about-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 19px 32px;
+
+    margin: 0;
+
+    padding: 0;
+
     list-style: none;
+}
+
+.landing-page .about-list li {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    color: #102a4c;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+}
+
+.landing-page .about-list li>span {
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 1px;
+
+    border-radius: 50%;
+
+    background: #fbe7e8;
+
+    color: #d9272e;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+.landing-page .about-list li div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.landing-page .about-list li strong {
+    color: #102a4c;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.landing-page .about-list li small {
+    color: #7a8ca0;
+
+    font-size: 11px;
+
+    font-weight: 400;
+
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   30. FAQ
+============================================================ */
+
+.landing-page .faq-section {
+    position: relative;
+
+    width: 100%;
+
+    padding: 100px 0 110px;
+
+    background:
+        linear-gradient(180deg,
+            #ffffff 0%,
+            #f9fbfd 100%);
+
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   FAQ HEADER
+============================================================ */
+
+.landing-page .faq-header {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.05fr) minmax(280px, 0.65fr);
+
+    align-items: end;
+
+    gap: 80px;
+
+    margin-bottom: 55px;
+}
+
+.landing-page .faq-header-left {
+    max-width: 700px;
+}
+
+.landing-page .faq-header-left .section-eyebrow {
+    margin: 0 0 13px;
+
+    color: #d9272e;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    line-height: 1.2;
+
+    text-transform: uppercase;
+}
+
+.landing-page .faq-header-left h2 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(46px, 5vw, 65px);
+
+    font-weight: 400;
+
+    letter-spacing: -1.5px;
+
+    line-height: 1.02;
+}
+
+.landing-page .faq-red-line {
+    width: 50px;
+
+    height: 3px;
+
+    margin-top: 25px;
+
+    background: #d9272e;
+}
+
+.landing-page .faq-header-right {
+    max-width: 430px;
+
+    padding-bottom: 4px;
+}
+
+.landing-page .faq-header-right p {
+    margin: 0;
+
+    color: #71839a;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+}
+
+
+/* ============================================================
+   FAQ LIST
+============================================================ */
+
+.landing-page .faq-list {
+    width: min(920px, 100%);
+
+    margin: 0 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+}
+
+.landing-page .faq-list details {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    border: 1px solid #e1e9f1;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 18px rgba(16, 42, 76, 0.025);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.landing-page .faq-list details:hover {
+    border-color: #d4dfea;
+
+    box-shadow:
+        0 9px 25px rgba(16, 42, 76, 0.055);
+
+    transform: translateY(-1px);
+}
+
+.landing-page .faq-list details[open] {
+    border-color: #ccd9e5;
+
+    box-shadow:
+        0 10px 28px rgba(16, 42, 76, 0.065);
+}
+
+.landing-page .faq-list summary {
+    min-height: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 0 27px;
+
+    color: #102a4c;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    cursor: pointer;
+
+    list-style: none;
+
+    user-select: none;
 }
 
 .landing-page .faq-list summary::-webkit-details-marker {
     display: none;
 }
 
-.landing-page .faq-list summary span {
+.landing-page .faq-list summary::marker {
+    display: none;
+}
+
+.landing-page .faq-question {
+    display: block;
+
+    color: #102a4c;
+}
+
+.landing-page .faq-toggle {
+    width: 30px;
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fbeaec;
+
     color: #d9272e;
 
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     font-size: 20px;
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    transition:
+        transform 0.25s ease,
+        background 0.2s ease;
 }
 
-.landing-page .faq-list details p {
-    margin: 0 0 20px;
-
-    color: #6d7d90;
-
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-
-/* ============================================================
-   FINAL CTA
-============================================================ */
-
-.landing-page .final-cta {
-    padding: 30px 0;
+.landing-page .faq-list details[open] .faq-toggle {
+    transform: rotate(45deg);
 
     background: #d9272e;
 
     color: #ffffff;
 }
 
-.landing-page .final-cta-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 25px;
+.landing-page .faq-list details[open] summary {
+    border-bottom: 1px solid #edf1f5;
 }
 
-.landing-page .final-cta h2 {
+.landing-page .faq-list details p {
+    max-width: 760px;
+
     margin: 0;
+
+    padding: 21px 27px 25px;
+
+    color: #6d7e91;
+
+    font-size: 14px;
+
+    line-height: 1.75;
+}
+
+
+/* ============================================================
+   31. FINAL CTA
+============================================================ */
+
+.landing-page .final-cta {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 350px;
+
+    padding: 75px 0;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(105deg,
+            #f8fbff 0%,
+            #ffffff 48%,
+            #fff8fa 100%);
+
+    color: #102a4c;
+}
+
+.landing-page .final-cta::before {
+    content: "";
+
+    position: absolute;
+
+    left: -80px;
+    bottom: -170px;
+
+    width: 720px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(219, 234, 250, 0.62);
+
+    filter: blur(3px);
+
+    transform: rotate(12deg);
+
+    pointer-events: none;
+}
+
+.landing-page .final-cta::after {
+    content: "";
+
+    position: absolute;
+
+    right: -100px;
+    bottom: -160px;
+
+    width: 650px;
+    height: 330px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(250, 221, 227, 0.55);
+
+    filter: blur(4px);
+
+    transform: rotate(-12deg);
+
+    pointer-events: none;
+}
+
+.landing-page .final-cta-inner {
+    position: relative;
+
+    z-index: 3;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.1fr) minmax(380px, 0.9fr);
+
+    align-items: center;
+
+    gap: 80px;
+}
+
+.landing-page .final-cta-content {
+    max-width: 720px;
+}
+
+.landing-page .final-cta-eyebrow {
+    margin: 0 0 14px;
+
+    color: #d9272e;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.7px;
+
+    text-transform: uppercase;
+}
+
+.landing-page .final-cta-content h2 {
+    margin: 0;
+
+    color: #102a4c;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(43px, 4.7vw, 63px);
+
+    font-weight: 400;
+
+    letter-spacing: -1.4px;
+
+    line-height: 1.03;
+}
+
+.landing-page .final-cta-description {
+    max-width: 620px;
+
+    margin: 24px 0 0;
+
+    color: #63778f;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* ============================================================
+   FINAL CTA ACTION
+============================================================ */
+
+.landing-page .final-cta-action {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+}
+
+.landing-page .final-cta-button {
+    min-width: 300px;
+
+    min-height: 68px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    padding: 0 30px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: #d9272e;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 14px 28px rgba(217, 39, 46, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.landing-page .final-cta-button:hover {
+    background: #c92329;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 18px 35px rgba(217, 39, 46, 0.27);
+}
+
+.landing-page .final-cta-button span {
+    font-size: 21px;
+
+    line-height: 1;
+}
+
+
+/* ============================================================
+   FINAL CTA BENEFITS
+============================================================ */
+
+.landing-page .final-cta-benefits {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 25px;
+
+    margin-top: 25px;
+}
+
+.landing-page .final-cta-benefit {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #19385b;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.landing-page .final-cta-benefit-icon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fde7e9;
+
+    color: #d9272e;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   32. DESKTOP FOOTER
+============================================================ */
+
+.landing-page .landing-desktop-footer {
+    display: block;
+
+    background: #061f3a;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   FOOTER GRID
+============================================================ */
+
+.landing-page .footer-grid {
+    padding: 62px 0 55px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.45fr 1fr 0.9fr 1fr 1.35fr;
+
+    gap: 32px;
+
+    align-items: start;
+}
+
+
+/* ============================================================
+   FOOTER BRAND
+============================================================ */
+
+.landing-page .footer-brand {
+    min-width: 0;
+}
+
+.landing-page .footer-logo {
+    display: inline-flex;
+
+    align-items: center;
+
+    text-decoration: none;
+}
+
+.landing-page .footer-logo img {
+    width: 120px;
+
+    height: auto;
+
+    object-fit: contain;
+}
+
+.landing-page .footer-tagline {
+    margin: 18px 0 0;
+
+    color: #b6c6d7;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* ============================================================
+   FOOTER SOCIALS
+============================================================ */
+
+.landing-page .footer-socials {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 23px;
+}
+
+.landing-page .footer-socials a {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.landing-page .footer-socials a:hover {
+    background: #d9272e;
+
+    transform: translateY(-2px);
+}
+
+
+/* ============================================================
+   FOOTER COLUMNS
+============================================================ */
+
+.landing-page .footer-column {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 11px;
+}
+
+.landing-page .footer-column h4 {
+    margin: 0 0 10px;
 
     color: #ffffff;
 
@@ -1328,81 +3035,9 @@
         "Times New Roman",
         serif;
 
-    font-size: 31px;
-}
+    font-size: 17px;
 
-.landing-page .cta-outline-button {
-    padding: 13px 21px;
-
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 6px;
-
-    background: transparent;
-
-    color: #ffffff;
-
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-.landing-page .cta-outline-button:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-
-/* ============================================================
-   DESKTOP FOOTER
-============================================================ */
-
-.landing-page .landing-desktop-footer {
-    display: block;
-
-    background: #061d38;
-
-    color: #ffffff;
-}
-
-.landing-page .footer-grid {
-    padding: 60px 0;
-
-    display: grid;
-
-    grid-template-columns:
-        1.5fr repeat(4, 1fr);
-
-    gap: 35px;
-}
-
-.landing-page .footer-logo {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-}
-
-.landing-page .footer-brand p {
-    margin-top: 18px;
-
-    color: #aebed0;
-
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-.landing-page .footer-column {
-    display: flex;
-    flex-direction: column;
-
-    gap: 10px;
-}
-
-.landing-page .footer-column h4 {
-    margin: 0 0 7px;
-
-    color: #ffffff;
-
-    font-size: 15px;
+    font-weight: 600;
 }
 
 .landing-page .footer-column a,
@@ -1414,14 +3049,26 @@
 
     background: transparent;
 
-    color: #aebed0;
+    color: #aebfd1;
 
-    font-size: 15px;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.5;
 
     text-align: left;
+
     text-decoration: none;
 
     cursor: pointer;
+
+    transition: color 0.2s ease;
 }
 
 .landing-page .footer-column a:hover,
@@ -1429,30 +3076,63 @@
     color: #ffffff;
 }
 
-.landing-page .footer-bottom {
-    padding: 18px 0;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* ============================================================
+   CONNECT
+============================================================ */
 
-    color: #8396ac;
+.landing-page .footer-connect span {
+    display: flex;
 
-    font-size: 14px;
+    align-items: flex-start;
 
-    text-align: center;
+    gap: 9px;
+
+    word-break: break-word;
 }
 
 
 /* ============================================================
-   LANDING PROFILE PHOTO
+   FOOTER BOTTOM
+============================================================ */
+
+.landing-page .footer-bottom {
+    min-height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.14);
+
+    color: #8fa3b8;
+
+    font-size: 12px;
+}
+
+.landing-page .footer-bottom span:last-child {
+    text-align: right;
+}
+
+
+/* ============================================================
+   33. PROFILE PHOTO
 ============================================================ */
 
 .landing-page .landing-profile-photo {
     width: 100%;
+
     height: 100%;
 
     display: block;
 
     object-fit: cover;
+
     object-position: center top;
 
     border-radius: 50%;
@@ -1460,61 +3140,194 @@
 
 
 /* ============================================================
-   RESPONSIVE — 1050px
+   34. TABLET / SMALL DESKTOP — 1200px
 ============================================================ */
 
-@media (max-width: 1050px) {
+@media (max-width: 1200px) {
+
+    .landing-container {
+        padding-left: 45px;
+        padding-right: 45px;
+    }
+
+
+    /* NAV */
 
     .landing-page .landing-nav {
-        gap: 15px;
+        gap: 22px;
     }
 
-    .landing-page .landing-nav a {
-        font-size: 15px;
-    }
+
+    /* HERO */
 
     .landing-page .hero-grid {
-        grid-template-columns: 1fr 0.8fr;
+        grid-template-columns:
+            minmax(0, 1fr) minmax(360px, 0.82fr);
+
+        gap: 20px;
+    }
+
+    .landing-page .hero-content h1 {
+        font-size: 58px;
     }
 
     .landing-page .hero-nurse-card {
-        width: 300px;
-        height: 410px;
+        width: 350px;
+        height: 470px;
     }
 
-    .landing-page .hero-circle {
-        width: 460px;
-        height: 460px;
+
+    /* WHO */
+
+    .landing-page .who-heading-row {
+        gap: 55px;
     }
+
+    .landing-page .who-cards {
+        gap: 14px;
+    }
+
+    .landing-page .who-card {
+        padding: 22px 20px;
+    }
+
+
+    /* RESOURCES */
 
     .landing-page .resources-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
     }
+
+
+    /* FOOTER */
 
     .landing-page .footer-grid {
         grid-template-columns:
-            1.5fr repeat(2, 1fr);
-    }
+            1.4fr repeat(4, minmax(0, 1fr));
 
-    .landing-page .mentorship-inner {
-        grid-template-columns:
-            minmax(400px, 0.9fr) minmax(400px, 1.1fr);
-
-        gap: 35px;
-    }
-
-    .landing-page .mentorship-photo-placeholder {
-        max-width: 590px;
-    }
-
-    .landing-page .mentorship-content h2 {
-        font-size: 40px;
+        gap: 30px;
     }
 }
 
 
 /* ============================================================
-   RESPONSIVE — 800px
+   35. TABLET — 1000px
+============================================================ */
+
+@media (max-width: 1000px) {
+
+    .landing-page .nav-container {
+        gap: 15px;
+    }
+
+    .landing-page .landing-nav {
+        gap: 16px;
+    }
+
+    .landing-page .landing-nav a {
+        font-size: 13px;
+    }
+
+    .landing-page .nav-primary-button,
+    .landing-page .nav-login-button {
+        padding: 0 13px;
+
+        font-size: 12px;
+    }
+
+
+    /* HERO */
+
+    .landing-page .hero-content h1 {
+        font-size: 52px;
+    }
+
+    .landing-page .hero-description {
+        font-size: 15px;
+    }
+
+    .landing-page .hero-features {
+        gap: 15px;
+    }
+
+    .landing-page .hero-feature {
+        font-size: 12px;
+    }
+
+    .landing-page .hero-nurse-card {
+        width: 315px;
+        height: 430px;
+    }
+
+
+    /* WHO */
+
+    .landing-page .who-heading h2 {
+        font-size: 46px;
+    }
+
+    .landing-page .who-heading-row {
+        gap: 40px;
+    }
+
+    .landing-page .who-cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .landing-page .who-card {
+        min-height: 215px;
+    }
+
+
+    /* JOURNEY */
+
+    .landing-page .journey-banner {
+        min-height: 290px;
+    }
+
+    .landing-page .journey-banner-inner {
+        min-height: 290px;
+    }
+
+    .landing-page .journey-banner-card {
+        width: 320px;
+    }
+
+
+    /* MENTORSHIP */
+
+    .landing-page .mentorship-inner {
+        grid-template-columns:
+            minmax(360px, 0.9fr) minmax(370px, 1.1fr);
+
+        gap: 45px;
+    }
+
+    .landing-page .mentorship-content h2 {
+        font-size: 50px;
+    }
+
+
+    /* CTA */
+
+    .landing-page .final-cta-inner {
+        grid-template-columns: 1fr;
+
+        gap: 35px;
+    }
+
+    .landing-page .final-cta-action {
+        align-items: flex-start;
+    }
+}
+
+
+/* ============================================================
+   36. TABLET — 800px
 ============================================================ */
 
 @media (max-width: 800px) {
@@ -1523,6 +3336,9 @@
         padding-left: 35px;
         padding-right: 35px;
     }
+
+
+    /* HEADER */
 
     .landing-page .nav-container {
         min-height: 68px;
@@ -1533,75 +3349,133 @@
     }
 
 
-    /* --------------------------------------------------------
-       MAJOR SECTIONS
-    -------------------------------------------------------- */
+    /* HERO */
 
-    .landing-page .hero-grid,
-    .landing-page .audience-grid,
-    .landing-page .mentorship-inner,
-    .landing-page .about-grid {
+    .landing-page .hero-section {
+        min-height: 0;
+
+        background-position: 66% center;
+    }
+
+    .landing-page .hero-grid {
+        min-height: 0;
+
         grid-template-columns: 1fr;
+
+        gap: 0;
     }
 
     .landing-page .hero-content {
-        padding: 70px 0 20px;
+        padding: 62px 0 20px;
+    }
+
+    .landing-page .hero-content h1 {
+        font-size: 48px;
+    }
+
+    .landing-page .hero-description {
+        max-width: 650px;
     }
 
     .landing-page .hero-visual {
-        min-height: 450px;
-    }
+        min-height: 480px;
 
-    .landing-page .hero-circle {
-        right: 50%;
-
-        transform: translateX(50%);
-
-        width: 450px;
-        height: 450px;
+        margin-top: 5px;
     }
 
     .landing-page .hero-nurse-card {
-        width: 280px;
-        height: 390px;
+        width: 310px;
+        height: 420px;
     }
 
     .landing-page .hero-floating-card {
         left: 50%;
-        bottom: 35px;
+
+        bottom: 30px;
 
         transform: translateX(-50%);
     }
 
 
-    /* --------------------------------------------------------
-       AUDIENCE
-    -------------------------------------------------------- */
+    /* WHO */
 
-    .landing-page .help-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .landing-page .who-heading-row {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+        padding-top: 65px;
+        padding-bottom: 25px;
+    }
+
+    .landing-page .who-intro {
+        max-width: 650px;
+
+        padding-bottom: 0;
+    }
+
+    .landing-page .who-cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
 
-    /* --------------------------------------------------------
-       HOW IT WORKS
-    -------------------------------------------------------- */
+    /* JOURNEY */
+
+    .landing-page .journey-banner {
+        min-height: 430px;
+    }
+
+    .landing-page .journey-banner-inner {
+        min-height: 430px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        justify-content: center;
+
+        gap: 30px;
+    }
+
+    .landing-page .journey-banner-card {
+        width: 340px;
+
+        min-height: 150px;
+
+        padding: 25px 28px;
+    }
+
+
+    /* OLD AUDIENCE */
+
+    .landing-page .audience-grid {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+    }
+
+
+    /* HOW */
 
     .landing-page .steps-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
 
-    /* --------------------------------------------------------
-       MENTORSHIP
-    -------------------------------------------------------- */
+    /* MENTORSHIP */
 
     .landing-page .mentorship-section {
-        padding: 65px 0;
+        min-height: 0;
+
+        padding: 75px 0 80px;
     }
 
     .landing-page .mentorship-inner {
-        gap: 45px;
+        grid-template-columns: 1fr;
+
+        gap: 50px;
     }
 
     .landing-page .mentorship-visual {
@@ -1611,48 +3485,38 @@
     .landing-page .mentorship-content {
         order: 2;
 
-        text-align: center;
+        max-width: 700px;
     }
 
-    .landing-page .mentorship-content h2 {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .landing-page .mentorship-content>p {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .landing-page .mentorship-meta {
-        justify-content: center;
+    .landing-page .mentorship-photo-placeholder {
+        max-width: 560px;
     }
 
 
-    /* --------------------------------------------------------
-       RESOURCES
-    -------------------------------------------------------- */
+    /* RESOURCES */
 
     .landing-page .resources-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
 
-    /* --------------------------------------------------------
-       ABOUT
-    -------------------------------------------------------- */
+    /* ABOUT */
 
-    .landing-page .about-list {
+    .landing-page .about-grid {
         grid-template-columns: 1fr;
+
+        gap: 45px;
     }
 
 
-    /* --------------------------------------------------------
-       FOOTER
-    -------------------------------------------------------- */
+    /* FOOTER */
 
     .landing-page .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 35px;
     }
 
     .landing-page .footer-brand {
@@ -1660,20 +3524,18 @@
     }
 
 
-    /* --------------------------------------------------------
-       CTA
-    -------------------------------------------------------- */
+    /* CTA */
 
     .landing-page .final-cta-inner {
-        flex-direction: column;
+        grid-template-columns: 1fr;
 
-        text-align: center;
+        gap: 30px;
     }
 }
 
 
 /* ============================================================
-   MOBILE — 600px AND BELOW
+   37. MOBILE — 600px
 ============================================================ */
 
 @media (max-width: 600px) {
@@ -1689,21 +3551,12 @@
     .landing-page {
         width: 100%;
         max-width: 100%;
-        min-width: 0;
 
         overflow-x: hidden;
     }
 
-
-    /* ========================================================
-       CONTAINER
-    ======================================================== */
-
     .landing-page .landing-container {
         width: 100%;
-        max-width: none;
-
-        margin: 0;
 
         padding-left: 20px;
         padding-right: 20px;
@@ -1720,19 +3573,8 @@
         gap: 8px;
     }
 
-    .landing-page .logo-mark {
-        width: 32px;
-        height: 32px;
-
-        font-size: 23px;
-    }
-
-    .landing-page .logo-text strong {
-        font-size: 16px;
-    }
-
-    .landing-page .logo-text span {
-        font-size: 13px;
+    .landing-page .landing-logo img {
+        width: 145px;
     }
 
     .landing-page .nav-actions {
@@ -1741,11 +3583,13 @@
 
     .landing-page .nav-login-button,
     .landing-page .nav-primary-button {
-        padding: 8px 11px;
+        min-height: 38px;
+
+        padding: 0 10px;
 
         border-radius: 6px;
 
-        font-size: 13px;
+        font-size: 11px;
     }
 
 
@@ -1753,8 +3597,25 @@
        HERO
     ======================================================== */
 
+    .landing-page .hero-section {
+        min-height: 0;
+
+        background-image:
+            linear-gradient(180deg,
+                rgba(248, 251, 253, 0.97) 0%,
+                rgba(248, 251, 253, 0.92) 38%,
+                rgba(248, 251, 253, 0.60) 70%,
+                rgba(248, 251, 253, 0.18) 100%),
+            url("/images/toronto-hero-background.png");
+
+        background-size: cover;
+
+        background-position: 65% center;
+    }
+
     .landing-page .hero-grid {
         display: flex;
+
         flex-direction: column;
 
         min-height: 0;
@@ -1765,13 +3626,13 @@
     .landing-page .hero-content {
         width: 100%;
 
-        padding: 55px 0 20px;
+        padding: 50px 0 18px;
     }
 
     .landing-page .section-eyebrow {
-        margin-bottom: 12px;
+        margin-bottom: 11px;
 
-        font-size: 13px;
+        font-size: 12px;
 
         letter-spacing: 1.1px;
     }
@@ -1779,7 +3640,9 @@
     .landing-page .hero-content h1 {
         max-width: 100%;
 
-        font-size: 42px;
+        font-size: 40px;
+
+        letter-spacing: -0.8px;
 
         line-height: 1.05;
     }
@@ -1787,9 +3650,10 @@
     .landing-page .hero-description {
         max-width: 100%;
 
-        margin: 20px 0 25px;
+        margin: 19px 0 25px;
 
-        font-size: 15px;
+        font-size: 14px;
+
         line-height: 1.65;
     }
 
@@ -1802,25 +3666,24 @@
         width: 100%;
 
         flex-direction: column;
+
         align-items: stretch;
 
-        gap: 10px;
+        gap: 9px;
     }
 
     .landing-page .hero-buttons button,
     .landing-page .hero-buttons a {
         width: 100%;
-
-        justify-content: center;
-
-        text-align: center;
     }
 
     .landing-page .primary-button,
     .landing-page .secondary-button {
-        min-height: 48px;
+        min-height: 47px;
 
-        font-size: 15px;
+        justify-content: center;
+
+        font-size: 14px;
     }
 
 
@@ -1831,25 +3694,25 @@
     .landing-page .hero-features {
         display: grid;
 
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        gap: 14px;
+        gap: 13px;
 
-        margin-top: 32px;
+        margin-top: 30px;
     }
 
     .landing-page .hero-feature {
         gap: 8px;
 
-        font-size: 13px;
-        line-height: 1.35;
+        font-size: 12px;
     }
 
     .landing-page .feature-icon {
-        width: 28px;
-        height: 28px;
+        width: 27px;
+        height: 27px;
 
-        font-size: 13px;
+        font-size: 12px;
     }
 
 
@@ -1860,60 +3723,195 @@
     .landing-page .hero-visual {
         width: 100%;
 
-        min-height: 390px;
+        min-height: 400px;
 
         margin-top: 5px;
     }
 
-    .landing-page .hero-circle {
-        width: 360px;
-        height: 360px;
-
-        right: 50%;
-        bottom: -75px;
-
-        transform: translateX(50%);
-    }
-
-    .landing-page .hero-map-shape {
-        right: 75px;
-        top: 55px;
-
-        font-size: 55px;
-    }
-
     .landing-page .hero-nurse-card {
-        width: 245px;
-        height: 340px;
-
-        border-radius: 125px 125px 18px 18px;
+        width: 250px;
+        height: 350px;
     }
 
-    .landing-page .nurse-stethoscope {
-        right: 65px;
-        bottom: 60px;
-
-        font-size: 52px;
+    .landing-page .nurse-avatar img {
+        object-fit: contain;
     }
 
     .landing-page .hero-floating-card {
         left: 50%;
-        bottom: 18px;
+
+        bottom: 15px;
 
         width: max-content;
+
         max-width: calc(100% - 30px);
 
-        padding: 12px 15px;
+        padding: 11px 14px;
+
+        transform: translateX(-50%);
     }
 
     .landing-page .floating-check {
-        width: 34px;
-        height: 34px;
+        width: 33px;
+        height: 33px;
+
+        font-size: 12px;
+    }
+
+    .landing-page .hero-floating-card strong {
+        font-size: 12px;
+    }
+
+    .landing-page .hero-floating-card div span {
+        font-size: 10px;
     }
 
 
     /* ========================================================
-       GENERAL SECTION SPACING
+       WHO
+    ======================================================== */
+
+    .landing-page .who-heading-row {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+
+        padding-top: 58px;
+        padding-bottom: 25px;
+    }
+
+    .landing-page .who-heading h2 {
+        font-size: 38px;
+
+        line-height: 1.04;
+    }
+
+    .landing-page .who-intro p {
+        font-size: 14px;
+
+        line-height: 1.65;
+    }
+
+    .landing-page .who-cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+        padding-bottom: 24px;
+    }
+
+    .landing-page .who-card {
+        min-height: 205px;
+
+        padding: 18px 15px 18px;
+
+        border-radius: 12px;
+    }
+
+    .landing-page .who-card-icon {
+        width: 44px;
+        height: 44px;
+
+        margin-bottom: 15px;
+
+        font-size: 21px;
+    }
+
+    .landing-page .who-card h3 {
+        margin-bottom: 9px;
+
+        font-size: 16px;
+
+        line-height: 1.15;
+    }
+
+    .landing-page .who-card p {
+        font-size: 12px;
+
+        line-height: 1.5;
+    }
+
+
+    /* ========================================================
+       JOURNEY
+    ======================================================== */
+
+    .landing-page .journey-banner {
+        min-height: 490px;
+
+        background-position: center center;
+    }
+
+    .landing-page .journey-banner-overlay {
+        background:
+            linear-gradient(180deg,
+                rgba(5, 31, 58, 0.50) 0%,
+                rgba(5, 31, 58, 0.84) 58%,
+                rgba(5, 31, 58, 0.94) 100%);
+    }
+
+    .landing-page .journey-banner-inner {
+        min-height: 490px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        justify-content: flex-end;
+
+        gap: 25px;
+
+        padding-top: 45px;
+
+        padding-bottom: 35px;
+    }
+
+    .landing-page .journey-banner-title {
+        max-width: 100%;
+    }
+
+    .landing-page .journey-red-line {
+        width: 40px;
+
+        height: 3px;
+
+        margin-bottom: 19px;
+    }
+
+    .landing-page .journey-banner-title h2 {
+        font-size: 36px;
+
+        line-height: 1.05;
+    }
+
+    .landing-page .journey-banner-card {
+        width: 100%;
+
+        min-height: 145px;
+
+        padding: 23px 24px;
+
+        border-radius: 12px;
+    }
+
+    .landing-page .journey-banner-card h3 {
+        font-size: 25px;
+
+        line-height: 1.13;
+    }
+
+    .landing-page .journey-card-line {
+        width: 40px;
+
+        margin-top: 18px;
+    }
+
+
+    /* ========================================================
+       GENERAL SECTIONS
     ======================================================== */
 
     .landing-page .audience-section,
@@ -1925,8 +3923,7 @@
     }
 
     .landing-page .audience-section h2,
-    .landing-page .section-heading h2,
-    .landing-page .about-content h2 {
+    .landing-page .section-heading h2 {
         font-size: 30px;
 
         line-height: 1.15;
@@ -1934,21 +3931,22 @@
 
 
     /* ========================================================
-       AUDIENCE
+       OLD AUDIENCE
     ======================================================== */
 
     .landing-page .audience-grid {
-        gap: 55px;
+        gap: 45px;
     }
 
     .landing-page .check-list {
-        gap: 14px;
+        gap: 13px;
     }
 
     .landing-page .check-list li {
         align-items: flex-start;
 
-        font-size: 14px;
+        font-size: 13px;
+
         line-height: 1.5;
     }
 
@@ -1962,32 +3960,35 @@
     ======================================================== */
 
     .landing-page .help-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        gap: 10px;
+        gap: 9px;
     }
 
     .landing-page .help-card {
-        min-height: 115px;
+        min-height: 110px;
 
-        padding: 13px 9px;
+        padding: 12px 8px;
     }
 
     .landing-page .help-card>span {
         margin-bottom: 6px;
 
-        font-size: 22px;
+        font-size: 21px;
     }
 
     .landing-page .help-card strong {
-        font-size: 13px;
+        font-size: 12px;
+
         line-height: 1.3;
     }
 
     .landing-page .help-card small {
         margin-top: 4px;
 
-        font-size: 11px;
+        font-size: 10px;
+
         line-height: 1.35;
     }
 
@@ -1996,39 +3997,69 @@
        HOW IT WORKS
     ======================================================== */
 
-    .landing-page .section-heading {
-        margin-bottom: 38px;
+    .landing-page .how-section {
+        padding: 65px 0;
     }
 
-    .landing-page .section-subtitle {
-        font-size: 14px;
+    .landing-page .how-heading {
+        margin-bottom: 55px;
+    }
+
+    .landing-page .how-heading .section-eyebrow {
+        font-size: 12px;
+
+        letter-spacing: 1.7px;
+    }
+
+    .landing-page .how-heading h2 {
+        font-size: 34px;
+
+        line-height: 1.12;
+    }
+
+    .landing-page .how-heading .red-line {
+        margin-top: 18px;
     }
 
     .landing-page .steps-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
         gap: 12px;
+    }
+
+    .landing-page .steps-grid::before {
+        display: none;
     }
 
     .landing-page .step-card {
         min-width: 0;
 
+        min-height: 220px;
+
         padding: 28px 12px 20px;
     }
 
     .landing-page .step-icon {
-        margin: 10px 0 13px;
+        width: 60px;
+        height: 60px;
 
-        font-size: 28px;
+        margin: 10px 0 13px;
+    }
+
+    .landing-page .step-icon span {
+        font-size: 27px;
     }
 
     .landing-page .step-card h3 {
-        font-size: 14px;
+        font-size: 13px;
+
         line-height: 1.3;
     }
 
     .landing-page .step-card p {
-        font-size: 12px;
+        font-size: 11px;
+
         line-height: 1.5;
     }
 
@@ -2038,14 +4069,27 @@
     ======================================================== */
 
     .landing-page .mentorship-section {
-        padding: 50px 0 55px;
+        min-height: 0;
+
+        padding: 60px 0 65px;
+
+        background-position: center center;
+    }
+
+    .landing-page .mentorship-section::before {
+        background:
+            linear-gradient(180deg,
+                rgba(7, 28, 51, 0.78) 0%,
+                rgba(7, 28, 51, 0.88) 50%,
+                rgba(7, 28, 51, 0.96) 100%);
     }
 
     .landing-page .mentorship-inner {
         display: flex;
+
         flex-direction: column;
 
-        gap: 35px;
+        gap: 38px;
     }
 
     .landing-page .mentorship-visual {
@@ -2056,20 +4100,16 @@
 
     .landing-page .mentorship-photo-placeholder {
         width: 100%;
+
         max-width: 100%;
 
-        border-radius: 10px;
+        border-radius: 0;
     }
 
     .landing-page .mentorship-photo-placeholder img {
         width: 100%;
-    }
 
-    .landing-page .mentorship-photo-placeholder>span,
-    .landing-page .mentorship-photo-caption {
-        padding: 7px 12px 9px;
-
-        font-size: 20px;
+        height: auto;
     }
 
     .landing-page .mentorship-content {
@@ -2082,37 +4122,44 @@
         text-align: left;
     }
 
-    .landing-page .section-eyebrow.light {
-        margin-bottom: 18px;
+    .landing-page .mentorship-content .section-eyebrow {
+        margin-bottom: 17px;
 
-        font-size: 21px;
+        font-size: 13px;
     }
 
     .landing-page .mentorship-content h2 {
         max-width: 100%;
 
-        font-size: 38px;
-        line-height: 1.04;
+        font-size: 44px;
+
+        line-height: 1.02;
     }
 
     .landing-page .mentorship-content>p {
         max-width: 100%;
 
-        margin: 20px 0;
+        margin: 21px 0;
 
-        font-size: 14px;
+        font-size: 13px;
+
         line-height: 1.7;
     }
 
     .landing-page .mentorship-meta {
         flex-direction: column;
+
         align-items: flex-start;
 
-        gap: 10px;
+        gap: 9px;
 
-        margin-bottom: 24px;
+        margin-bottom: 23px;
+    }
 
-        font-size: 14px;
+    .landing-page .mentorship-meta span {
+        min-height: 40px;
+
+        padding: 0 13px;
     }
 
     .landing-page .mentorship-content .light-button {
@@ -2123,91 +4170,97 @@
 
 
     /* ========================================================
-       RESOURCES — MOBILE 2 COLUMN
-       
-       This is intentionally different from desktop.
-       Cards stay side-by-side like the reference screenshot.
+       RESOURCES
     ======================================================== */
 
     .landing-page .resources-section {
-        padding: 65px 0;
+        padding: 58px 0 62px;
     }
 
-    .landing-page .resources-grid {
-        width: 100%;
+    .landing-page .resources-heading {
+        display: block;
 
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 14px;
+        margin-bottom: 25px;
     }
 
-    .landing-page .resource-card {
-        min-width: 0;
+    .landing-page .resources-heading .section-eyebrow {
+        margin-bottom: 8px;
 
-        min-height: 0;
+        font-size: 12px;
 
-        display: flex;
-        flex-direction: column;
-
-        padding: 18px 15px 20px;
-
-        border-radius: 10px;
+        letter-spacing: 1.7px;
     }
 
-    .landing-page .resource-icon {
-        width: 40px;
-        height: 40px;
+    .landing-page .resources-heading h2 {
+        font-size: 38px;
 
-        margin-bottom: 20px;
-
-        border-radius: 9px;
-
-        font-size: 20px;
+        letter-spacing: -0.8px;
     }
 
-    .landing-page .resource-card h3 {
-        margin: 0 0 10px;
+    .landing-page .resources-subtitle {
+        max-width: 600px;
 
-        font-size: 18px;
-
-        line-height: 1.25;
-
-        overflow-wrap: anywhere;
-    }
-
-    .landing-page .resource-card p {
-        min-height: auto;
-
-        margin: 0 0 18px;
-
-        color: #77879a;
+        margin-top: 11px;
 
         font-size: 13px;
 
-        line-height: 1.55;
+        line-height: 1.6;
     }
 
-    .landing-page .resource-card span {
-        margin-top: auto;
+    .landing-page .resources-view-all {
+        margin-top: 15px;
 
-        font-size: 14px;
-
-        line-height: 1.3;
+        font-size: 13px;
     }
 
-    .landing-page .resources-button {
-        margin-top: 25px;
+    .landing-page .resources-view-all span {
+        font-size: 17px;
     }
 
-    .landing-page .outline-button {
-        width: 100%;
+    .landing-page .resources-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        min-height: 46px;
+        gap: 10px;
+    }
 
-        font-size: 14px;
+    .landing-page .resource-card {
+        min-height: 190px;
+
+        padding: 16px 14px 17px;
+
+        border-radius: 11px;
+    }
+
+    .landing-page .resource-icon {
+        width: 44px;
+        height: 44px;
+
+        margin-bottom: 14px;
+
+        font-size: 22px;
+    }
+
+    .landing-page .resource-card h3 {
+        min-height: 39px;
+
+        margin-bottom: 8px;
+
+        font-size: 16px;
+
+        line-height: 1.15;
+    }
+
+    .landing-page .resource-card p {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+    .landing-page .resource-arrow {
+        margin-left: 3px;
+
+        font-size: 15px;
     }
 
 
@@ -2215,37 +4268,76 @@
        ABOUT
     ======================================================== */
 
+    .landing-page .about-section {
+        padding: 65px 0;
+    }
+
     .landing-page .about-grid {
-        gap: 40px;
+        gap: 38px;
     }
 
     .landing-page .about-visual {
-        min-height: 260px;
+        min-height: 285px;
     }
 
-    .landing-page .canada-placeholder {
-        min-height: 260px;
+    .landing-page .about-image-wrap {
+        height: 285px;
 
-        font-size: 75px;
+        border-radius: 14px;
     }
 
-    .landing-page .canada-placeholder span {
-        font-size: 21px;
+    .landing-page .about-image-wrap img {
+        border-radius: 14px;
+
+        object-position: center center;
     }
 
-    .landing-page .about-content>p {
-        font-size: 14px;
-        line-height: 1.7;
+    .landing-page .about-content .section-eyebrow {
+        margin-bottom: 11px;
+
+        font-size: 12px;
+
+        letter-spacing: 1.5px;
+    }
+
+    .landing-page .about-content h2 {
+        font-size: 38px;
+
+        letter-spacing: -0.7px;
+
+        line-height: 1.05;
+    }
+
+    .landing-page .about-content .red-line {
+        margin: 18px 0 21px;
+    }
+
+    .landing-page .about-description {
+        margin-bottom: 24px;
+    }
+
+    .landing-page .about-description p {
+        font-size: 13px;
+
+        line-height: 1.68;
     }
 
     .landing-page .about-list {
         grid-template-columns: 1fr;
 
-        gap: 12px;
+        gap: 14px;
     }
 
     .landing-page .about-list li {
-        font-size: 14px;
+        gap: 10px;
+    }
+
+    .landing-page .about-list li strong {
+        font-size: 13px;
+    }
+
+    .landing-page .about-list li small {
+        font-size: 11px;
     }
 
 
@@ -2253,34 +4345,84 @@
        FAQ
     ======================================================== */
 
+    .landing-page .faq-section {
+        padding: 65px 0 75px;
+    }
+
+    .landing-page .faq-header {
+        grid-template-columns: 1fr;
+
+        gap: 16px;
+
+        margin-bottom: 30px;
+    }
+
+    .landing-page .faq-header-left .section-eyebrow {
+        margin-bottom: 9px;
+
+        font-size: 12px;
+
+        letter-spacing: 1.7px;
+    }
+
+    .landing-page .faq-header-left h2 {
+        font-size: 38px;
+
+        letter-spacing: -0.8px;
+
+        line-height: 1.05;
+    }
+
+    .landing-page .faq-red-line {
+        width: 42px;
+
+        height: 3px;
+
+        margin-top: 18px;
+    }
+
+    .landing-page .faq-header-right {
+        max-width: 100%;
+
+        padding-bottom: 0;
+    }
+
+    .landing-page .faq-header-right p {
+        font-size: 13px;
+
+        line-height: 1.65;
+    }
+
     .landing-page .faq-list {
-        width: 100%;
+        gap: 9px;
     }
 
     .landing-page .faq-list details {
-        padding: 0 16px;
+        border-radius: 10px;
     }
 
     .landing-page .faq-list summary {
-        min-height: 60px;
+        min-height: 65px;
 
-        padding: 17px 0;
+        padding: 0 16px;
 
-        font-size: 14px;
+        gap: 14px;
 
-        gap: 15px;
+        font-size: 13px;
     }
 
-    .landing-page .faq-list summary span {
-        flex-shrink: 0;
+    .landing-page .faq-toggle {
+        width: 27px;
+        height: 27px;
 
-        font-size: 19px;
+        font-size: 18px;
     }
 
     .landing-page .faq-list details p {
-        margin-bottom: 18px;
+        padding: 17px 16px 20px;
 
-        font-size: 14px;
+        font-size: 12px;
+
         line-height: 1.65;
     }
 
@@ -2290,31 +4432,115 @@
     ======================================================== */
 
     .landing-page .final-cta {
-        padding: 38px 0;
+        min-height: auto;
+
+        padding: 62px 0 65px;
+    }
+
+    .landing-page .final-cta::before {
+        width: 500px;
+        height: 250px;
+
+        left: -180px;
+        bottom: -120px;
+    }
+
+    .landing-page .final-cta::after {
+        width: 450px;
+        height: 240px;
+
+        right: -180px;
+        bottom: -100px;
     }
 
     .landing-page .final-cta-inner {
-        gap: 20px;
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 30px;
     }
 
-    .landing-page .final-cta h2 {
-        font-size: 26px;
+    .landing-page .final-cta-eyebrow {
+        margin-bottom: 11px;
 
-        line-height: 1.2;
+        font-size: 12px;
+
+        letter-spacing: 1.5px;
     }
 
-    .landing-page .cta-outline-button {
+    .landing-page .final-cta-content h2 {
+        font-size: 38px;
+
+        letter-spacing: -0.8px;
+
+        line-height: 1.06;
+    }
+
+    .landing-page .final-cta-description {
+        margin-top: 18px;
+
+        font-size: 13px;
+
+        line-height: 1.65;
+    }
+
+    .landing-page .final-cta-action {
         width: 100%;
 
-        min-height: 48px;
+        align-items: stretch;
+    }
+
+    .landing-page .final-cta-button {
+        width: 100%;
+
+        min-width: 0;
+
+        min-height: 55px;
 
         font-size: 14px;
+    }
+
+    .landing-page .final-cta-benefits {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 8px;
+
+        margin-top: 20px;
+    }
+
+    .landing-page .final-cta-benefit {
+        flex-direction: column;
+
+        justify-content: center;
+
+        gap: 7px;
+
+        text-align: center;
+
+        font-size: 10px;
+
+        white-space: normal;
+    }
+
+    .landing-page .final-cta-benefit-icon {
+        width: 29px;
+        height: 29px;
+
+        font-size: 11px;
     }
 }
 
 
 /* ============================================================
-   MOBILE — 400px AND BELOW
+   38. SMALL MOBILE — 400px
 ============================================================ */
 
 @media (max-width: 400px) {
@@ -2325,39 +4551,30 @@
     }
 
 
-    /* --------------------------------------------------------
-       HEADER
-    -------------------------------------------------------- */
+    /* HEADER */
 
-    .landing-page .logo-mark {
-        width: 29px;
-        height: 29px;
-
-        font-size: 21px;
-    }
-
-    .landing-page .logo-text strong {
-        font-size: 15px;
-    }
-
-    .landing-page .logo-text span {
-        font-size: 12px;
+    .landing-page .landing-logo img {
+        width: 130px;
     }
 
     .landing-page .nav-login-button,
     .landing-page .nav-primary-button {
-        padding: 7px 9px;
+        min-height: 36px;
 
-        font-size: 12px;
+        padding: 0 8px;
+
+        font-size: 10px;
     }
 
 
-    /* --------------------------------------------------------
-       HERO
-    -------------------------------------------------------- */
+    /* HERO */
 
     .landing-page .hero-content h1 {
         font-size: 36px;
+    }
+
+    .landing-page .hero-description {
+        font-size: 13px;
     }
 
     .landing-page .hero-features {
@@ -2365,12 +4582,7 @@
     }
 
     .landing-page .hero-visual {
-        min-height: 360px;
-    }
-
-    .landing-page .hero-circle {
-        width: 330px;
-        height: 330px;
+        min-height: 365px;
     }
 
     .landing-page .hero-nurse-card {
@@ -2378,220 +4590,334 @@
         height: 315px;
     }
 
-    .landing-page .hero-floating-card {
-        bottom: 15px;
+
+    /* WHO */
+
+    .landing-page .who-heading h2 {
+        font-size: 34px;
+    }
+
+    .landing-page .who-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-page .who-card {
+        min-height: auto;
+
+        padding: 20px;
+    }
+
+    .landing-page .who-card h3 {
+        font-size: 18px;
+    }
+
+    .landing-page .who-card p {
+        font-size: 13px;
     }
 
 
-    /* --------------------------------------------------------
-       MOBILE RESOURCE CARDS
-    -------------------------------------------------------- */
+    /* JOURNEY */
+
+    .landing-page .journey-banner {
+        min-height: 510px;
+    }
+
+    .landing-page .journey-banner-inner {
+        min-height: 510px;
+
+        padding-bottom: 28px;
+    }
+
+    .landing-page .journey-banner-title h2 {
+        font-size: 33px;
+    }
+
+    .landing-page .journey-banner-card h3 {
+        font-size: 23px;
+    }
+
+
+    /* HOW */
+
+    .landing-page .step-card {
+        min-height: 205px;
+
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .landing-page .step-card h3 {
+        font-size: 12px;
+    }
+
+    .landing-page .step-card p {
+        font-size: 10px;
+    }
+
+
+    /* MENTORSHIP */
+
+    .landing-page .mentorship-content h2 {
+        font-size: 37px;
+    }
+
+    .landing-page .section-eyebrow.light {
+        font-size: 12px;
+    }
+
+
+    /* RESOURCES */
+
+    .landing-page .resources-section {
+        padding: 50px 0 55px;
+    }
+
+    .landing-page .resources-heading h2 {
+        font-size: 34px;
+    }
+
+    .landing-page .resources-subtitle {
+        font-size: 12px;
+    }
 
     .landing-page .resources-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
 
         gap: 10px;
     }
 
     .landing-page .resource-card {
-        padding: 15px 12px 17px;
+        min-height: 155px;
 
-        border-radius: 9px;
+        padding: 17px;
     }
 
     .landing-page .resource-icon {
-        width: 38px;
-        height: 38px;
+        width: 43px;
+        height: 43px;
 
-        margin-bottom: 17px;
-
-        font-size: 18px;
+        margin-bottom: 13px;
     }
 
     .landing-page .resource-card h3 {
-        font-size: 16px;
+        min-height: auto;
+
+        font-size: 17px;
     }
 
     .landing-page .resource-card p {
         font-size: 12px;
-        line-height: 1.5;
-    }
-
-    .landing-page .resource-card span {
-        font-size: 13px;
     }
 
 
-    /* --------------------------------------------------------
-       MENTORSHIP
-    -------------------------------------------------------- */
+    /* ABOUT */
 
-    .landing-page .mentorship-content h2 {
+    .landing-page .about-section {
+        padding: 55px 0;
+    }
+
+    .landing-page .about-image-wrap {
+        height: 245px;
+    }
+
+    .landing-page .about-content h2 {
         font-size: 34px;
     }
 
-    .landing-page .section-eyebrow.light {
-        font-size: 19px;
+    .landing-page .about-description p {
+        font-size: 12px;
+    }
+
+
+    /* FAQ */
+
+    .landing-page .faq-section {
+        padding: 55px 0 65px;
+    }
+
+    .landing-page .faq-header-left h2 {
+        font-size: 34px;
+    }
+
+    .landing-page .faq-header-right p {
+        font-size: 12px;
+    }
+
+    .landing-page .faq-list summary {
+        min-height: 60px;
+
+        padding: 0 14px;
+
+        font-size: 12px;
+    }
+
+    .landing-page .faq-list details p {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+
+    /* FINAL CTA */
+
+    .landing-page .final-cta {
+        padding: 55px 0 58px;
+    }
+
+    .landing-page .final-cta-content h2 {
+        font-size: 34px;
+    }
+
+    .landing-page .final-cta-description {
+        font-size: 12px;
+    }
+
+    .landing-page .final-cta-benefit {
+        font-size: 9px;
     }
 }
 
 
 /* ============================================================
-   MOBILE FOOTER — HOME DEPOT STYLE
+   39. MOBILE FOOTER
 ============================================================ */
-
-/* Hide mobile footer by default */
 
 .landing-page .landing-mobile-footer {
     display: none;
 }
 
 
-/* ============================================================
-   MOBILE FOOTER
-============================================================ */
-
 @media (max-width: 600px) {
-
-    /* --------------------------------------------------------
-       HIDE DESKTOP FOOTER
-    -------------------------------------------------------- */
 
     .landing-page .landing-desktop-footer {
         display: none;
     }
-
-
-    /* --------------------------------------------------------
-       MOBILE FOOTER CONTAINER
-    -------------------------------------------------------- */
 
     .landing-page .landing-mobile-footer {
         display: block;
 
         width: 100%;
 
-        background: #ffffff;
+        padding: 0 20px 30px;
 
-        color: #333333;
+        background: #061f3a;
 
-        padding: 0 20px 35px;
+        color: #ffffff;
     }
 
 
-    /* --------------------------------------------------------
+    /* ========================================================
        BRAND
-    -------------------------------------------------------- */
+    ======================================================== */
 
     .landing-page .mobile-footer-brand {
-        padding: 42px 10px 32px;
+        padding: 42px 5px 30px;
 
         text-align: center;
     }
-
 
     .landing-page .mobile-footer-logo {
         display: inline-flex;
 
         align-items: center;
 
-        gap: 10px;
-
-        text-align: left;
-    }
-
-
-    .landing-page .mobile-footer-logo-mark {
-        width: 38px;
-        height: 38px;
-
-        display: flex;
-        align-items: center;
         justify-content: center;
 
-        font-size: 28px;
+        text-decoration: none;
     }
 
+    .landing-page .mobile-footer-logo img {
+        width: 190px;
 
-    .landing-page .mobile-footer-logo strong,
-    .landing-page .mobile-footer-logo span {
-        display: block;
-
-        font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-        line-height: 1.05;
+        height: auto;
     }
-
-
-    .landing-page .mobile-footer-logo strong {
-        color: #102a4c;
-
-        font-size: 19px;
-        font-weight: 700;
-    }
-
-
-    .landing-page .mobile-footer-logo span {
-        margin-top: 3px;
-
-        color: #102a4c;
-
-        font-size: 15px;
-    }
-
 
     .landing-page .mobile-footer-brand p {
         margin: 17px 0 0;
 
-        color: #6d7885;
+        color: #aebfd1;
 
-        font-size: 14px;
+        font-size: 13px;
+
         line-height: 1.6;
     }
 
 
-    /* --------------------------------------------------------
+    /* ========================================================
+       SOCIALS
+    ======================================================== */
+
+    .landing-page .mobile-footer-socials {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 11px;
+
+        margin-top: 20px;
+    }
+
+    .landing-page .mobile-footer-socials a {
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.10);
+
+        color: #ffffff;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        text-decoration: none;
+    }
+
+
+    /* ========================================================
        ACCORDION
-    -------------------------------------------------------- */
+    ======================================================== */
 
     .landing-page .mobile-footer-accordion {
         width: 100%;
 
         margin: 0;
 
-        border: 1px solid #d2d2d2;
+        border:
+            1px solid rgba(255, 255, 255, 0.13);
 
         border-bottom: 0;
 
-        background: #ffffff;
+        background: transparent;
     }
-
 
     .landing-page .mobile-footer-accordion:last-of-type {
-        border-bottom: 1px solid #d2d2d2;
+        border-bottom:
+            1px solid rgba(255, 255, 255, 0.13);
     }
 
-
-    /* --------------------------------------------------------
-       ACCORDION HEADER
-    -------------------------------------------------------- */
-
     .landing-page .mobile-footer-accordion summary {
-        min-height: 68px;
+        min-height: 61px;
 
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
 
-        padding: 0 20px;
+        padding: 0 17px;
 
-        color: #333333;
+        color: #ffffff;
 
-        font-size: 18px;
+        font-size: 14px;
+
         font-weight: 700;
 
         cursor: pointer;
@@ -2599,52 +4925,45 @@
         list-style: none;
     }
 
-
     .landing-page .mobile-footer-accordion summary::-webkit-details-marker {
         display: none;
     }
-
 
     .landing-page .mobile-footer-accordion summary::marker {
         display: none;
     }
 
-
     .landing-page .mobile-footer-accordion summary span {
-        color: #666666;
+        color: #ffffff;
 
-        font-size: 29px;
+        font-size: 23px;
+
         font-weight: 300;
 
         line-height: 1;
     }
 
-
-    /* --------------------------------------------------------
-       OPEN STATE
-    -------------------------------------------------------- */
-
     .landing-page .mobile-footer-accordion[open] summary {
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom:
+            1px solid rgba(255, 255, 255, 0.10);
     }
-
 
     .landing-page .mobile-footer-accordion[open] summary span {
         font-size: 0;
     }
 
-
     .landing-page .mobile-footer-accordion[open] summary span::after {
         content: "−";
 
-        font-size: 29px;
+        font-size: 23px;
+
         font-weight: 300;
     }
 
 
-    /* --------------------------------------------------------
-       ACCORDION CONTENT
-    -------------------------------------------------------- */
+    /* ========================================================
+       ACCORDION LINKS
+    ======================================================== */
 
     .landing-page .mobile-footer-links {
         display: flex;
@@ -2653,9 +4972,8 @@
 
         gap: 0;
 
-        padding: 5px 20px 15px;
+        padding: 6px 17px 15px;
     }
-
 
     .landing-page .mobile-footer-links a,
     .landing-page .mobile-footer-links button,
@@ -2664,13 +4982,13 @@
 
         width: 100%;
 
-        padding: 10px 0;
+        padding: 9px 0;
 
         border: 0;
 
         background: transparent;
 
-        color: #5d6a78;
+        color: #aebfd1;
 
         font-family:
             Inter,
@@ -2679,7 +4997,7 @@
             "Segoe UI",
             sans-serif;
 
-        font-size: 15px;
+        font-size: 13px;
 
         line-height: 1.5;
 
@@ -2688,31 +5006,63 @@
         text-decoration: none;
     }
 
-
     .landing-page .mobile-footer-links a:hover,
     .landing-page .mobile-footer-links button:hover {
-        color: #d9272e;
+        color: #ffffff;
     }
 
 
-    /* --------------------------------------------------------
+    /* ========================================================
        COPYRIGHT
-    -------------------------------------------------------- */
+    ======================================================== */
 
     .landing-page .mobile-footer-bottom {
-        margin-top: 35px;
+        margin-top: 30px;
 
-        padding: 24px 10px 0;
+        padding: 22px 5px 0;
 
-        border-top: 1px solid #d2d2d2;
+        border-top:
+            1px solid rgba(255, 255, 255, 0.14);
 
-        color: #707070;
+        color: #8196ac;
 
-        font-size: 13px;
+        font-size: 11px;
 
         line-height: 1.6;
 
         text-align: center;
     }
+}
 
+
+/* ============================================================
+   40. ACCESSIBILITY
+============================================================ */
+
+.landing-page button:focus-visible,
+.landing-page a:focus-visible,
+.landing-page summary:focus-visible {
+    outline: 2px solid #d9272e;
+
+    outline-offset: 3px;
+}
+
+
+/* ============================================================
+   41. REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .landing-page *,
+    .landing-page *::before,
+    .landing-page *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
 }
